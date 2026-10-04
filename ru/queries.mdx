@@ -40,7 +40,7 @@ db.getUser().createMany(many -> {
 });
 ```
 
-`findMany` возвращает список, `findFirst` и `findUnique` — nullable-запись. Варианты `OrThrow` выбрасывают `VolanNotFoundException`. `create`, `update` и `delete` возвращают запись; одиночная запись с неоднозначным совпадением нескольких строк запрещена. `createMany`, `updateMany`, `deleteMany` возвращают число затронутых строк. Bulk insert сохраняет defaults пропущенных полей и объединяет все batches одной транзакцией.
+`findMany` возвращает список, `findFirst` и `findUnique` — nullable-запись. Варианты `OrThrow` выбрасывают `VolanNotFoundException`. `create`, `update` и `delete` возвращают запись; одиночная запись с неоднозначным совпадением нескольких строк запрещена. `createMany`, `updateMany`, `deleteMany` возвращают число затронутых строк. Массовая вставка сохраняет defaults пропущенных полей и объединяет все пакеты строк одной транзакцией.
 
 `upsert { where { ... }; create { ... }; update { ... } }` использует find/create-or-update. Это не атомарный server upsert: конкурентные вставки могут столкнуться с unique constraint.
 
@@ -48,7 +48,7 @@ db.getUser().createMany(many -> {
 
 Скалярные поля предоставляют `eq`, `notEq`, `gt`, `gte`, `lt`, `lte`, `oneOf`, `notOneOf`. Для строк доступны `contains`, `startsWith`, `endsWith` и `ignoringCase()`. Nullable-поля поддерживают `isNull()`, `isNotNull()`. Условия группируются через `and`, `or`, `not`. В Java используются getters и методы: `w.getId().eq(1)`, `w.or(o -> { ...; })`.
 
-Значения передаются параметрами. В raw SQL передавай их списком parameters; не вставляй пользовательский ввод в SQL. Case conversion зависит от СУБД; встроенное преобразование SQLite работает с ASCII.
+Значения передаются параметрами. В raw SQL передавай их списком parameters; не вставляй пользовательский ввод в SQL. Регистронезависимое сравнение строк зависит от СУБД; встроенное преобразование SQLite работает с ASCII.
 
 ## Пагинация
 
