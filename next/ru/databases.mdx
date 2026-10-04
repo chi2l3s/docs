@@ -1,0 +1,69 @@
+---
+title: "СУБД"
+description: "Сравни хранение типов, запросы и поведение миграций разных providers."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+</Info>
+
+Одинаковая модель в клиенте не означает одинаковое хранение во всех базах. СУБД отличаются типами, precision времени, поддержкой массивов, правилами distinct и поведением DDL. Эти различия важны и при проектировании схемы, и при переносе приложения между providers.
+
+Alpha.2 поддерживает PostgreSQL и SQLite. H2, MySQL и MariaDB требуют [artifacts alpha.3 из исходников](/next/ru/build). Таблица ниже показывает реализованные возможности с этой границей версий.
+
+| Возможность | PostgreSQL | SQLite | H2 | MySQL/MariaDB |
+|---|---|---|---|---|
+| Библиотеки | alpha.2 | alpha.2 | alpha.3 из исходников | alpha.3 из исходников |
+| CRUD, связи и агрегаты | Да | Да | Да | Да, InnoDB |
+| Transactions/savepoints | Да | Да | Да | Да |
+| Arrays | Да | Нет | Да | Нет |
+| Decimal | Да | Нет | NUMERIC(65,30) | DECIMAL(65,30) |
+| Native @db overrides | Да | Нет | Нет | Нет |
+| Distinct | DISTINCT ON | Выбранные колонки | DISTINCT ON | Выбранные колонки |
+| Push/versioned migrations | Транзакционно | Транзакционно | Журнал прогресса, ручное восстановление | Журнал прогресса, ручное восстановление |
+| Full-text index DDL | Да | Нет | Нет | Да |
+| Typed full-text search | Отложено | Отложено | Отложено | Отложено |
+
+## Зависимости
+
+Добавь runtime, модуль provider и JDBC-драйвер. Диалект определяется через ServiceLoader по JDBC URL. Модуль MySQL также поддерживает MariaDB.
+
+| provider | Модуль | JDBC URL | Проверенный драйвер/сервер |
+|---|---|---|---|
+| postgresql | volan-dialect-postgres | jdbc:postgresql://localhost:5432/app | PostgreSQL JDBC 42.7.13 |
+| sqlite | volan-dialect-sqlite | jdbc:sqlite:./data.db | Xerial 3.53.4.0 |
+| h2 | volan-dialect-h2 | jdbc:h2:file:./data | H2 2.5.252 regular mode |
+| mysql | volan-dialect-mysql | jdbc:mysql://localhost:3306/app | Connector/J 26.7.0, MySQL 8.4 |
+| mariadb | volan-dialect-mysql | jdbc:mariadb://localhost:3306/app | MariaDB Java 3.5.10, MariaDB 11.4 |
+
+## Различия хранения
+
+SQLite требует 3.35+ для RETURNING. Встроенный пул сохраняет одно соединение даже при большем maxPoolSize. Внешний DataSource сам управляет количеством и lifetime соединений. DateTime хранится как UTC ISO text с девятью дробными знаками; Date/Time — ISO text, UUID — канонический текст, Boolean — integer 0/1, Bytes — BLOB. Ручные SQL/defaults должны соблюдать эти соглашения. Decimal запрещён: для точных сумм используй scaled Long. Enum экспортируется pull как String.
+
+H2 использует TIMESTAMP(9) WITH TIME ZONE, TIME(9), NUMERIC(65,30), native JSON и скалярные массивы. Пробелы JSON могут нормализоваться. Проверяется regular mode; compatibility modes не проверены. Приватная БД в памяти использует одно соединение. Именованная БД сохраняет данные в течение жизни клиента.
+
+MySQL/MariaDB используют InnoDB, utf8mb4_bin, UTC и строгие session settings. Строки и enum — VARCHAR(191), UUID — CHAR(36), Bytes — LONGBLOB, Decimal(65,30), UTC DATETIME(6), TIME(6). Длинные строки вызывают ошибку; точность времени — микросекунды. UUID primary key задавай в приложении: uuid() default для него запрещён. Массивы, native overrides и SetDefault запрещены.
+
+## Интроспекция
+
+Readers сохраняют только представимые структуры и отказывают для неподдерживаемых определений. Views, triggers, custom collations, generated columns, неподдерживаемые индексы и cross-schema/database relations могут блокировать pull/plan/push. Сохраняй исходную схему: в ней остаются enum, generator, aliases и updatedAt.
+
+[Полные ограничения хранения и каталогов](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/docs/dialects.md). [Восстановление DDL](/next/ru/migrations).
+
+## Provider и URL должны совпадать
+
+Provider в схеме задаёт правила проверки типов и генерации SQL для структуры. Подключённый клиент выбирает runtime-диалект по JDBC URL и установленным модулям. Схема SQLite и URL PostgreSQL не образуют переносимую конфигурацию: выбери один согласованный provider и проверь её на целевой БД.
+
+Когда используешь внешний DataSource, он управляет соединениями сам. URL всё ещё нужен для выбора диалекта. Не рассчитывай на свойства встроенного пула SQLite, если подключения выдаёт другой пул: lifetime приватной БД в памяти и число соединений тогда зависят от него.
+
+## Типы проверяй на реальных данных
+
+Для денежных сумм важна точность, а не только возможность скомпилировать поле. SQLite не поддерживает Volan Decimal: используй целое число в минимальных денежных единицах и явно храни выбранный масштаб. При переносе временных значений учитывай, что MySQL/MariaDB сохраняют микросекунды, а не все девять дробных знаков.
+
+Существующий ручной SQL также должен соблюдать соглашения хранения. Например, произвольный текст даты может пройти SQLite storage affinity, но не преобразоваться в ожидаемый тип клиента. Ошибка mapping — повод проверить фактическое значение и схему, а не только драйвер.
+
+## Тестовая база и рабочая база
+
+H2 или SQLite удобны для локальной обратной связи, но их успешный тест не доказывает поведение PostgreSQL/MySQL. Проверяй на целевой СУБД фильтры строк, defaults, foreign keys, precision и SQL миграций. Особое значение имеет DDL: гарантии rollback PostgreSQL/SQLite нельзя переносить на H2/MySQL/MariaDB.
+
+Строгая интроспекция может остановиться на структуре, которую Volan не умеет представить без потерь. Это помогает не выдавать неполную схему за полное описание базы. Если reader отказал, изучи указанную структуру и реши, можно ли упростить её или управлять этой частью отдельным SQL-процессом.

@@ -1,0 +1,50 @@
+---
+title: "Installation"
+description: "Choose the Volan pieces you need: application libraries and a CLI for schema work."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+Volan belongs in your application's build. Add the runtime, database dialect and JDBC driver; run the matching generator during compilation. You do not need a globally installed command to try [First query](/v0.1.0-alpha.2/en/quickstart).
+
+## Libraries from Central
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:0.1.0-alpha.2"))
+    implementation("io.github.thirtyeighttwentysix:volan-runtime")
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-sqlite")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.53.4.0")
+}
+```
+
+Use `volan-dialect-postgres` and the PostgreSQL JDBC driver for a PostgreSQL application. Add `volan-migrate` when you need migration or introspection APIs. The BOM aligns Volan libraries; specify third-party driver versions separately.
+
+The generator uses `io.github.thirtyeighttwentysix:volan-codegen:0.1.0-alpha.2` in a build-only configuration. It does not belong in the service runtime. [Build](/v0.1.0-alpha.2/en/build) explains how generated Kotlin is compiled before your Kotlin or Java application.
+
+Volan supports Java 17+. The complete quickstart uses JDK 25 for its compact Java entry point. Its wrapper pins Gradle 9.8.0.
+
+## Optional database CLI
+
+The alpha.2 release has no portable CLI installation archive. Build its database tool from the matching source tag:
+
+```bash
+git clone --branch v0.1.0-alpha.2 --depth 1 https://github.com/thirtyeighttwentysix/volan.git volan-alpha2
+cd volan-alpha2
+./gradlew :volan-cli:installDist
+./volan-cli/build/install/volan/bin/volan --help
+```
+
+On Windows, use `.\gradlew.bat :volan-cli:installDist` and `.\volan-cli\build\install\volan\bin\volan.bat --help`.
+
+This tagged CLI provides `db pull` and `db push`. It does not provide `init`, `generate`, `validate` or `format`; use the generation program in [First query](/v0.1.0-alpha.2/en/quickstart) for the application build. Add the generated `bin` directory to PATH if you want to type `volan` in the following guides.
+
+The separately downloadable alpha.3 CLI preview generates a newer API. It is not the alpha.2 generator. Select the development documentation for its installation instructions.
+
+## Check the pieces
+
+The dialect turns operations into provider SQL; the JDBC driver opens connections. Installing one does not supply the other. A connection failure calls for checking both dependencies, the URL and credentials.
+
+Updating a CLI does not edit application dependencies. Pin the runtime and codegen versions together, regenerate on upgrades and apply database changes separately through reviewed migrations.

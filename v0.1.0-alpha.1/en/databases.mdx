@@ -1,0 +1,30 @@
+---
+title: "Databases"
+description: "Compare type storage, queries and migration behavior across providers."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+Alpha.1 supports PostgreSQL only. SQLite arrived in alpha.2; H2, MySQL and MariaDB belong to later development. A JDBC driver for another database does not provide Volan with that dialect.
+
+## Dependencies
+
+Use volan-runtime and volan-dialect-postgres aligned by the `0.1.0-alpha.1` BOM. Add `org.postgresql:postgresql:42.7.13` as the driver. A JDBC URL has the form `jdbc:postgresql://localhost:5432/app`; supply username and password separately.
+
+## Types and queries
+
+PostgreSQL supports the scalar types, scalar-array storage and native @db overrides described in [Schema](/v0.1.0-alpha.1/en/schema). Distinct supports representative rows through DISTINCT ON. Full-text index DDL does not imply a typed full-text query API.
+
+Keep hand-written SQL consistent with mapped field types and enum values. Client generation cannot check existing stored values; mismatches can appear when mapping a returned row.
+
+## Introspection and migrations
+
+The PostgreSQL reader uses catalogs to recover representable tables, keys, defaults and relations. Unsupported definitions such as expression indexes or cross-schema references can stop introspection. Pull does not recover every application declaration, including aliases or generator settings.
+
+Push verifies the resulting structure before commit. Versioned migration files and their journal entries commit together; advisory locks coordinate Volan migration writers in the current schema. Read [Migrations](/v0.1.0-alpha.1/en/migrations) before updating tables with existing data.
+
+## Test the deployment provider
+
+Run alpha.1 queries against a dedicated PostgreSQL database. An unsupported substitute cannot prove PostgreSQL defaults, filtering, precision or DDL. The [quickstart](/v0.1.0-alpha.1/en/quickstart) uses a temporary table in one transaction for repeatable Kotlin and Java runs.

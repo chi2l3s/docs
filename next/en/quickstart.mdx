@@ -1,0 +1,280 @@
+---
+title: "First query"
+description: "Create a user, read it by id and check the result in Kotlin or Java."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+</Info>
+
+On this page you will create a user, read it by `id` and see the result in the console. SQLite will keep the database in memory for the duration of the run. There is no separate server to start, and every run begins with an empty database.
+
+Use alpha.3 artifacts staged from the pinned sources in [Build](/next/en/build). They are not published on Central. The complete example uses JDK 25 and Gradle 9.8.0. Pass the local repository URI to both run tasks.
+
+[All example files](https://github.com/chi2l3s/docs/tree/main/examples/first-query-next) are available in the documentation repository with a Gradle wrapper. Download the repository and run commands from `examples/first-query-next`.
+
+## Project files
+
+Kotlin and Java share one client. Add both entry points to try both APIs, or keep only the language you need. Application code belongs in `src/main`. The small generation program lives in a separate source set and is not part of your application runtime.
+
+```text
+volan-first-query/
+  settings.gradle.kts
+  build.gradle.kts
+  schema.volan
+  src/
+    generator/java/org/example/GenerateClient.java
+    main/kotlin/org/example/Main.kt
+    main/java/Main.java
+```
+
+Set the project name in `settings.gradle.kts`:
+
+```kotlin title="settings.gradle.kts"
+rootProject.name = "volan-first-query"
+```
+
+## Describe a user
+
+Create `schema.volan` in the project root:
+
+```prisma title="schema.volan"
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.generated"
+  javaFriendly = true
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+}
+```
+
+`datasource` selects SQLite. `generator` sets the client package and enables Java callbacks. `User` describes three columns: the database assigns `id`, `email` is required and unique, and `name` can be absent. A `?` marks a nullable field.
+
+`DATABASE_URL` describes a connection source for database schema operations. This example supplies the client URL directly in code, and generation never opens a database. You do not need to set the environment variable for this run.
+
+## Add Volan to the build
+
+Replace `build.gradle.kts` with:
+
+```kotlin title="build.gradle.kts"
+plugins {
+    kotlin("jvm") version "2.4.20"
+}
+
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    val stagedRepository = providers.gradleProperty("volanRepository").get()
+    maven { url = uri(stagedRepository) }
+    mavenCentral()
+}
+
+val generator = sourceSets.create("generator")
+val generated = layout.buildDirectory.dir("generated/volan")
+
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:0.1.0-alpha.3"))
+    implementation("io.github.thirtyeighttwentysix:volan-runtime")
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-sqlite")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.53.4.0")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.20")
+
+    add(generator.implementationConfigurationName,
+        "io.github.thirtyeighttwentysix:volan-codegen:0.1.0-alpha.3")
+
+    testImplementation(kotlin("test"))
+    testImplementation(platform("org.junit:junit-bom:6.0.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+kotlin {
+    jvmToolchain(25)
+    sourceSets.main {
+        kotlin.srcDir(generated)
+    }
+}
+
+val generateClient = tasks.register<JavaExec>("generateClient") {
+    classpath = generator.runtimeClasspath
+    mainClass.set("org.example.GenerateClient")
+    inputs.file("schema.volan")
+    outputs.dir(generated)
+    args(
+        layout.projectDirectory.file("schema.volan").asFile.absolutePath,
+        generated.get().asFile.absolutePath
+    )
+}
+
+tasks.named("compileKotlin") {
+    dependsOn(generateClient)
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.withType<JavaExec>().configureEach {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
+tasks.register<JavaExec>("runKotlinExample") {
+    dependsOn(tasks.named("classes"))
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("org.example.MainKt")
+}
+
+tasks.register<JavaExec>("runJavaExample") {
+    dependsOn(tasks.named("classes"))
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("Main")
+}
+```
+
+Each dependency has a specific job. `volan-runtime` executes queries; `volan-dialect-sqlite` handles SQLite SQL; `sqlite-jdbc` opens connections. The BOM keeps Volan libraries on the same version. The generator belongs to the build and uses the separate `generator` source set.
+
+`generateClient` reads the schema and writes Kotlin files to `build/generated/volan`. `compileKotlin` depends on it, so a normal build updates the client before compilation. The generated directory is registered as main sources: Kotlin compiles the client and Java can use the resulting classes. The two `run…Example` tasks launch the entry points with the application runtime classpath.
+
+This example invokes matching codegen directly, keeping Kotlin and Java runs easy to compare. Alpha.3 also has build plugins described in [Build](/next/en/build). Create the small generation program below.
+
+```java title="src/generator/java/org/example/GenerateClient.java"
+package org.example;
+
+import io.github.thirtyeighttwentysix.volan.codegen.VolanGenerator;
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader;
+import io.github.thirtyeighttwentysix.volan.schema.SourceFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class GenerateClient {
+    public static void main(String[] args) throws Exception {
+        var source = new SourceFile("schema.volan", Files.readString(Path.of(args[0])));
+        VolanGenerator.writeTo(SchemaLoader.loadOrThrow(source), Path.of(args[1]));
+    }
+}
+```
+
+## Run a query
+
+Choose a language. Both examples open a client, create a table, insert Alice, read the row by the assigned `id`, check the result and close the client.
+
+<Tabs>
+<Tab title="Kotlin">
+
+```kotlin title="src/main/kotlin/org/example/Main.kt"
+package org.example
+
+import org.example.generated.VolanClient
+
+fun main() {
+    VolanClient.builder().url("jdbc:sqlite::memory:").build().use { db ->
+        db.rawExecute("""
+            CREATE TABLE "User" (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "email" TEXT NOT NULL UNIQUE,
+                "name" TEXT
+            )
+        """.trimIndent())
+
+        val created = db.user.create {
+            email = "alice@example.org"
+            name = "Alice"
+        }
+
+        val found = db.user.findUnique {
+            where { id eq created.id }
+        }
+
+        check(found == created)
+        println("${found.name}: ${found.email}")
+        println("Users: ${db.user.count()}")
+    }
+}
+```
+
+`create` returns the saved record, including the database-assigned `id`. `findUnique` binds that identifier as an SQL parameter. `check` stops the run if the saved and returned records differ. `use` closes the client even if an operation fails.
+
+</Tab>
+<Tab title="Java">
+
+```java title="src/main/java/Main.java"
+import org.example.generated.VolanClient;
+
+void main() {
+    try (var db = VolanClient.builder().url("jdbc:sqlite::memory:").build()) {
+        db.rawExecute("""
+            CREATE TABLE "User" (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "email" TEXT NOT NULL UNIQUE,
+                "name" TEXT
+            )
+            """);
+
+        var created = db.getUser().create(data -> {
+            data.setEmail("alice@example.org");
+            data.setName("Alice");
+        });
+
+        var found = db.getUser().findUnique(query ->
+            query.where(where -> where.getId().eq(created.getId())));
+
+        if (!created.equals(found)) {
+            throw new IllegalStateException("The saved user was not returned");
+        }
+        IO.println(found.getName() + ": " + found.getEmail());
+        IO.println("Users: " + db.getUser().count());
+    }
+}
+```
+
+`getUser()` returns the model repository. The `data` callback fills a write form through setters; the `query` callback describes the read condition. Try-with-resources closes the client. This `Main.java` uses a compact Java 25 entry point and has no package declaration.
+
+</Tab>
+</Tabs>
+
+## Run and check the output
+
+From the project root on Linux/macOS:
+
+```bash
+./gradlew runKotlinExample -PvolanRepository=file:///absolute/path/volan/build/release-repository
+./gradlew runJavaExample -PvolanRepository=file:///absolute/path/volan/build/release-repository
+```
+
+On Windows:
+
+```powershell
+.\gradlew.bat runKotlinExample -PvolanRepository=file:///D:/path/to/volan/build/release-repository
+.\gradlew.bat runJavaExample -PvolanRepository=file:///D:/path/to/volan/build/release-repository
+```
+
+If the project has no wrapper yet, run the same tasks with an installed `gradle`. Run only the task for an entry point you added. The first build downloads dependencies and generates the client; later builds use Gradle's normal incremental behavior.
+
+Each run prints:
+
+```text
+Alice: alice@example.org
+Users: 1
+```
+
+The count is one because each entry point creates its own fresh in-memory database. The built-in SQLite pool retains one connection, keeping the table available between `rawExecute`, `create` and `findUnique` calls on that client. Closing the client discards that database.
+
+## Why CREATE TABLE is here
+
+The schema describes the generated API; the generator does not create tables. We explicitly create one table in this small run so you can see both parts: the database structure and the ORM query. Remove the DDL and the code still compiles, but the first query fails because the table is missing.
+
+For persistent data, use `jdbc:sqlite:./data.db` and create the structure through [Migrations](/next/en/migrations). A relative file path is resolved from the process working directory. Do not leave this `CREATE TABLE` in every real application startup: after the first run the table already exists.
+
+## Keep going
+
+[Schema](/next/en/schema) adds user posts and explains the foreign key. [Queries](/next/en/queries) covers filtering, updates and pagination. For an existing database, [Schema sync](/next/en/sync) explains introspection and reviewing a change plan.

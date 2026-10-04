@@ -1,0 +1,69 @@
+---
+title: "Relations"
+description: "Load related records explicitly and know which data a result contains."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+A profile page may need a user and their posts; a user list may need no posts at all. Volan makes that choice part of the query: `include` loads a relation, while a regular result contains the model's scalar fields.
+
+These examples use the [User/Post schema](/v0.1.0-alpha.1/en/schema). `posts` is a user relation and `email` is a column. For a subset of columns, `projectMany` and `projectFirst` return a generated projection.
+
+```kotlin
+val loaded = db.user.findMany {
+    include { posts { orderBy { id.asc() } } }
+}
+val titles = loaded.flatMap { it.posts }.map { it.title }
+
+val emails = db.user.projectMany { select { email } }.map { it.email }
+
+val author = db.user.create {
+    email = "author@example.org"
+    posts.create { title = "First" }
+}
+db.user.count { where { posts { some { views gt 0 } } } }
+```
+
+Java equivalents: `q.include(i -> i.posts())`, `q.select(s -> s.email())`, `data.getPosts().create(post -> post.setTitle("First"))`.
+
+## Loaded and selected fields
+
+An entity relation throws `VolanRelationNotLoadedException` unless included. Loaded nullable relations can be null; loaded lists can be empty. That differs from not loaded. A projection uses one generated `UserProjection` type, not a separate class for every column combination. Reading an omitted column raises `VolanFieldNotSelectedException`.
+
+`select` and `include` are separate query shapes; do not combine projection and relation loading in one query. For HTTP responses, map explicitly to DTOs: reflection-based serializers can access unloaded relation getters.
+
+## Query counts
+
+The loader collects parent keys and reads related rows in batches. A direct relation uses one statement per key batch; implicit many-to-many additionally reads join-table pairs and then target rows. Nested includes repeat this for each requested relation.
+
+This avoids one query per parent. It does not guarantee a fixed single extra statement for arbitrary result sizes: key chunks, multiple branches and nesting add statements. The current chunk cap is 500 parent keys, further limited by dialect parameter capacity.
+
+`take` / `skip` inside an include apply to its related query batch; do not assume a per-parent top-N contract. Bound the parent page and query children explicitly when each parent's limit matters.
+
+## Relation filters and writes
+
+To-many filters provide `some`, `every`, `none`; to-one uses `matches` / `notMatches`. They filter rows without implicitly loading relations.
+
+Nested `create` and `update` relation operations run transactionally, with connect/disconnect and related writes where supported by the generated relation shape. Update nesting beyond one relation level and deletion of an owning-side required relation are limited. A deeper write must already know other required keys. See [Limitations](/v0.1.0-alpha.1/en/limitations).
+
+PostgreSQL supports representative-row distinct queries. Use an order appropriate to the representative row you want and select the fields needed by the response.
+
+## Empty versus not loaded
+
+A user with no posts has an empty `posts` list when the query included that relation. If the query omitted the include, accessing `posts` throws. These are different states: one confirms that the database returned no posts; the other means you never asked for them.
+
+A nullable to-one relation similarly distinguishes `null` from an unloaded property. The exception reveals that response code needs data the query did not fetch. Fix the read boundary: add the include or change the DTO so it does not access that relation.
+
+## Parent filters and child filters
+
+`posts { some { views gt 0 } }` selects users with at least one matching post. It does not load those posts or automatically filter a separate include. A condition inside an include controls loaded children; it does not replace the parent filter.
+
+If you need “authors with popular posts, and only those posts,” describe both parts: the author condition and the loaded-post condition. For `every`, remember how the condition works on an empty set: no children does not demonstrate that a matching child exists. Use `some` when existence matters.
+
+## Keep the result manageable
+
+Batch loading removes the usual one-query-per-user loop, but a large include tree can still return many rows. Limit parent pages, load only the branches a response needs and measure statement counts. A projection is simpler than loading users and posts when an endpoint only returns email addresses.
+
+The nested `posts.create` example creates an author and a related post. The runtime supplies the author's key to the post and performs the nested write transactionally. Run external actions, such as publishing a notification, after the transaction succeeds.

@@ -1,0 +1,81 @@
+---
+title: "Синхронизация"
+description: "Прочитай существующую базу или проверь, что изменится при применении схемы."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Архивный релиз для PostgreSQL.
+</Info>
+
+При подключении существующей базы удобно начать с её структуры. `pull` читает каталоги БД и создаёт представимое описание в формате Volan. Когда схема уже написана, `push` строит план перехода от фактической структуры к желаемой и может применить его к development-базе.
+
+Обе операции работают с таблицами и ограничениями. Генерация клиента — отдельный этап: она читает файл схемы, не соединяется с БД и не запускает push автоматически.
+
+## CLI
+
+```bash
+volan db push --schema schema.volan --url jdbc:postgresql://localhost:55433/volan_example --dry-run
+volan db push --schema schema.volan --url jdbc:postgresql://localhost:55433/volan_example
+volan db pull --url jdbc:postgresql://localhost:55433/volan_example --stdout
+```
+
+Используй CLI из тега alpha.1, описанный в [Установке](/v0.1.0-alpha.1/ru/installation). Эти команды для базы не генерируют клиент. DATABASE_URL — JDBC URL; параметры доступа серверной БД передаются через окружение.
+
+Pull печатает схему с `--stdout` либо создаёт `--schema introspected.volan`. Замена файла требует `--force`. Экспорт использует env("DATABASE_URL"), не credentials. Сохраняй исходную схему: pull не восстановит все объявления клиента.
+
+## Библиотека
+
+Добавь volan-migrate, выровненный BOM alpha.1. Здесь используются PostgresReader и PostgresDialect. Передавай параметры доступа DriverManager через Properties либо используй тестовый URL, настроенный окружением.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+import io.github.thirtyeighttwentysix.volan.dialect.postgres.PostgresDialect
+import io.github.thirtyeighttwentysix.volan.migrate.DatabaseSync
+import io.github.thirtyeighttwentysix.volan.migrate.PostgresReader
+import java.nio.file.Files
+import java.nio.file.Path
+import java.sql.DriverManager
+import java.util.Properties
+
+val schema = SchemaLoader.load("schema.volan",
+    Files.readString(Path.of("schema.volan"))).schemaOrThrow()
+val sync = DatabaseSync(PostgresReader(), PostgresDialect)
+val credentials = Properties().apply {
+    setProperty("user", System.getenv("DATABASE_USER") ?: "volan")
+    setProperty("password", System.getenv("DATABASE_PASSWORD") ?: "volan")
+}
+val url = System.getenv("DATABASE_URL") ?: "jdbc:postgresql://localhost:55433/volan_example"
+DriverManager.getConnection(url, credentials).use { connection ->
+    val plan = sync.plan(connection, schema)
+    println(plan.toSql(PostgresDialect))
+    sync.push(connection, schema)
+}
+```
+
+Используй отдельные JDBC-соединения, начинающие в auto-commit. Перед применением отобрази и проверь план; не принимай разрушительные изменения автоматически из недоверенного ввода. `sync.plan` — actual → desired, `sync.drift(connection, SchemaMapper.map(expectedSchema))` — expected → actual. Сравнивается структура, а не данные; операции лишь читают каталоги.
+
+## История изменений
+
+Предупреждения требуют явного `--accept-data-loss`. Warning может означать ошибку на существующих строках, а не только потерю данных. Rename представляется как drop/add; для сохранения данных используй проверенный ALTER RENAME SQL.
+
+Push PostgreSQL проверяет структуру до commit транзакции. Успешный повтор пуст; ошибка транзакционного push приводит к откату.
+
+Push не создаёт файлы миграций и не добавляет версионируемую историю. Для развёртывания используй проверенные [миграции](/v0.1.0-alpha.1/ru/migrations).plan вместо общего SchemaDiffer.
+
+## Разбери направление операции
+
+Pull отвечает «что сейчас существует в базе?». Push отвечает «что нужно изменить, чтобы база соответствовала файлу?». Если перепутать направление, можно заменить своё описание неполной интроспекцией или применить старую схему к более новой базе. Сохраняй исходную схему в Git и выполняй pull сначала в отдельный файл либо stdout.
+
+Introspection не восстанавливает все намерения разработчика. Два SQL-поля могут выглядеть одинаково, хотя одно было enum в схеме, а другое — String. Generator settings, aliases и `@updatedAt` тоже требуют проверки. Прочитанная схема — материал для сравнения, который нужно довести до нужного API.
+
+## План сначала, применение потом
+
+На своей development-базе начни с `--dry-run` и прочитай SQL. Обрати внимание на drop/add, новые NOT NULL колонки и изменения ограничений. Даже технически корректный план может быть неприемлемым для текущих данных: добавление обязательного поля без default требует решения, чем заполнить старые строки.
+
+`--accept-data-loss` означает согласие на предупреждения, но не делает операцию обратимой. Если нужна переносимая история изменений для команды и deployment, сохрани проверенный SQL как [версионируемую миграцию](/v0.1.0-alpha.1/ru/migrations), построенную относительно предыдущего состояния.
+
+## Структура и данные — разные проверки
+
+Пустой structural plan говорит, что поддерживаемая структура соответствует цели. Он не доказывает корректность бизнес-данных, отсутствие дублей в логике приложения или одинаковое содержимое двух баз. Для этого нужны отдельные запросы и проверки.
+
+После успешного push повторный план должен быть пустым. Иначе проверь provider, URL, рабочий каталог и поддерживаемые определения. Push не заменяет проверку данных или резервную копию.

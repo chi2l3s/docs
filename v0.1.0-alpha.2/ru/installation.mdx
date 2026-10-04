@@ -1,0 +1,50 @@
+---
+title: "Установка"
+description: "Выбери нужные части Volan: библиотеки для приложения и CLI для работы со схемой."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Опубликованные библиотеки для PostgreSQL и SQLite.
+</Info>
+
+Подключи Volan к сборке приложения: runtime, диалект базы и JDBC-драйвер нужны для запросов, а генератор работает во время сборки. Чтобы пройти [Первый запрос](/v0.1.0-alpha.2/ru/quickstart), глобально установленная команда не нужна.
+
+## Библиотеки из Central
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:0.1.0-alpha.2"))
+    implementation("io.github.thirtyeighttwentysix:volan-runtime")
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-sqlite")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.53.4.0")
+}
+```
+
+Для PostgreSQL выбери `volan-dialect-postgres` и PostgreSQL JDBC-драйвер. Добавь `volan-migrate`, если приложению нужны API миграций или интроспекции. BOM выравнивает версии библиотек Volan; версии сторонних драйверов задаются отдельно.
+
+Генератор `io.github.thirtyeighttwentysix:volan-codegen:0.1.0-alpha.2` подключается в отдельную конфигурацию сборки. Он не нужен в runtime сервиса. В [Сборке](/v0.1.0-alpha.2/ru/build) разобрано, как сгенерированный Kotlin компилируется перед кодом приложения Kotlin или Java.
+
+Volan поддерживает Java 17+. Полный пример использует JDK 25 для компактной точки входа Java. Wrapper закрепляет Gradle 9.8.0.
+
+## Необязательный CLI для базы
+
+У релиза alpha.2 нет переносимого установочного архива CLI. Его инструмент для базы можно собрать из соответствующего тега:
+
+```bash
+git clone --branch v0.1.0-alpha.2 --depth 1 https://github.com/thirtyeighttwentysix/volan.git volan-alpha2
+cd volan-alpha2
+./gradlew :volan-cli:installDist
+./volan-cli/build/install/volan/bin/volan --help
+```
+
+В Windows используй `.\gradlew.bat :volan-cli:installDist` и `.\volan-cli\build\install\volan\bin\volan.bat --help`.
+
+CLI из этого тега предоставляет `db pull` и `db push`. Команд `init`, `generate`, `validate` и `format` в нём нет. Для сборки приложения используй программу генерации из [Первого запроса](/v0.1.0-alpha.2/ru/quickstart). Если хочешь вводить `volan` в следующих примерах, добавь полученный каталог `bin` в PATH.
+
+Отдельный скачиваемый preview CLI alpha.3 генерирует более новый API и не заменяет генератор alpha.2. Его установка описана в документации разработки.
+
+## Проверь состав зависимостей
+
+Диалект строит SQL конкретной СУБД, а JDBC-драйвер открывает соединение. Один не заменяет другой. При ошибке подключения проверь оба модуля, URL и параметры доступа.
+
+Обновление CLI не меняет зависимости приложения. Закрепляй runtime и codegen вместе, заново генерируй клиент при обновлении и применяй изменения базы отдельными проверенными миграциями.

@@ -1,0 +1,97 @@
+---
+title: "Фреймворки"
+description: "Подключи клиент к lifecycle Spring Boot или Ktor и выполни запрос из сервиса."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+</Info>
+
+В web-приложении клиент живёт дольше одного HTTP-запроса. Создай его при запуске, передавай сервисам и закрой после завершения активной работы при остановке. Так пул соединений не создаётся заново для каждого endpoint.
+
+У Volan сейчас нет Spring Boot starter или Ktor plugin. Интеграция использует обычные механизмы фреймворка. Сначала настрой [генерацию клиента](/next/ru/quickstart) и примени структуру базы; ниже показано, как включить готовый клиент в lifecycle.
+
+## Spring Boot
+
+Зарегистрируй клиент singleton bean. Добавь runtime, диалект и JDBC-драйвер; примени проверенные миграции до приёма запросов. В существующем Boot-приложении:
+
+```java
+package org.example;
+
+import org.example.generated.VolanClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration(proxyBeanMethods = false)
+public class DatabaseConfig {
+    @Bean(destroyMethod = "close")
+    public VolanClient volanClient() {
+        return VolanClient.builder()
+            .url(System.getenv("DATABASE_URL"))
+            .username(System.getenv("DATABASE_USER"))
+            .password(System.getenv("DATABASE_PASSWORD"))
+            .build();
+    }
+}
+```
+
+Передай VolanClient в сервис через constructor injection. Синхронный сервис Spring MVC может вызвать `db.getUser().count()` на request worker. В WebFlux переноси JDBC на ограниченный worker executor; JDBC не становится reactive. Используй callback транзакции Volan; `@Transactional` не гарантирует автоматическое присоединение.
+
+Если Boot уже владеет DataSource, передай `.dataSource(dataSource).url(jdbcUrl)` для выбора диалекта. Volan не закрывает переданный DataSource; lifecycle принадлежит Boot. Не создавай второй пул случайно. [Lifecycle Spring bean](https://docs.spring.io/spring-framework/reference/core/beans/java/bean-annotation.html).
+
+## Ktor
+
+Этот пример alpha.3 переносит JDBC средствами kotlinx-coroutines. Для отмены активного запроса используй coroutine-адаптер Volan, описанный ниже. Ktor и kotlinx-coroutines должны быть настроены в приложении. Задай DATABASE_URL для файловой БД с применёнными миграциями, например `jdbc:sqlite:./data.db`, и вызови `volanModule()` из модуля приложения:
+
+```kotlin
+package org.example
+
+import org.example.generated.VolanClient
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationStopped
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+fun Application.volanModule() {
+    val db = VolanClient.builder()
+        .url(requireNotNull(System.getenv("DATABASE_URL")))
+        .build()
+    monitor.subscribe(ApplicationStopped) { db.close() }
+    val jdbcWorkers = Dispatchers.IO.limitedParallelism(4)
+    routing {
+        get("/users/count") {
+            val count = withContext(jdbcWorkers) { db.user.count() }
+            call.respondText(count.toString())
+        }
+    }
+}
+```
+
+GET `/users/count` возвращает количество строк текстом. Создавай клиент один раз при запуске модуля, не в каждом route. Согласуй workers с размером пула; встроенный SQLite pool имеет одно соединение. Hook соответствует [событиям Ktor](https://ktor.io/docs/server-events.html). До закрытия клиента заверши jobs приложения.
+
+В alpha.3 вместо обычного withContext используй `db.suspendQuery(access) { user.count() }` с [описанной отменой](/next/ru/async).
+
+## Данные HTTP
+
+Преобразуй записи и проекции в DTO с явно выбранными скалярными полями. Не сериализуй сгенерированные сущности автоматически: serializer может прочитать незагруженные связи. Преобразуй not-found и constraint failures в HTTP-ответы приложения, скрывая внутренний SQL и credentials.
+
+## От HTTP-запроса к базе
+
+HTTP-обработчик сначала разбирает и проверяет входные данные. Сервис затем выполняет запрос или транзакцию и возвращает необходимые поля. На границе HTTP эти поля превращаются в DTO и ответ. Такое разделение позволяет проверить database-операцию без запуска полного web-сервера.
+
+В Ktor-примере ответ простой: GET `/users/count` возвращает число пользователей текстом. Если таблица пуста, это `0`, а не ошибка. Если таблица не создана, запрос завершится исключением БД: создание и закрытие клиента не заменяют миграции.
+
+## Один владелец ресурсов
+
+Если приложение использует встроенный пул Volan, закрой клиент при завершении работы. Если DataSource создаёт Spring Boot, именно Boot отвечает за его закрытие. Аналогично, переданный executor принадлежит приложению. Разные владельцы должны завершать ресурсы в порядке, который позволяет активным запросам закончиться.
+
+Для SQLite относительный путь в URL зависит от рабочего каталога сервера. Запуск из другой папки может создать другой файл и выглядеть как исчезнувшие данные. В deployment задай путь явно и проверь, какой файл открыт.
+
+## Транзакции и ответы
+
+Используй `db.transaction` для связанных database-операций. Наличие Spring `@Transactional` само по себе не доказывает, что Volan использует ту же connection-bound транзакцию. Для Kotlin переноси всю операцию на worker, а внутри transaction callback выполняй синхронные запросы.
+
+Not-found преобразуй в поведение endpoint, конфликт уникального ключа — в понятный конфликт данных, временную недоступность — в подходящий ответ сервиса. Не возвращай наружу весь текст SQL-ошибки. Причину сохраняй в диагностике приложения, а response собирай из выбранных полей.

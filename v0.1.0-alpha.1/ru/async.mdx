@@ -1,0 +1,48 @@
+---
+title: "Асинхронные запросы"
+description: "Выполняй JDBC на подходящих workers и учитывай, что означает отмена операции."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Архивный релиз для PostgreSQL.
+</Info>
+
+JDBC занимает поток, пока ждёт соединение, сеть или выполнение SQL. Alpha.1 предоставляет Java API с `CompletableFuture`, но в этой версии нет coroutine-модуля Volan и отмены активного JDBC statement.
+
+## Java futures
+
+```java
+var workers = java.util.concurrent.Executors.newFixedThreadPool(4);
+try (var db = VolanClient.builder().url(url).asyncExecutor(workers).build()) {
+    var users = db.getUser().findManyAsync(q -> q.setTake(20)).join();
+} finally {
+    workers.shutdown();
+}
+```
+
+Репозитории, транзакции, rawQuery и rawExecute имеют async-операции. По умолчанию используется ForkJoinPool.commonPool(); отдельный executor делает ресурсы сервиса явными. Приложение владеет executor и должно дождаться активной работы до закрытия клиента.
+
+`join()` блокирует поток и оборачивает ошибку в CompletionException; `get()` использует ExecutionException. Не вызывай join на event loop. Возвращай результат через механизм завершения запросов своего фреймворка.
+
+## Kotlin на рабочих потоках
+
+Если приложение уже использует kotlinx-coroutines, перенеси синхронный JDBC на подходящий worker:
+
+```kotlin
+val jdbcWorkers = Dispatchers.IO.limitedParallelism(4)
+val users = withContext(jdbcWorkers) {
+    db.user.findMany { take = 20 }
+}
+```
+
+Импортируй Dispatchers и withContext из kotlinx.coroutines и подключи эту зависимость в приложении. Это перенос работы средствами фреймворка; API Volan suspendQuery в alpha.1 нет. Полный пример жизненного цикла Ktor находится в [Фреймворках](/v0.1.0-alpha.1/ru/frameworks).
+
+## Отмена и транзакции
+
+Отмена future в alpha.1 может пропустить работу, которая ещё не началась. Она не отменяет уже выполняющийся JDBC statement. Отменённый future не доказывает откат записи. Таймаут корутины вокруг блокирующего JDBC также не гарантирует немедленную остановку базы.
+
+Настраивай таймауты пула, сети и БД отдельно. При неизвестном результате записи проверь состояние по бизнес-ключу до повтора. Переноси на worker всю транзакцию и сохраняй синхронность callback; отдельные операции tx нельзя отправлять на другой поток.
+
+## Ресурсы и завершение
+
+Выбирай число workers с учётом пула. Количество одновременно работающих запросов ограничено доступными соединениями. Учитывай соединения всех экземпляров сервиса. При остановке перестань планировать работу, дождись активных операций и затем закрой ресурсы приложения.

@@ -1,0 +1,35 @@
+---
+title: "CLI"
+description: "Validate and format schemas, generate clients and run explicit database operations."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+The CLI built from `v0.1.0-alpha.2` is a database synchronization tool. It provides `db pull` and `db push`, and needs Java 17+. [Installation](/v0.1.0-alpha.2/en/installation) shows how to build the tagged tool and put its launcher on PATH.
+
+```bash
+volan --help
+volan db pull --url jdbc:sqlite:./data.db --stdout
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db --dry-run
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db
+```
+
+## Read before changing
+
+`pull --stdout` prints the representable database structure. Without stdout, pull writes the schema file; `--force` allows replacing an existing file. Save introspection to a separate file first so it cannot replace your intended model accidentally.
+
+`push --dry-run` prints SQL and warnings without applying the plan. Run it against the intended development database and review drops, new required fields and constraints. `--accept-data-loss` accepts warning-bearing changes; it does not make them reversible.
+
+## Connection and paths
+
+The default schema path is `schema.volan`. Push uses its datasource URL unless `--url` overrides it. Pull uses `--url` or `DATABASE_URL`. For PostgreSQL, provide `DATABASE_USER` and `DATABASE_PASSWORD` through the environment.
+
+URLs use JDBC syntax. SQLite relative file paths depend on the current working directory. Check the target before applying a plan. [Schema sync](/v0.1.0-alpha.2/en/sync) explains comparison direction and introspection limits.
+
+## Commands in this release
+
+Alpha.2 does not include `init`, `generate`, `format`, `validate`, `migrate` or `--resolve`. Generate the client with the alpha.2 build program from [First query](/v0.1.0-alpha.2/en/quickstart). Apply versioned migration files through the [migration API](/v0.1.0-alpha.2/en/migrations).
+
+The alpha.3 preview CLI has a larger command set and newer generated APIs. Selecting its documentation does not update your application dependencies. Use the tool and generator that match your application release.

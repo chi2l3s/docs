@@ -1,0 +1,75 @@
+---
+title: "Schema sync"
+description: "Read an existing database or review changes needed to apply your schema."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+For an existing database, start by reading its structure. `pull` inspects database catalogs and writes the representable structure as a Volan schema. With a schema already written, `push` plans a transition from the actual structure to the desired one and can apply it to a development database.
+
+Both operations deal with tables and constraints. Client generation is separate: it reads the schema file, does not connect to a database and never runs push automatically.
+
+## CLI
+
+```bash
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db --dry-run
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db
+volan db pull --url jdbc:sqlite:./data.db --stdout
+```
+
+Use the CLI built from the alpha.2 tag, described in [Installation](/v0.1.0-alpha.2/en/installation). These database commands do not generate the client. DATABASE_URL is a JDBC URL; use environment variables for server credentials.
+
+Pull prints with `--stdout` or creates `--schema introspected.volan`. Existing files require `--force`. Export uses env("DATABASE_URL"), not credentials. Preserve the original schema: pull cannot recover all client declarations.
+
+## Library
+
+Alpha.2 SQLite setup: add `volan-migrate` to the dependencies of [First query](/v0.1.0-alpha.2/en/quickstart), aligned by the BOM.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+import io.github.thirtyeighttwentysix.volan.dialect.sqlite.SqliteDialect
+import io.github.thirtyeighttwentysix.volan.migrate.DatabaseSync
+import io.github.thirtyeighttwentysix.volan.migrate.SqliteReader
+import java.nio.file.Files
+import java.nio.file.Path
+import java.sql.DriverManager
+
+val schema = SchemaLoader.load("schema.volan",
+    Files.readString(Path.of("schema.volan"))).schemaOrThrow()
+val sync = DatabaseSync(SqliteReader(), SqliteDialect)
+DriverManager.getConnection("jdbc:sqlite:./data.db").use { connection ->
+    val plan = sync.plan(connection, schema)
+    println(plan.toSql(SqliteDialect))
+    sync.push(connection, schema)
+}
+```
+
+Use dedicated JDBC connections beginning in auto-commit mode. Render and review the plan before applying; never auto-accept destructive changes from untrusted input. `sync.plan` is actual → desired; `sync.drift(connection, SchemaMapper.map(expectedSchema))` is expected → actual. These compare structure, not table data, and read only catalogue data.
+
+## Safety and history
+
+Warnings require explicit `--accept-data-loss`. A warning can indicate failure on existing rows as well as data loss. Renames are modeled as drop/add; use reviewed ALTER RENAME SQL to retain data.
+
+PostgreSQL and SQLite push verify structure before transaction commit. A successful repeat is empty; a failed transactional push rolls back.
+
+Push does not create migration files or append versioned history. Use reviewed [versioned migrations](/v0.1.0-alpha.2/en/migrations) for deployment. For SQLite rebuilds, use DatabaseSync.plan rather than the generic SchemaDiffer.
+
+## Understand the direction
+
+Pull asks “what exists in the database now?” Push asks “what must change to match this file?” Confusing them can replace your intended model with incomplete introspection or apply an old schema to a newer database. Keep the original schema in Git and start with pull output to a separate file or stdout.
+
+Introspection cannot recover every application intention. Two SQL fields may look alike even though one was a schema enum and the other a String. Generator settings, aliases and `@updatedAt` need review too. Treat an introspected schema as input for comparison and refine it to the API you need.
+
+## Plan before applying
+
+Start with `--dry-run` on your development database and read the SQL. Look for drop/add operations, new NOT NULL columns and constraint changes. A technically valid plan may still fail on existing data: a new required field without a default needs a decision about old rows.
+
+`--accept-data-loss` accepts warnings; it does not make the operation reversible. For a shared deployment history, store reviewed SQL as a [versioned migration](/v0.1.0-alpha.2/en/migrations) planned against the previous state.
+
+## Structure and data are separate checks
+
+An empty structural plan says the supported structure matches the target. It does not prove business data correctness, application-level uniqueness or equal contents in two databases. Those need separate queries and checks.
+
+After successful push, a repeated plan should be empty. Otherwise check the provider, URL, working directory and supported definitions. Do not treat push as a data validation or backup tool.

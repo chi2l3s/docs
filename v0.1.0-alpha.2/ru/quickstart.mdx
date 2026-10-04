@@ -1,0 +1,278 @@
+---
+title: "Первый запрос"
+description: "Создай пользователя, прочитай его по id и проверь результат в Kotlin или Java."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Опубликованные библиотеки для PostgreSQL и SQLite.
+</Info>
+
+На этой странице ты создашь пользователя, прочитаешь его по `id` и увидишь результат в консоли. База SQLite будет жить в памяти только во время запуска. Ничего поднимать отдельно не нужно, и повторный запуск начнётся с чистой базы.
+
+Используем библиотеки `0.1.0-alpha.2` из Maven Central и генератор той же версии. Для показанных entry points и сборки нужна **JDK 25**. Сам Volan поддерживает Java 17+, но короткая форма Java-примера на этой странице использует возможности Java 25. Проверенная версия Gradle — 9.8.0; удобнее запускать проект через его wrapper.
+
+[Все файлы примера](https://github.com/chi2l3s/docs/tree/main/examples/first-query) доступны в репозитории документации вместе с Gradle wrapper. Можно скачать репозиторий и запускать команды из `examples/first-query`.
+
+## Структура проекта
+
+Kotlin и Java могут использовать один клиент. Добавь оба entry point, чтобы попробовать оба API, или оставь только нужный язык. Файлы приложения лежат в `src/main`; маленькая программа генерации находится в отдельном source set и не входит в runtime приложения.
+
+```text
+volan-first-query/
+  settings.gradle.kts
+  build.gradle.kts
+  schema.volan
+  src/
+    generator/java/org/example/GenerateClient.java
+    main/kotlin/org/example/Main.kt
+    main/java/Main.java
+```
+
+В `settings.gradle.kts` достаточно имени проекта:
+
+```kotlin title="settings.gradle.kts"
+rootProject.name = "volan-first-query"
+```
+
+## Опиши пользователя
+
+В корне проекта создай `schema.volan`:
+
+```prisma title="schema.volan"
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.generated"
+  javaFriendly = true
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+}
+```
+
+`datasource` выбирает SQLite. `generator` задаёт package клиента и включает удобные Java callbacks. Модель `User` описывает три колонки: база выдаёт `id`, `email` обязателен и уникален, `name` может отсутствовать. Знак `?` в схеме означает nullable-поле.
+
+Переменная `DATABASE_URL` описывает источник подключения для операций со схемой. В этом запуске клиент получит URL напрямую из кода, а генерация вообще не открывает базу. Поэтому устанавливать переменную окружения для примера не требуется.
+
+## Подключи Volan
+
+Замени содержимое `build.gradle.kts`:
+
+```kotlin title="build.gradle.kts"
+plugins {
+    kotlin("jvm") version "2.4.20"
+}
+
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+val generator = sourceSets.create("generator")
+val generated = layout.buildDirectory.dir("generated/volan")
+
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:0.1.0-alpha.2"))
+    implementation("io.github.thirtyeighttwentysix:volan-runtime")
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-sqlite")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.53.4.0")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.20")
+
+    add(generator.implementationConfigurationName,
+        "io.github.thirtyeighttwentysix:volan-codegen:0.1.0-alpha.2")
+
+    testImplementation(kotlin("test"))
+    testImplementation(platform("org.junit:junit-bom:6.0.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+kotlin {
+    jvmToolchain(25)
+    sourceSets.main {
+        kotlin.srcDir(generated)
+    }
+}
+
+val generateClient = tasks.register<JavaExec>("generateClient") {
+    classpath = generator.runtimeClasspath
+    mainClass.set("org.example.GenerateClient")
+    inputs.file("schema.volan")
+    outputs.dir(generated)
+    args(
+        layout.projectDirectory.file("schema.volan").asFile.absolutePath,
+        generated.get().asFile.absolutePath
+    )
+}
+
+tasks.named("compileKotlin") {
+    dependsOn(generateClient)
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.withType<JavaExec>().configureEach {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
+tasks.register<JavaExec>("runKotlinExample") {
+    dependsOn(tasks.named("classes"))
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("org.example.MainKt")
+}
+
+tasks.register<JavaExec>("runJavaExample") {
+    dependsOn(tasks.named("classes"))
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("Main")
+}
+```
+
+Зависимости разделены по назначению. `volan-runtime` выполняет запросы; `volan-dialect-sqlite` знает особенности SQL SQLite; `sqlite-jdbc` открывает соединения. BOM удерживает библиотеки Volan на одной версии. Генератор нужен сборке и находится в отдельном source set `generator`.
+
+Задача `generateClient` читает схему и записывает Kotlin-файлы в `build/generated/volan`. `compileKotlin` зависит от неё, поэтому обычная сборка сначала обновит клиент. Каталог добавлен к main sources: Kotlin-компилятор соберёт клиент, а Java сможет обращаться к полученным классам. Две задачи `run…Example` только запускают entry points на runtime classpath.
+
+В alpha.2 ещё нет опубликованного плагина сборки Volan, поэтому задаче нужна небольшая программа `GenerateClient`. Создай её в указанном ниже пути:
+
+```java title="src/generator/java/org/example/GenerateClient.java"
+package org.example;
+
+import io.github.thirtyeighttwentysix.volan.codegen.VolanGenerator;
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader;
+import io.github.thirtyeighttwentysix.volan.schema.SourceFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class GenerateClient {
+    public static void main(String[] args) throws Exception {
+        var source = new SourceFile("schema.volan", Files.readString(Path.of(args[0])));
+        VolanGenerator.writeTo(SchemaLoader.loadOrThrow(source), Path.of(args[1]));
+    }
+}
+```
+
+## Выполни запрос
+
+Выбери язык. Оба примера выполняют одинаковую последовательность: открывают клиент, создают таблицу, добавляют Alice, читают строку по выданному `id`, проверяют результат и закрывают клиент.
+
+<Tabs>
+<Tab title="Kotlin">
+
+```kotlin title="src/main/kotlin/org/example/Main.kt"
+package org.example
+
+import org.example.generated.VolanClient
+
+fun main() {
+    VolanClient.builder().url("jdbc:sqlite::memory:").build().use { db ->
+        db.rawExecute("""
+            CREATE TABLE "User" (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "email" TEXT NOT NULL UNIQUE,
+                "name" TEXT
+            )
+        """.trimIndent())
+
+        val created = db.user.create {
+            email = "alice@example.org"
+            name = "Alice"
+        }
+
+        val found = db.user.findUnique {
+            where { id eq created.id }
+        }
+
+        check(found == created)
+        println("${found.name}: ${found.email}")
+        println("Users: ${db.user.count()}")
+    }
+}
+```
+
+`create` возвращает сохранённую запись вместе с выданным базой `id`. В `findUnique` этот идентификатор становится значением SQL-параметра. `check` останавливает запуск, если прочитанная строка отличается от созданной. `use` закрывает клиент даже при исключении.
+
+</Tab>
+<Tab title="Java">
+
+```java title="src/main/java/Main.java"
+import org.example.generated.VolanClient;
+
+void main() {
+    try (var db = VolanClient.builder().url("jdbc:sqlite::memory:").build()) {
+        db.rawExecute("""
+            CREATE TABLE "User" (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "email" TEXT NOT NULL UNIQUE,
+                "name" TEXT
+            )
+            """);
+
+        var created = db.getUser().create(data -> {
+            data.setEmail("alice@example.org");
+            data.setName("Alice");
+        });
+
+        var found = db.getUser().findUnique(query ->
+            query.where(where -> where.getId().eq(created.getId())));
+
+        if (!created.equals(found)) {
+            throw new IllegalStateException("The saved user was not returned");
+        }
+        IO.println(found.getName() + ": " + found.getEmail());
+        IO.println("Users: " + db.getUser().count());
+    }
+}
+```
+
+`getUser()` возвращает репозиторий модели. Callback `data` заполняет запись через setters, а callback `query` задаёт условия чтения. `try` с ресурсом гарантирует закрытие клиента. Этот `Main.java` использует короткую форму entry point Java 25 и не объявляет package.
+
+</Tab>
+</Tabs>
+
+## Запуск и результат
+
+На Linux/macOS запусти нужную задачу из корня проекта:
+
+```bash
+./gradlew runKotlinExample
+./gradlew runJavaExample
+```
+
+На Windows:
+
+```powershell
+.\gradlew.bat runKotlinExample
+.\gradlew.bat runJavaExample
+```
+
+Если wrapper ещё не добавлен, те же задачи доступны через установленный `gradle`. Запускай только задачу того языка, для которого добавлен entry point. Первая сборка скачает зависимости и создаст клиент; последующие сборки используют обычные механизмы Gradle.
+
+Каждый запуск напечатает:
+
+```text
+Alice: alice@example.org
+Users: 1
+```
+
+Количество равно одному, потому что каждый entry point создаёт собственную новую базу в памяти. Встроенный пул SQLite держит одно соединение; таблица остаётся доступной между `rawExecute`, `create` и `findUnique` этого клиента. После закрытия клиента эта база исчезает.
+
+## Почему здесь есть CREATE TABLE
+
+Схема нужна генератору, но генератор не создаёт таблицы. В учебном запуске мы явно создали одну таблицу, чтобы было видно обе стороны: структуру БД и запрос ORM. Если убрать DDL, код скомпилируется, но первый запрос завершится ошибкой отсутствующей таблицы.
+
+Для постоянных данных замени URL на `jdbc:sqlite:./data.db` и создай структуру через [Миграции](/v0.1.0-alpha.2/ru/migrations). Относительный путь считается от рабочего каталога процесса. Не оставляй этот `CREATE TABLE` в каждом запуске реального приложения: после первого запуска таблица уже существует.
+
+## Дальше
+
+На странице [Схема](/v0.1.0-alpha.2/ru/schema) добавим публикации пользователя и разберём внешний ключ. В [Запросах](/v0.1.0-alpha.2/ru/queries) есть фильтры, обновления и пагинация. Если база уже есть, [Синхронизация](/v0.1.0-alpha.2/ru/sync) объясняет чтение структуры и проверку плана изменений.

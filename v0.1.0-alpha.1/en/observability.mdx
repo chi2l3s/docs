@@ -1,0 +1,28 @@
+---
+title: "Observability"
+description: "Measure real database work and distinguish repository operations from SQL statements."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+Measure the application operation and database work separately. One repository call can execute several SQL statements: includes load relations and nested writes perform related changes. A successful statement also does not prove that its enclosing transaction eventually committed.
+
+## Application measurements
+
+Measure endpoint or service duration around the operation and record outcomes with a small, stable set of labels. Separate not-found results from exceptions. Compare those measurements with pool waits and database-side query statistics to locate a slow stage.
+
+An application timer includes more than SQL: authorization, input preparation and response mapping may contribute. It does not automatically count physical statements.
+
+## Database and pool
+
+Use database monitoring and the connection pool's supported metrics. If you supply a DataSource, its configuration and lifecycle belong to the application. A long wait can come from pool exhaustion rather than expensive SQL; increasing pool size can also overload the server.
+
+Test result sizes, includes and concurrency with representative data. A tiny single-row benchmark does not explain a large relation read in production.
+
+## Release boundary
+
+Alpha.1 has no QueryInterceptor API or volan-micrometer module. Do not register an interceptor or add that module to an alpha.1 build. Those features are documented in the development version.
+
+Keep metric labels bounded: operation type and outcome are useful categories. Emails, record IDs, SQL and error messages can create unbounded series or expose data. Use appropriately redacted diagnostics for individual failures.

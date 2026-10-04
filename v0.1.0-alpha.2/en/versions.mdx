@@ -1,0 +1,30 @@
+---
+title: "Versions"
+description: "Align generator, client, runtime and plugin versions before running an application."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+This section is for `0.1.0-alpha.2`. Select the version matching your application dependencies. The dropdown changes documentation, not build files or database state.
+
+## Available documentation
+
+| Version | Distribution | Database support |
+|---|---|---|
+| [0.1.0-alpha.2](/v0.1.0-alpha.2/en/introduction) | Latest published Central alpha | PostgreSQL and SQLite |
+| [0.1.0-alpha.1](/v0.1.0-alpha.1/en/introduction) | Archived Central alpha | PostgreSQL |
+| [0.1.0-alpha.3-SNAPSHOT](/next/en/introduction) | Development sources, not a Central release | PostgreSQL, SQLite, H2, MySQL, MariaDB |
+
+## Upgrade together
+
+Pin runtime, dialect, migration library and codegen to `0.1.0-alpha.2`. The BOM aligns Volan libraries, but a build-only generator still needs the matching version. Regenerate and compile after upgrading.
+
+Alpha.2 adds SQLite and fixes bulk insert defaults/order and JDBC relation-key matching. Moving from alpha.1 does not automatically move PostgreSQL data to SQLite: choose provider, schema, dependencies and URL intentionally, then test migration SQL against the target.
+
+## Separate CLI releases
+
+The portable `cli-v0.1.0-alpha.3-preview.1` is a separate executable whose generator targets alpha.3. It does not update libraries and cannot replace alpha.2 codegen. The alpha.2 tagged CLI provides database pull/push and can be built from source.
+
+An older documentation URL stays on its release. Old unversioned links redirect to alpha.2. [Release notes](https://github.com/thirtyeighttwentysix/volan/releases/tag/v0.1.0-alpha.2) describe the published package; development examples use staged artifacts.

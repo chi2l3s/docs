@@ -1,0 +1,16 @@
+---
+title: "Examples"
+description: "Choose an example for your first run, framework integration or client build checks."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+[First query](/v0.1.0-alpha.1/en/quickstart) includes every file for the alpha.1 PostgreSQL example. The [downloadable project](https://github.com/chi2l3s/docs/tree/main/examples/first-query-alpha1) has Kotlin and Java entry points and Gradle 9.8.0 wrapper; use JDK 25.
+
+Start the dedicated PostgreSQL database described in the guide, then run `./gradlew runKotlinExample runJavaExample` (`.\gradlew.bat` on Windows). Each entry point creates its own temporary table in a transaction, prints Alice and `Users: 1`, and drops the table at commit.
+
+The [tagged alpha.1 release consumer](https://github.com/thirtyeighttwentysix/volan/tree/v0.1.0-alpha.1/release-smoke) demonstrates an independent build from Maven artifacts. It exercises PostgreSQL APIs, generation and migrations without depending on workspace source classes.
+
+For an existing service, follow [Web frameworks](/v0.1.0-alpha.1/en/frameworks). Use persistent tables and reviewed migrations there. The quickstart's temporary-table lifetime is an example technique, not an application storage strategy.
