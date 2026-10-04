@@ -92,8 +92,8 @@
           {
             "group": "Справочник",
             "pages": [
-              "ru/limitations",
               "ru/cli",
+              "ru/limitations",
               "ru/errors",
               "ru/examples",
               "ru/benchmarks",
