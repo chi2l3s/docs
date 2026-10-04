@@ -44,7 +44,7 @@ db.getUser().createMany(many -> {
 
 ## Filters
 
-Scalar handles provide `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `oneOf`, `notOneOf`; applicable string filters include `contains`, `startsWith`, `endsWith` and `ignoringCase()`. Nullable fields expose `isNull()` and `isNotNull()`. Group predicates with `and`, `or`, `not`. Java uses getters and method calls: `w.getId().eq(1)`, `w.or(o -> { ...; })`.
+Scalar handles provide `eq`, `notEq`, `gt`, `gte`, `lt`, `lte`, `oneOf`, `notOneOf`; applicable string filters include `contains`, `startsWith`, `endsWith` and `ignoringCase()`. Nullable fields expose `isNull()` and `isNotNull()`. Group predicates with `and`, `or`, `not`. Java uses getters and method calls: `w.getId().eq(1)`, `w.or(o -> { ...; })`.
 
 Values are bound parameters. For raw SQL, bind values in the parameters list; never concatenate user input into SQL. Dialects differ in case conversion; SQLite's built-in conversion is ASCII.
 

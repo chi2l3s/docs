@@ -44,7 +44,7 @@ db.getUser().createMany(many -> {
 
 ## Фильтры
 
-Скалярные поля предоставляют `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `oneOf`, `notOneOf`. Для строк доступны `contains`, `startsWith`, `endsWith` и `ignoringCase()`. Nullable-поля поддерживают `isNull()`, `isNotNull()`. Условия группируются через `and`, `or`, `not`. В Java используются getters и методы: `w.getId().eq(1)`, `w.or(o -> { ...; })`.
+Скалярные поля предоставляют `eq`, `notEq`, `gt`, `gte`, `lt`, `lte`, `oneOf`, `notOneOf`. Для строк доступны `contains`, `startsWith`, `endsWith` и `ignoringCase()`. Nullable-поля поддерживают `isNull()`, `isNotNull()`. Условия группируются через `and`, `or`, `not`. В Java используются getters и методы: `w.getId().eq(1)`, `w.or(o -> { ...; })`.
 
 Значения передаются параметрами. В raw SQL передавай их списком parameters; не вставляй пользовательский ввод в SQL. Case conversion зависит от СУБД; встроенное преобразование SQLite работает с ASCII.
 
