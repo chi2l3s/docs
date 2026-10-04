@@ -1,0 +1,62 @@
+---
+title: "FAQ"
+description: "Answers about generation, queries, relations, transactions and migrations."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+These questions often come up between installation and the first real endpoint. Each answer explains ORM behavior and points to a worked example or a more detailed guide.
+
+## Do I need the CLI first?
+
+The application needs libraries, a dialect and a JDBC driver. Generation is invoked by the build in [First query](/v0.1.0-alpha.1/en/quickstart). The optional tagged database CLI provides pull/push; it does not initialize a build project.
+
+## Why does the schema exist but the table does not?
+
+The schema describes models and generated APIs. Generation never connects to a database, so it cannot create the table. Apply DDL or a [migration](/v0.1.0-alpha.1/en/migrations) to the same JDBC URL the client uses.
+
+## Why does a Java application need a Kotlin plugin?
+
+The client is generated as Kotlin and must compile before Java uses it. `javaFriendly = true` enables getters, setters and callbacks. Your application code remains Java; the Kotlin compiler handles generated sources. [Build](/v0.1.0-alpha.1/en/build) explains the sequence.
+
+## Why does current CLI output fail with alpha.1?
+
+The preview CLI generates the alpha.3 API. Alpha.1 runtime need not contain those methods. Use the matching alpha.1 generator or a complete staged alpha.3 set. Updating the CLI does not update application dependencies; see [Versions](/v0.1.0-alpha.1/en/versions).
+
+## Why did findUnique return null?
+
+No matching row is a normal read outcome. Check the key and database target, then handle absence according to application rules. Use `findUniqueOrThrow` when the operation requires a row and handle not-found at the service boundary. A list read with no matches returns an empty list.
+
+## Why does name = null change a row while omitting name does not?
+
+An update form distinguishes intent. Leaving a field unassigned keeps the current column. Assigning null writes SQL NULL, which requires a nullable field. During create, an omitted field can use its supported database default.
+
+## Why does accessing posts throw?
+
+The query did not load that relation through include. An unloaded relation differs from an empty post list returned after explicit loading. Add include when needed or remove the relation from the DTO. A getter never performs a lazy query; see [Relations](/v0.1.0-alpha.1/en/relations).
+
+## Can include still run several queries?
+
+Yes. Related keys are loaded in batches, and many-to-many adds join-table and target-row reads. This removes a query per parent but does not promise one SQL statement for every include. Batch size, depth and branches affect the count. Included `take` does not guarantee top-N for each parent either.
+
+## Can I return a generated entity as JSON?
+
+A serializer may access every getter, including unloaded relations. Build a DTO from selected scalar fields so the response has an explicit shape and does not need missing data. A projection limits columns in the query itself.
+
+## Can I use Spring @Transactional?
+
+The annotation alone does not prove Volan joins a Spring transaction. Use `db.transaction` and `tx` for related operations. Do not move individual queries from that callback onto another thread. [Web frameworks](/v0.1.0-alpha.1/en/frameworks) covers lifecycle integration.
+
+## Do coroutines make JDBC nonblocking?
+
+No. JDBC occupies a worker. Use framework dispatch for a Kotlin service or Java futures with a dedicated executor. Alpha.1 has no Volan coroutine adapter or active statement cancellation. [Async](/v0.1.0-alpha.1/en/async) describes the available behavior.
+
+## Can alpha.1 use SQLite?
+
+No. The SQLite dialect and migration reader were added in alpha.2. Upgrade the generator, runtime and related libraries together, change provider and driver deliberately and test the resulting data model.
+
+## Is Volan stable for every project?
+
+It is an alpha before 1.0. Suitability depends on operations and provider. Start with a reproducible scenario, review [Limitations](/v0.1.0-alpha.1/en/limitations), pin versions and test your queries and migrations. The documentation describes current guarantees rather than support for every workload.

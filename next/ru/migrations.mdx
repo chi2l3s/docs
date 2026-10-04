@@ -1,0 +1,103 @@
+---
+title: "Миграции"
+description: "Обновляй структуру базы проверенными SQL-файлами и сохраняй историю применения."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+</Info>
+
+Миграция связывает изменение модели с конкретным SQL, который команда может проверить, сохранить в Git и применить при deployment. Это особенно важно, когда в базе уже есть данные: добавление поля или изменение ключа должно учитывать старые строки, а не только новую схему.
+
+`Migrator` читает каталоги миграций, сверяет историю и применяет новые файлы. Для API нужен `volan-migrate` той же версии, что runtime. Отдельной команды CLI `volan migrate` сейчас нет.
+
+## Создание и применение
+
+Используй schema и sync со страницы [Синхронизация](/next/ru/sync), задай `url = "jdbc:sqlite:./data.db"`. План строится относительно предыдущей версии БД, а не базы, уже изменённой push.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.migrate.MigrationDirectory
+import io.github.thirtyeighttwentysix.volan.migrate.Migrator
+import java.nio.file.Path
+import java.time.Instant
+import java.sql.DriverManager
+
+val directory = MigrationDirectory(Path.of("migrations"))
+DriverManager.getConnection(url).use { connection ->
+    val plan = sync.plan(connection, schema)
+    if (!plan.isEmpty) {
+        println(plan.warnings)
+        directory.write(Instant.now(), "add_posts", plan.toSql(SqliteDialect))
+    }
+}
+// Review and commit migrations/*/migration.sql before deployment.
+DriverManager.getConnection(url).use { connection ->
+    Migrator(directory).apply(connection)
+}
+```
+
+Каталоги имеют вид `yyyyMMddHHmmss_description/migration.sql`. Существующую миграцию нельзя перезаписать. SHA-256 нормализует CRLF в LF. После deployment сохраняй проверенные файлы неизменными.
+
+`Migrator.status(connection)` сообщает applied, pending, edited, missing и unfinished. Apply отказывает при несогласованной истории. `markApplied(connection, migration)` записывает проверенный baseline или завершённое восстановление: он не исполняет SQL и не проверяет структуру.
+
+## PostgreSQL и SQLite
+
+Файл и запись журнала фиксируются одной транзакцией; ошибка откатывает оба. Отдельное соединение должно начинать в auto-commit. Advisory lock PostgreSQL сериализует Volan writers в текущей схеме. SQLite использует BEGIN IMMEDIATE, перепроверяет историю после lock и проверяет foreign keys до commit. Rebuild сохраняет оставшиеся данные и AUTOINCREMENT history. Новая обязательная колонка без default может вызвать ошибку на заполненной таблице.
+
+Скрипт не должен содержать собственное управление транзакцией. PostgreSQL CREATE INDEX CONCURRENTLY не входит в transactional migrator. Добавление enum value и его использование могут требовать разных commit/миграций.
+
+## H2, MySQL, MariaDB
+
+Нужна alpha.3. DDL делает implicit commit. H2 получает exclusive mode: используй maintenance window, отдельное administrator-соединение и отсутствие активных транзакций приложения. MySQL/MariaDB получают named session lock для БД с ожиданием до 60 секунд. Locks координируют Volan writers, но не сторонний SQL и другие инструменты.
+
+Журнал фиксирует старт, подтверждает выполненные statements в `applied_steps`, затем задаёт `finished_at`. Ошибка оставляет committed steps и unfinished record. Следующий apply останавливается; частичный скрипт автоматически не повторяется. После crash счётчик — лишь нижняя граница: ещё один statement мог уже завершиться.
+
+## Восстановление
+
+1. Останови конкурирующие изменения схемы и записи приложения. Сохрани исходные SQL и checksum.
+2. Прочитай status/journal и фактическую структуру БД. Сравни с нужным конечным состоянием.
+3. Заверши или исправь изменения вручную либо восстанови согласованную резервную копию.
+4. После достижения нужного состояния заверши исходную запись:
+```kotlin
+val original = directory.read().single { it.id == failedMigrationId }
+DriverManager.getConnection(url).use { connection ->
+    val migrator = Migrator(directory)
+    migrator.markApplied(connection, original)
+    migrator.apply(connection)
+}
+```
+
+Не меняй частично выполненный файл и не удаляй журнал для повторного запуска. markApplied сохраняет checksum, время старта и подтверждённый прогресс; правильность восстановления проверяешь ты.
+
+Незавершённый push хранится в `_volan_push` и блокирует push/versioned apply. Восстанови исходную целевую структуру, затем выполни:
+```bash
+volan db push --schema schema.volan --url jdbc:h2:file:./data --resolve
+```
+
+Эквивалент API: `sync.resolvePush(connection, originalSchema)`. Он проверяет fingerprint исходной цели и фактическую структуру, не исполняет repair DDL и отказывает при изменённой или неполной цели.
+
+Зарезервируй `_volan_push` и `_volan_migrations`. Push проверяет default versioned journal; custom journal требует собственной координации unfinished states. Nontransactional scripts не должны менять session, transaction, schema/database или locks напрямую и через routines. Executable version comments MySQL/MariaDB запрещены.
+
+[Полные ограничения SQL и восстановление](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/docs/migrations.md).
+
+## Пример изменения с существующими данными
+
+Представь таблицу пользователей, где уже есть строки, и новое обязательное поле. Сразу добавить NOT NULL без подходящего default может не получиться: базе неизвестно значение для старых пользователей. Сначала реши, как заполнить существующие данные, затем подготовь SQL и проверку результата.
+
+Если нужно переименовать колонку, не полагайся на распознавание rename в сравнении схем: оно может выглядеть как удаление и добавление. Проверь миграцию на копии предыдущей структуры с характерными данными. Пустая тестовая база не обнаружит все проблемы перехода.
+
+## Почему важен неизменный файл
+
+Checksum связывает запись журнала с текстом миграции. Если файл уже применили в одной среде и затем изменили, два окружения могут получить разную структуру под одним идентификатором. Поэтому исправление применённой миграции обычно оформляется новым файлом, а исходный остаётся в истории.
+
+`edited` означает, что локальный текст отличается от применённого. `missing` означает, что применённый файл отсутствует в каталоге. `unfinished` требует проверки прерванного выполнения. Ни одно из этих состояний не стоит скрывать удалением журнала: сначала выясни, как расходятся история и фактическая база.
+
+## План deployment
+
+Выполняй миграции на выделенном соединении, до запуска кода, который требует новую структуру. Если приложение развёрнуто в нескольких экземплярах, заранее выбери, кто отвечает за применение: специальная deployment-задача обычно проще для контроля, чем конкурирующие старты всех экземпляров.
+
+Lock координирует Volan writers в описанных пределах. Он не предотвращает ручное DDL из другого инструмента. На время сложного изменения структуры согласуй действия команды и других процессов. Для H2/MySQL/MariaDB оставь время на проверку частичного результата и восстановление.
+
+## Что означает markApplied
+
+Эта операция утверждает, что миграция уже приведена к нужному состоянию. Она не выполняет пропущенный SQL и не доказывает соответствие таблиц. Используй её только после сравнения фактической структуры и данных с исходной целью. Для partial push есть отдельный `resolvePush`, который проверяет структуру и fingerprint цели; эти два механизма решают разные задачи.

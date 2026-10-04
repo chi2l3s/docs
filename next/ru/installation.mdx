@@ -1,0 +1,52 @@
+---
+title: "Установка"
+description: "Выбери нужные части Volan: библиотеки для приложения и CLI для работы со схемой."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+</Info>
+
+У Volan две отдельные поставки. Библиотеки добавляются в зависимости приложения и выполняют запросы. CLI устанавливается в систему и помогает проверять схему, генерировать код и работать со структурой базы. Для [первого запроса](/next/ru/quickstart) достаточно библиотек: генерация уже встроена в показанную сборку.
+
+Если ты планируешь редактировать схему и часто выполнять `validate`, `format` или `db pull`, установи CLI. Сначала проверь `java -version`: launcher требует Java 17+ и выбирает Java из `JAVA_HOME`, если эта переменная задана. Сам установщик JDK не скачивает.
+
+## CLI
+
+Windows, PowerShell 5.1 или 7:
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.ps1)))
+```
+
+Linux/macOS, Bash с `curl`, `tar` и `sha256sum` или `shasum`:
+```bash
+curl -fsSL https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.sh | bash
+```
+
+Выполни `volan --help`. Windows обновляет текущую сессию PowerShell; другие терминалы перезапусти. На Unix открой новый терминал либо выполни `source "$HOME/.config/volan/env.sh"` в Bash/Zsh или `source "$HOME/.config/volan/env.fish"` в Fish.
+
+Каталоги по умолчанию: `%LOCALAPPDATA%\Programs\Volan` и `~/.local/share/volan`. Повторный запуск обновляет CLI. `JAVA_HOME` имеет приоритет над PATH. `VOLAN_INSTALL_DIR` задаёт другой каталог, `VOLAN_TAG=cli-v0.1.0-alpha.3-preview.1` фиксирует релиз. PowerShell также принимает `-InstallDir` и `-Tag`.
+
+Для ручной установки скачай `volan-cli.zip` или `volan-cli.tar.gz` и `SHA256SUMS` из [релиза CLI](https://github.com/thirtyeighttwentysix/volan/releases/tag/cli-v0.1.0-alpha.3-preview.1), проверь хеш, распакуй и добавь `volan/bin` в PATH. WinGet, Homebrew, Scoop и команды self-update нет.
+
+## Библиотеки
+
+Координаты используют namespace `io.github.thirtyeighttwentysix`. Alpha.3 нужны runtime, диалект, JDBC-драйвер и совпадающий по версии `volan-codegen` для сборки. BOM выравнивает версии библиотек. [Первый запрос](/next/ru/quickstart) содержит полную сборку с подготовленным репозиторием.
+
+Установленный preview генерирует код alpha.3. Подготовь соответствующие runtime и диалекты из закреплённых исходников по [Сборке](/next/ru/build). Первый пример вызывает codegen напрямую из этого репозитория.
+
+## Удаление
+
+Удали выделенный каталог установки и его запись из пользовательского PATH. На Unix также удали `~/.config/volan/env.sh`, `env.fish` и блоки установщика с заголовком `# Volan CLI` в настройках оболочки. Перезапусти терминал. Файлы схемы проекта хранятся отдельно.
+
+## Что попадает в приложение
+
+В runtime classpath нужны три части: `volan-runtime`, модуль диалекта и JDBC-драйвер выбранной базы. Генератор выполняется во время сборки; его не требуется включать в поставку сервиса. Модуль `volan-migrate` добавляется отдельно, когда приложению или специальной программе deployment нужен API миграций.
+
+Например, наличие SQLite-драйвера ещё не даёт Volan SQL-диалект, а наличие диалекта не устанавливает драйвер. При ошибке подключения проверь обе зависимости. BOM выравнивает версии модулей Volan, но версии сторонних драйверов задаются отдельно.
+
+## Как проверить установку
+
+`volan --help` подтверждает, что shell находит launcher и Java может его выполнить. Затем `volan validate --schema schema.volan` проверяет конкретный файл без подключения к базе. Если `volan` не найден, сначала открой новый терминал: старый процесс мог ещё не получить обновлённый PATH.
+
+Обновление CLI и обновление библиотек — отдельные действия. Новый CLI не меняет `build.gradle.kts` или `pom.xml`, а новая зависимость runtime не заменяет установленный executable. Перед генерацией сравни их [версии](/next/ru/versions). Этот раздел использует подготовленный runtime alpha.3 и генератор той же версии.

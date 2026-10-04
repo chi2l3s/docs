@@ -1,0 +1,32 @@
+---
+title: "Examples"
+description: "Choose an example for your first run, framework integration or client build checks."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+[First query](/v0.1.0-alpha.2/en/quickstart) is a complete alpha.2 application with Kotlin and Java entry points, a pinned wrapper and a matching Central generator. Its SQLite database exists only for the run, so each entry point begins with no rows.
+
+## Download and run
+
+[Example project](https://github.com/chi2l3s/docs/tree/main/examples/first-query). From that directory:
+
+```bash
+./gradlew runKotlinExample runJavaExample
+```
+
+Use `.\gradlew.bat` on Windows and JDK 25. Both tasks print Alice and `Users: 1`. Generated output stays under build; neither task modifies a deployment database.
+
+## Existing services
+
+Use [Web frameworks](/v0.1.0-alpha.2/en/frameworks) for Spring bean and Ktor lifecycle integration. Apply migrations before serving requests. The route example assumes a persistent database, unlike the temporary quickstart.
+
+## Release consumer
+
+[The alpha.2 release smoke project](https://github.com/thirtyeighttwentysix/volan/tree/v0.1.0-alpha.2/release-smoke) generates, compiles and exercises independent consumers from Maven artifacts. It covers PostgreSQL and SQLite; server checks require a test database.
+
+## Adapt the scenario
+
+Add a Post relation using [Schema](/v0.1.0-alpha.2/en/schema), regenerate and apply a migration. Inspect related reads with include and keep writes in a transaction where the operation requires all-or-nothing behavior. A passing SQLite example does not replace testing on your deployment provider.

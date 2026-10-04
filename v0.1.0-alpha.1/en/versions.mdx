@@ -1,0 +1,26 @@
+---
+title: "Versions"
+description: "Align generator, client, runtime and plugin versions before running an application."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+This is the archived `0.1.0-alpha.1` documentation. Its supported database is PostgreSQL. Keep generator, runtime, dialect and migration library on alpha.1 for an existing application.
+
+## Upgrade to alpha.2
+
+[Alpha.2](/v0.1.0-alpha.2/en/introduction) adds SQLite and fixes heterogeneous bulk insert defaults/order and JDBC relation-key matching. Update the BOM and codegen together, regenerate and compile. Test reads, nested writes and migrations against the actual deployment database.
+
+An upgrade does not move rows to another database or create tables. Keep PostgreSQL when only updating the libraries; choose a different provider as a separate change with its own migration plan.
+
+## Other documentation
+
+| Version | Status | Providers |
+|---|---|---|
+| [0.1.0-alpha.1](/v0.1.0-alpha.1/en/introduction) | Archived Central alpha | PostgreSQL |
+| [0.1.0-alpha.2](/v0.1.0-alpha.2/en/introduction) | Latest published Central alpha | PostgreSQL and SQLite |
+| [0.1.0-alpha.3-SNAPSHOT](/next/en/introduction) | Development sources | Additional providers and modules |
+
+The alpha.1 tagged CLI has database pull/push only. Portable alpha.3 CLI archives target a different generated API and are not an alpha.1 generator. [Alpha.1 release notes](https://github.com/thirtyeighttwentysix/volan/releases/tag/v0.1.0-alpha.1) are the distribution reference.

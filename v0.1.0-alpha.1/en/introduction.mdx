@@ -1,0 +1,54 @@
+---
+title: "Overview"
+description: "Describe your data and generate typed queries for Kotlin and Java."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+A user, a few posts, a filter and a transaction: database work often starts with a small set of familiar operations. Volan lets you describe those records in `schema.volan` and generate a client whose models, fields and relations are known to the compiler.
+
+In Kotlin, a query is a small block of typed conditions. Java exposes the same operations through methods and callbacks. Underneath, the client uses JDBC to build SQL, bind values and map returned rows into generated objects.
+
+## From schema to query
+
+Suppose your application has a `User` model with `id`, `email` and `name`. Generation gives the client a `db.user` repository. Reading a user means referring to the generated `id` field:
+
+```kotlin
+val user = db.user.findUnique {
+    where { id eq userId }
+}
+```
+
+Here, `db` is a connected client and `userId` comes from your application. The result can be `null`: a missing row is a normal read outcome. Use `findUniqueOrThrow` when a row must exist for the operation to make sense.
+
+The client gets field names from the schema. Change a model and regenerate, and code that still refers to a removed field stops compiling. That helps catch mismatches in application code before a query runs. The database is a separate concern: compilation does not prove that the table exists.
+
+## Three parts of an application
+
+| Part | Responsibility | When it changes |
+|---|---|---|
+| `schema.volan` | Models, types, keys, relations and generator settings | When the data model changes |
+| Generated client | Repositories, write forms, filters and row mapping | When you generate from the schema |
+| Database | Tables, constraints, indexes and stored rows | During migrations and application queries |
+
+Keep these three parts aligned. Adding a field changes the description first; generation updates the API; a migration updates the table. Each step is explicit. A build can therefore generate code without credentials or a production database connection.
+
+## Where to start
+
+Open [First query](/v0.1.0-alpha.1/en/quickstart) for a runnable PostgreSQL application. It creates a temporary table within one transaction, prints the result and drops the table at commit. Start a dedicated database or use the included Docker command.
+
+For an existing database, start with [Schema sync](/v0.1.0-alpha.1/en/sync): `pull` reads the supported database structure. For a service, follow the first query with [Web frameworks](/v0.1.0-alpha.1/en/frameworks) and [Application setup](/v0.1.0-alpha.1/en/production). To update tables across application releases, read [Migrations](/v0.1.0-alpha.1/en/migrations).
+
+## This release
+
+`0.1.0-alpha.1` is the archived first Central alpha. It supports PostgreSQL, generated Kotlin and Java APIs, explicit relations, transactions, Java futures, schema sync and migrations. It does not include SQLite.
+
+Keep runtime and generator on alpha.1 when maintaining an application on this release. [Version compatibility](/v0.1.0-alpha.1/en/versions) explains upgrading to alpha.2 and its fixes.
+
+## Before you build on it
+
+Relations are loaded explicitly with `include`: reading a property does not trigger hidden SQL. Transactions use a client callback. For HTTP responses, choose fields and construct a DTO. Database work stays visible in the code, making it easier to reason about the queries each operation needs.
+
+JDBC remains blocking when called through futures or coroutines. Tenant isolation and soft delete require explicit application conditions. Volan is in alpha; check [Limitations](/v0.1.0-alpha.1/en/limitations) and your [database provider](/v0.1.0-alpha.1/en/databases) before choosing it for a project.

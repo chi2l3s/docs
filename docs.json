@@ -11,94 +11,300 @@
     "languages": [
       {
         "language": "en",
-        "groups": [
+        "versions": [
           {
-            "group": "Start",
-            "pages": [
-              "en/introduction",
-              "en/installation",
-              "en/quickstart",
-              "en/build",
-              "en/schema",
-              "en/frameworks"
+            "version": "0.1.0-alpha.2",
+            "tag": "Published",
+            "default": true,
+            "groups": [
+              {
+                "group": "Start",
+                "pages": [
+                  "v0.1.0-alpha.2/en/introduction",
+                  "v0.1.0-alpha.2/en/installation",
+                  "v0.1.0-alpha.2/en/quickstart",
+                  "v0.1.0-alpha.2/en/build",
+                  "v0.1.0-alpha.2/en/schema",
+                  "v0.1.0-alpha.2/en/frameworks"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "v0.1.0-alpha.2/en/queries",
+                  "v0.1.0-alpha.2/en/relations",
+                  "v0.1.0-alpha.2/en/transactions",
+                  "v0.1.0-alpha.2/en/async",
+                  "v0.1.0-alpha.2/en/observability"
+                ]
+              },
+              {
+                "group": "Database",
+                "pages": [
+                  "v0.1.0-alpha.2/en/databases",
+                  "v0.1.0-alpha.2/en/sync",
+                  "v0.1.0-alpha.2/en/migrations",
+                  "v0.1.0-alpha.2/en/production"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "v0.1.0-alpha.2/en/cli",
+                  "v0.1.0-alpha.2/en/limitations",
+                  "v0.1.0-alpha.2/en/errors",
+                  "v0.1.0-alpha.2/en/examples",
+                  "v0.1.0-alpha.2/en/versions",
+                  "v0.1.0-alpha.2/en/benchmarks",
+                  "v0.1.0-alpha.2/en/faq"
+                ]
+              }
             ]
           },
           {
-            "group": "API",
-            "pages": [
-              "en/queries",
-              "en/relations",
-              "en/transactions",
-              "en/async",
-              "en/observability"
+            "version": "0.1.0-alpha.1",
+            "tag": "Archive",
+            "groups": [
+              {
+                "group": "Start",
+                "pages": [
+                  "v0.1.0-alpha.1/en/introduction",
+                  "v0.1.0-alpha.1/en/installation",
+                  "v0.1.0-alpha.1/en/quickstart",
+                  "v0.1.0-alpha.1/en/build",
+                  "v0.1.0-alpha.1/en/schema",
+                  "v0.1.0-alpha.1/en/frameworks"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "v0.1.0-alpha.1/en/queries",
+                  "v0.1.0-alpha.1/en/relations",
+                  "v0.1.0-alpha.1/en/transactions",
+                  "v0.1.0-alpha.1/en/async",
+                  "v0.1.0-alpha.1/en/observability"
+                ]
+              },
+              {
+                "group": "Database",
+                "pages": [
+                  "v0.1.0-alpha.1/en/databases",
+                  "v0.1.0-alpha.1/en/sync",
+                  "v0.1.0-alpha.1/en/migrations",
+                  "v0.1.0-alpha.1/en/production"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "v0.1.0-alpha.1/en/cli",
+                  "v0.1.0-alpha.1/en/limitations",
+                  "v0.1.0-alpha.1/en/errors",
+                  "v0.1.0-alpha.1/en/examples",
+                  "v0.1.0-alpha.1/en/versions",
+                  "v0.1.0-alpha.1/en/benchmarks",
+                  "v0.1.0-alpha.1/en/faq"
+                ]
+              }
             ]
           },
           {
-            "group": "Database",
-            "pages": [
-              "en/databases",
-              "en/sync",
-              "en/migrations",
-              "en/production"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "en/cli",
-              "en/limitations",
-              "en/errors",
-              "en/examples",
-              "en/versions",
-              "en/benchmarks",
-              "en/faq"
+            "version": "0.1.0-alpha.3-SNAPSHOT",
+            "tag": "Development",
+            "groups": [
+              {
+                "group": "Start",
+                "pages": [
+                  "next/en/introduction",
+                  "next/en/installation",
+                  "next/en/quickstart",
+                  "next/en/build",
+                  "next/en/schema",
+                  "next/en/frameworks"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "next/en/queries",
+                  "next/en/relations",
+                  "next/en/transactions",
+                  "next/en/async",
+                  "next/en/observability"
+                ]
+              },
+              {
+                "group": "Database",
+                "pages": [
+                  "next/en/databases",
+                  "next/en/sync",
+                  "next/en/migrations",
+                  "next/en/production"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "next/en/cli",
+                  "next/en/limitations",
+                  "next/en/errors",
+                  "next/en/examples",
+                  "next/en/versions",
+                  "next/en/benchmarks",
+                  "next/en/faq"
+                ]
+              }
             ]
           }
         ]
       },
       {
         "language": "ru",
-        "groups": [
+        "versions": [
           {
-            "group": "Начало",
-            "pages": [
-              "ru/introduction",
-              "ru/installation",
-              "ru/quickstart",
-              "ru/build",
-              "ru/schema",
-              "ru/frameworks"
+            "version": "0.1.0-alpha.2",
+            "tag": "Опубликована",
+            "default": true,
+            "groups": [
+              {
+                "group": "Начало",
+                "pages": [
+                  "v0.1.0-alpha.2/ru/introduction",
+                  "v0.1.0-alpha.2/ru/installation",
+                  "v0.1.0-alpha.2/ru/quickstart",
+                  "v0.1.0-alpha.2/ru/build",
+                  "v0.1.0-alpha.2/ru/schema",
+                  "v0.1.0-alpha.2/ru/frameworks"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "v0.1.0-alpha.2/ru/queries",
+                  "v0.1.0-alpha.2/ru/relations",
+                  "v0.1.0-alpha.2/ru/transactions",
+                  "v0.1.0-alpha.2/ru/async",
+                  "v0.1.0-alpha.2/ru/observability"
+                ]
+              },
+              {
+                "group": "База данных",
+                "pages": [
+                  "v0.1.0-alpha.2/ru/databases",
+                  "v0.1.0-alpha.2/ru/sync",
+                  "v0.1.0-alpha.2/ru/migrations",
+                  "v0.1.0-alpha.2/ru/production"
+                ]
+              },
+              {
+                "group": "Справочник",
+                "pages": [
+                  "v0.1.0-alpha.2/ru/cli",
+                  "v0.1.0-alpha.2/ru/limitations",
+                  "v0.1.0-alpha.2/ru/errors",
+                  "v0.1.0-alpha.2/ru/examples",
+                  "v0.1.0-alpha.2/ru/versions",
+                  "v0.1.0-alpha.2/ru/benchmarks",
+                  "v0.1.0-alpha.2/ru/faq"
+                ]
+              }
             ]
           },
           {
-            "group": "API",
-            "pages": [
-              "ru/queries",
-              "ru/relations",
-              "ru/transactions",
-              "ru/async",
-              "ru/observability"
+            "version": "0.1.0-alpha.1",
+            "tag": "Архив",
+            "groups": [
+              {
+                "group": "Начало",
+                "pages": [
+                  "v0.1.0-alpha.1/ru/introduction",
+                  "v0.1.0-alpha.1/ru/installation",
+                  "v0.1.0-alpha.1/ru/quickstart",
+                  "v0.1.0-alpha.1/ru/build",
+                  "v0.1.0-alpha.1/ru/schema",
+                  "v0.1.0-alpha.1/ru/frameworks"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "v0.1.0-alpha.1/ru/queries",
+                  "v0.1.0-alpha.1/ru/relations",
+                  "v0.1.0-alpha.1/ru/transactions",
+                  "v0.1.0-alpha.1/ru/async",
+                  "v0.1.0-alpha.1/ru/observability"
+                ]
+              },
+              {
+                "group": "База данных",
+                "pages": [
+                  "v0.1.0-alpha.1/ru/databases",
+                  "v0.1.0-alpha.1/ru/sync",
+                  "v0.1.0-alpha.1/ru/migrations",
+                  "v0.1.0-alpha.1/ru/production"
+                ]
+              },
+              {
+                "group": "Справочник",
+                "pages": [
+                  "v0.1.0-alpha.1/ru/cli",
+                  "v0.1.0-alpha.1/ru/limitations",
+                  "v0.1.0-alpha.1/ru/errors",
+                  "v0.1.0-alpha.1/ru/examples",
+                  "v0.1.0-alpha.1/ru/versions",
+                  "v0.1.0-alpha.1/ru/benchmarks",
+                  "v0.1.0-alpha.1/ru/faq"
+                ]
+              }
             ]
           },
           {
-            "group": "База данных",
-            "pages": [
-              "ru/databases",
-              "ru/sync",
-              "ru/migrations",
-              "ru/production"
-            ]
-          },
-          {
-            "group": "Справочник",
-            "pages": [
-              "ru/cli",
-              "ru/limitations",
-              "ru/errors",
-              "ru/examples",
-              "ru/versions",
-              "ru/benchmarks",
-              "ru/faq"
+            "version": "0.1.0-alpha.3-SNAPSHOT",
+            "tag": "В разработке",
+            "groups": [
+              {
+                "group": "Начало",
+                "pages": [
+                  "next/ru/introduction",
+                  "next/ru/installation",
+                  "next/ru/quickstart",
+                  "next/ru/build",
+                  "next/ru/schema",
+                  "next/ru/frameworks"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "next/ru/queries",
+                  "next/ru/relations",
+                  "next/ru/transactions",
+                  "next/ru/async",
+                  "next/ru/observability"
+                ]
+              },
+              {
+                "group": "База данных",
+                "pages": [
+                  "next/ru/databases",
+                  "next/ru/sync",
+                  "next/ru/migrations",
+                  "next/ru/production"
+                ]
+              },
+              {
+                "group": "Справочник",
+                "pages": [
+                  "next/ru/cli",
+                  "next/ru/limitations",
+                  "next/ru/errors",
+                  "next/ru/examples",
+                  "next/ru/versions",
+                  "next/ru/benchmarks",
+                  "next/ru/faq"
+                ]
+              }
             ]
           }
         ]
@@ -131,12 +337,232 @@
   "redirects": [
     {
       "source": "/index",
-      "destination": "/en/introduction",
+      "destination": "/v0.1.0-alpha.2/en/introduction",
       "permanent": true
     },
     {
       "source": "/quickstart",
-      "destination": "/en/quickstart",
+      "destination": "/v0.1.0-alpha.2/en/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/en/async",
+      "destination": "/v0.1.0-alpha.2/en/async",
+      "permanent": true
+    },
+    {
+      "source": "/en/benchmarks",
+      "destination": "/v0.1.0-alpha.2/en/benchmarks",
+      "permanent": true
+    },
+    {
+      "source": "/en/build",
+      "destination": "/v0.1.0-alpha.2/en/build",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli",
+      "destination": "/v0.1.0-alpha.2/en/cli",
+      "permanent": true
+    },
+    {
+      "source": "/en/databases",
+      "destination": "/v0.1.0-alpha.2/en/databases",
+      "permanent": true
+    },
+    {
+      "source": "/en/errors",
+      "destination": "/v0.1.0-alpha.2/en/errors",
+      "permanent": true
+    },
+    {
+      "source": "/en/examples",
+      "destination": "/v0.1.0-alpha.2/en/examples",
+      "permanent": true
+    },
+    {
+      "source": "/en/faq",
+      "destination": "/v0.1.0-alpha.2/en/faq",
+      "permanent": true
+    },
+    {
+      "source": "/en/frameworks",
+      "destination": "/v0.1.0-alpha.2/en/frameworks",
+      "permanent": true
+    },
+    {
+      "source": "/en/installation",
+      "destination": "/v0.1.0-alpha.2/en/installation",
+      "permanent": true
+    },
+    {
+      "source": "/en/introduction",
+      "destination": "/v0.1.0-alpha.2/en/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/en/limitations",
+      "destination": "/v0.1.0-alpha.2/en/limitations",
+      "permanent": true
+    },
+    {
+      "source": "/en/migrations",
+      "destination": "/v0.1.0-alpha.2/en/migrations",
+      "permanent": true
+    },
+    {
+      "source": "/en/observability",
+      "destination": "/v0.1.0-alpha.2/en/observability",
+      "permanent": true
+    },
+    {
+      "source": "/en/production",
+      "destination": "/v0.1.0-alpha.2/en/production",
+      "permanent": true
+    },
+    {
+      "source": "/en/queries",
+      "destination": "/v0.1.0-alpha.2/en/queries",
+      "permanent": true
+    },
+    {
+      "source": "/en/quickstart",
+      "destination": "/v0.1.0-alpha.2/en/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/en/relations",
+      "destination": "/v0.1.0-alpha.2/en/relations",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema",
+      "destination": "/v0.1.0-alpha.2/en/schema",
+      "permanent": true
+    },
+    {
+      "source": "/en/sync",
+      "destination": "/v0.1.0-alpha.2/en/sync",
+      "permanent": true
+    },
+    {
+      "source": "/en/transactions",
+      "destination": "/v0.1.0-alpha.2/en/transactions",
+      "permanent": true
+    },
+    {
+      "source": "/en/versions",
+      "destination": "/v0.1.0-alpha.2/en/versions",
+      "permanent": true
+    },
+    {
+      "source": "/ru/async",
+      "destination": "/v0.1.0-alpha.2/ru/async",
+      "permanent": true
+    },
+    {
+      "source": "/ru/benchmarks",
+      "destination": "/v0.1.0-alpha.2/ru/benchmarks",
+      "permanent": true
+    },
+    {
+      "source": "/ru/build",
+      "destination": "/v0.1.0-alpha.2/ru/build",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli",
+      "destination": "/v0.1.0-alpha.2/ru/cli",
+      "permanent": true
+    },
+    {
+      "source": "/ru/databases",
+      "destination": "/v0.1.0-alpha.2/ru/databases",
+      "permanent": true
+    },
+    {
+      "source": "/ru/errors",
+      "destination": "/v0.1.0-alpha.2/ru/errors",
+      "permanent": true
+    },
+    {
+      "source": "/ru/examples",
+      "destination": "/v0.1.0-alpha.2/ru/examples",
+      "permanent": true
+    },
+    {
+      "source": "/ru/faq",
+      "destination": "/v0.1.0-alpha.2/ru/faq",
+      "permanent": true
+    },
+    {
+      "source": "/ru/frameworks",
+      "destination": "/v0.1.0-alpha.2/ru/frameworks",
+      "permanent": true
+    },
+    {
+      "source": "/ru/installation",
+      "destination": "/v0.1.0-alpha.2/ru/installation",
+      "permanent": true
+    },
+    {
+      "source": "/ru/introduction",
+      "destination": "/v0.1.0-alpha.2/ru/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/ru/limitations",
+      "destination": "/v0.1.0-alpha.2/ru/limitations",
+      "permanent": true
+    },
+    {
+      "source": "/ru/migrations",
+      "destination": "/v0.1.0-alpha.2/ru/migrations",
+      "permanent": true
+    },
+    {
+      "source": "/ru/observability",
+      "destination": "/v0.1.0-alpha.2/ru/observability",
+      "permanent": true
+    },
+    {
+      "source": "/ru/production",
+      "destination": "/v0.1.0-alpha.2/ru/production",
+      "permanent": true
+    },
+    {
+      "source": "/ru/queries",
+      "destination": "/v0.1.0-alpha.2/ru/queries",
+      "permanent": true
+    },
+    {
+      "source": "/ru/quickstart",
+      "destination": "/v0.1.0-alpha.2/ru/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/ru/relations",
+      "destination": "/v0.1.0-alpha.2/ru/relations",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema",
+      "destination": "/v0.1.0-alpha.2/ru/schema",
+      "permanent": true
+    },
+    {
+      "source": "/ru/sync",
+      "destination": "/v0.1.0-alpha.2/ru/sync",
+      "permanent": true
+    },
+    {
+      "source": "/ru/transactions",
+      "destination": "/v0.1.0-alpha.2/ru/transactions",
+      "permanent": true
+    },
+    {
+      "source": "/ru/versions",
+      "destination": "/v0.1.0-alpha.2/ru/versions",
       "permanent": true
     }
   ],

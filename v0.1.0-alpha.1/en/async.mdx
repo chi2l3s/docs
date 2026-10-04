@@ -1,0 +1,48 @@
+---
+title: "Async queries"
+description: "Run JDBC on suitable workers and understand what cancellation can do."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+JDBC occupies a thread while waiting for a connection, the network or SQL. Alpha.1 offers Java `CompletableFuture` APIs, but has no Volan coroutine module and no active JDBC statement cancellation.
+
+## Java futures
+
+```java
+var workers = java.util.concurrent.Executors.newFixedThreadPool(4);
+try (var db = VolanClient.builder().url(url).asyncExecutor(workers).build()) {
+    var users = db.getUser().findManyAsync(q -> q.setTake(20)).join();
+} finally {
+    workers.shutdown();
+}
+```
+
+Repositories, transactions, rawQuery and rawExecute expose async operations. The default executor is ForkJoinPool.commonPool(); a dedicated executor makes service capacity explicit. The application owns the executor and must finish active work before closing the client.
+
+`join()` blocks and wraps failures in CompletionException; `get()` uses ExecutionException. Do not call join on an event loop. Use the framework's completion mechanism to return the result.
+
+## Kotlin worker dispatch
+
+In an application already using kotlinx-coroutines, dispatch synchronous JDBC to a suitable worker:
+
+```kotlin
+val jdbcWorkers = Dispatchers.IO.limitedParallelism(4)
+val users = withContext(jdbcWorkers) {
+    db.user.findMany { take = 20 }
+}
+```
+
+Import Dispatchers and withContext from kotlinx.coroutines and provide that dependency in the application. This is framework dispatch, not a Volan suspendQuery API. [Web frameworks](/v0.1.0-alpha.1/en/frameworks) shows a complete Ktor lifecycle example.
+
+## Cancellation and transactions
+
+Alpha.1 future cancellation can skip queued work; it does not cancel an active JDBC statement. A cancelled future does not prove a running write rolled back. Coroutine timeout around blocking JDBC likewise cannot promise an immediate database deadline.
+
+Configure pool, network and database timeouts separately. If a write outcome is uncertain, inspect state by a business key before retrying. Put the entire transaction on a worker and keep its callback synchronous; do not dispatch individual tx operations to another thread.
+
+## Capacity and shutdown
+
+Choose workers with the pool budget. Worker concurrency cannot exceed the available connection budget. Count connections across all service instances before increasing concurrency. Stop scheduling new work, await active operations and then close resources owned by the application.

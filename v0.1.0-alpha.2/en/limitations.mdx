@@ -1,0 +1,46 @@
+---
+title: "Limitations"
+description: "Check API boundaries before choosing your data model and application architecture."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+Check these boundaries before designing an application around an unsupported operation. This section describes alpha.2; features in development are not part of this runtime.
+
+## Queries and results
+
+| Scenario | Current boundary | Application approach |
+|---|---|---|
+| Cursor with arbitrary `orderBy` | Combination is rejected | Use offset for that order or traverse the primary key |
+| Top-N children for every included parent | `take` limits a related batch | Query children explicitly when a separate per-parent limit is required |
+| Arbitrary projection shape | One generated projection class | Access selected fields and build an explicit DTO |
+| Accessing an unloaded relation | Getter throws | Add include or omit the relation from the response |
+| Concurrent upsert | Find/create-or-update, without atomic server upsert | Keep a unique constraint and handle conflicts |
+| Scalar-array filtering and ordering | Deferred | Change the query model or use reviewed raw SQL |
+| Typed full-text search | Not implemented | Index DDL does not imply a query API |
+
+## Relation writes
+
+Nested writes support small related operations, but they do not represent every change graph. Nested update beyond one relation level, deleting an owning-side required relation and writes with unknown ancestor keys are restricted.
+
+For a complex operation, split supported writes into explicit steps inside a [transaction](/v0.1.0-alpha.2/en/transactions). Key acquisition and write order then stay visible. Deleting or disconnecting a required relation must preserve the schema rule: a child cannot remain without its required parent.
+
+## Names and schema
+
+`count` conflicts with aggregates. Kotlin keywords are not escaped in every generated API form. Choose a safe client alias and retain the existing SQL name through `@map` when needed.
+
+Multi-schema models, optimistic `@version` locking, read replicas and sharding are not implemented. Tenant isolation and soft delete need explicit application predicates.
+
+## Providers and migrations
+
+Introspection accepts representable structures and refuses definitions it cannot preserve correctly. Expression/partial indexes, triggers, generated columns, unsupported tables and other definitions can block pull or planning. Each provider has further [type and catalog limits](/v0.1.0-alpha.2/en/databases).
+
+PostgreSQL and SQLite migrations have transactional guarantees described in [Migrations](/v0.1.0-alpha.2/en/migrations). Review SQL and existing data before deployment; a transaction cannot make a logically wrong data change correct.
+
+## Async and compatibility
+
+JDBC remains blocking through futures or framework coroutine dispatch. Alpha.2 future cancellation does not cancel an active JDBC statement. [Async](/v0.1.0-alpha.2/en/async) explains workers and cleanup.
+
+Keep generator and runtime on alpha.2 and regenerate on upgrades. The alpha API can change before 1.0. PostgreSQL and SQLite are this release's providers; build plugins, H2, MySQL, MariaDB and Volan coroutine/metrics modules belong to later development.

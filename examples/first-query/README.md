@@ -18,4 +18,4 @@ Users: 1
 
 The in-memory database is discarded after the run. For persistent data, configure a file or server database and apply migrations separately.
 
-Read the complete guide in [Russian](https://volan.mintlify.app/ru/quickstart) or [English](https://volan.mintlify.app/en/quickstart).
+Read the complete guide in [Russian](https://volan.mintlify.app/v0.1.0-alpha.2/ru/quickstart) or [English](https://volan.mintlify.app/v0.1.0-alpha.2/en/quickstart).

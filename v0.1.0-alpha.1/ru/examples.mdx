@@ -1,0 +1,16 @@
+---
+title: "Примеры"
+description: "Выбери пример для первого запуска, интеграции или проверки сборки клиента."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Архивный релиз для PostgreSQL.
+</Info>
+
+[Первый запрос](/v0.1.0-alpha.1/ru/quickstart) содержит все файлы примера PostgreSQL alpha.1. В [готовом проекте](https://github.com/chi2l3s/docs/tree/main/examples/first-query-alpha1) есть точки входа Kotlin и Java и wrapper Gradle 9.8.0; нужен JDK 25.
+
+Запусти выделенную PostgreSQL-базу из инструкции, затем `./gradlew runKotlinExample runJavaExample` (`.\gradlew.bat` в Windows). Каждая точка входа создаёт свою временную таблицу в транзакции, печатает Alice и `Users: 1` и удаляет таблицу при commit.
+
+[Release consumer из тега alpha.1](https://github.com/thirtyeighttwentysix/volan/tree/v0.1.0-alpha.1/release-smoke) показывает независимую сборку из Maven-артефактов. Он выполняет PostgreSQL API, генерацию и миграции без зависимости от классов рабочего проекта.
+
+Для существующего сервиса переходи к [Фреймворкам](/v0.1.0-alpha.1/ru/frameworks). Там нужны постоянные таблицы и проверенные миграции. Временная таблица первого примера — способ показать запуск, а не стратегия хранения приложения.

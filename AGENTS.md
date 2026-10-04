@@ -13,3 +13,11 @@ This repository publishes Russian and English documentation at https://volan.min
 - Apply the user's clear-design preferences: no gradients, neon, emoji, decorative separators or default Lucide icons. Use the existing Volan logo assets.
 - Run `npx mint validate` and `npx mint broken-links` after MDX changes. Inspect desktop and mobile pages after publication.
 - Preserve unrelated local changes and stage only files belonging to the task.
+
+## Versioned documentation
+
+- Snapshot published releases under `v<version>/<language>/`. Keep their examples and APIs scoped to their tagged sources. Change old releases only to correct documentation errors.
+- Keep development content under `next/<language>/` and pin its source baseline in the build guide. Never label staged artifacts as published.
+- Navigation is language, then version, then topic groups. Default to the latest published release. Preserve both selectors when adding a release.
+- Archive the previous version when publishing a new release: add a new directory and version entry; do not overwrite a release snapshot. Add redirects for old unversioned URLs deliberately.
+- Quickstarts must match their corresponding examples: first-query for alpha.2, first-query-alpha1 for alpha.1 and first-query-next for development. Use the matching generator and runtime.

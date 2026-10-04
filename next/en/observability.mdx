@@ -1,0 +1,61 @@
+---
+title: "Observability"
+description: "Measure real database work and distinguish repository operations from SQL statements."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+</Info>
+
+One repository call does not always mean one SQL statement. An `include` can add relation reads, and a nested write can execute several writes. Observe physical statements with `QueryInterceptor` to understand where time goes and how much database work ran.
+
+Interceptors and the Micrometer module are available in alpha.3. Use the matching runtime from [staged artifacts](/next/en/build). The synchronous core works without Micrometer or coroutines when you do not need them.
+
+## Interceptors
+
+Implement `QueryInterceptor.intercept(query: QueryContext, next: Supplier<T>): T`. Register through `VolanClient.builder().interceptor(interceptor)`. Interceptors must be thread-safe and call `next.get()` exactly once on the same thread. First registered is outermost; duplicate or cross-thread downstream execution is refused.
+
+Hooks wrap pool checkout, preparation, binding, execution, mapping and cleanup for generated queries, raw SQL, relation reads and nested writes. Pool validation, dialect initialization, transaction-control SQL and migration commands executed directly through JDBC are outside them.
+
+QueryContext contains SQL, QUERY/EXECUTE operation and dialect; it contains no bound values. Caller-written SQL literals may still contain sensitive data. Avoid logging credentials or unredacted SQL. An interceptor failure propagates and can roll back an enclosing transaction; it cannot undo an autocommit write already completed. These hooks do not add tenant or soft-delete predicates.
+
+## Micrometer
+
+Add `io.github.thirtyeighttwentysix:volan-micrometer` and provide a MeterRegistry:
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.micrometer.MicrometerQueryInterceptor
+
+val db = VolanClient.builder()
+    .url(url)
+    .interceptor(MicrometerQueryInterceptor(registry))
+    .build()
+```
+
+The `volan.query` timer measures attempted statements, including checkout and mapping.
+
+| Tag | Values |
+|---|---|
+| dialect | Provider id |
+| operation | query, execute |
+| outcome | success, error, cancelled |
+
+No SQL, parameter values or exception messages are metric labels. An include contributes one sample per statement; a successful statement later rolled back remains a successful statement sample. Registry/exporter lifecycle belongs to the application; Volan does not close them.
+
+## Interpret a measurement
+
+`volan.query` time includes acquiring a connection and mapping rows into objects. A higher duration can mean slow SQL, a pool wait or a large result. The timer alone cannot prove the cause; compare pool metrics, result size and database-side measurements.
+
+Several samples for a user-with-posts read are expected with includes. A successful sample describes one statement, not a successful HTTP response or the final transaction commit. A later failure can roll back writes whose individual statements succeeded.
+
+## Keep metrics comparable
+
+Bounded tags let you compare providers, operations and outcomes without creating a separate series for each user. Do not add email addresses, record IDs, full SQL or error text as labels. Those values increase cardinality and can disclose application data.
+
+Use diagnostic logs or application tracing, with appropriate value redaction, to investigate a specific slow query. Keep persistent metric categories small and stable. The application owns the registry and exporter; the client supplies measurements through the registered interceptor.
+
+## An interceptor's responsibility
+
+`next.get()` performs the database operation. Call it exactly once and return its result or propagate its error. The interceptor runs in the query context; moving downstream work to another thread violates transaction guards. A hook is not a place to execute SQL again.
+
+Add tenant conditions to typed queries. Observing a statement does not turn arbitrary SQL into an application query with correct tenant isolation.

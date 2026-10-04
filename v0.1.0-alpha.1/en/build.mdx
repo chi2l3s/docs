@@ -1,0 +1,37 @@
+---
+title: "Build"
+description: "Connect client generation to compilation and understand each build dependency."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+A build reads `schema.volan`, generates Kotlin sources and compiles them with the application. It does not open the database or apply migrations. [First query](/v0.1.0-alpha.1/en/quickstart) contains the complete Gradle configuration and generation program.
+
+## Keep generation in the build
+
+Use `volan-codegen:0.1.0-alpha.1` in the separate `generator` source set. Register `build/generated/volan` as Kotlin main sources and make `compileKotlin` depend on `generateClient`. Java then refers to the compiled generated classes through getters and callbacks.
+
+```java
+var source = new SourceFile("schema.volan", Files.readString(Path.of(args[0])));
+VolanGenerator.writeTo(SchemaLoader.loadOrThrow(source), Path.of(args[1]));
+```
+
+The full imports and entry point are in the quickstart. `args[0]` is the schema path and `args[1]` the generated output directory. Diagnostics stop generation for an invalid model; compilation catches stale field references after a successful generation.
+
+## Dependencies and ownership
+
+The runtime and dialect use the alpha.1 BOM. The build-only codegen dependency has the same explicit version. Keep generated output separate from hand-written application sources: the generator owns its files and can remove obsolete output.
+
+No Volan Gradle or Maven plugin is published in alpha.1. Do not copy an alpha.3 plugin configuration into this build. You can invoke the matching generator from your own Gradle task or Maven build step, then compile its Kotlin output.
+
+## When the client looks stale
+
+After changing a schema, run generation and compilation before searching for a new getter. Check the schema path and registered source directory. Two generated directories can leave duplicate class names, and stale bytecode can survive an incorrectly configured incremental build.
+
+Never patch generated code to hide a mismatch. Change the schema or application code. If a generator emits methods missing from the runtime, compare versions first; [Compatibility](/v0.1.0-alpha.1/en/versions) describes the release boundary.
+
+## Database checks come separately
+
+A build can succeed while a table is missing. Generation checks the description, not a live database. Run integration queries against the intended provider and apply [migrations](/v0.1.0-alpha.1/en/migrations) before starting code that requires new columns.

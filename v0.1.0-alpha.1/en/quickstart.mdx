@@ -1,0 +1,293 @@
+---
+title: "First query"
+description: "Create a user, read it by id and check the result in Kotlin or Java."
+---
+
+<Info>
+Volan 0.1.0-alpha.1. Archived release for PostgreSQL.
+</Info>
+
+Create Alice in a temporary PostgreSQL table, read her by id and print the result. Alpha.1 supports PostgreSQL only. Each run uses one transaction; ON COMMIT DROP removes its temporary table after commit.
+
+Use `0.1.0-alpha.1` libraries from Maven Central and the matching generator. The entry points and build shown here need **JDK 25**. Volan itself supports Java 17+, but the compact Java entry point on this page uses Java 25 features. The tested Gradle version is 9.8.0; use your project's wrapper when available.
+
+[All example files](https://github.com/chi2l3s/docs/tree/main/examples/first-query-alpha1) are available in the documentation repository with a Gradle wrapper. Download the repository and run commands from `examples/first-query-alpha1`.
+
+## Start PostgreSQL
+
+Start a dedicated local example database. These are local demonstration credentials:
+
+```bash
+docker run --name volan-alpha1-example -e POSTGRES_PASSWORD=volan -e POSTGRES_USER=volan -e POSTGRES_DB=volan_example -p 127.0.0.1:55433:5432 -d postgres:17.10
+docker exec volan-alpha1-example pg_isready -U volan -d volan_example
+```
+
+Wait for pg_isready to report that connections are accepted. The code defaults to this localhost URL and these example credentials. For another dedicated database, set DATABASE_URL, DATABASE_USER and DATABASE_PASSWORD before running the tasks.
+
+## Project files
+
+Kotlin and Java share one client. Add both entry points to try both APIs, or keep only the language you need. Application code belongs in `src/main`. The small generation program lives in a separate source set and is not part of your application runtime.
+
+```text
+volan-first-query/
+  settings.gradle.kts
+  build.gradle.kts
+  schema.volan
+  src/
+    generator/java/org/example/GenerateClient.java
+    main/kotlin/org/example/Main.kt
+    main/java/Main.java
+```
+
+Set the project name in `settings.gradle.kts`:
+
+```kotlin title="settings.gradle.kts"
+rootProject.name = "volan-first-query"
+```
+
+## Describe a user
+
+Create `schema.volan` in the project root:
+
+```prisma title="schema.volan"
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.generated"
+  javaFriendly = true
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+}
+```
+
+`datasource` selects PostgreSQL. User has an auto-assigned integer id, a required unique email and a nullable name. The temporary SQL table below uses SERIAL for that id.
+
+Generation reads the description without connecting. The application gets DATABASE_URL from the environment or uses the local example URL. Credentials are supplied to the builder, separately from the schema.
+
+## Add Volan to the build
+
+Replace `build.gradle.kts` with:
+
+```kotlin title="build.gradle.kts"
+plugins {
+    kotlin("jvm") version "2.4.20"
+}
+
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+val generator = sourceSets.create("generator")
+val generated = layout.buildDirectory.dir("generated/volan")
+
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:0.1.0-alpha.1"))
+    implementation("io.github.thirtyeighttwentysix:volan-runtime")
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-postgres")
+    runtimeOnly("org.postgresql:postgresql:42.7.13")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.20")
+
+    add(generator.implementationConfigurationName,
+        "io.github.thirtyeighttwentysix:volan-codegen:0.1.0-alpha.1")
+
+    testImplementation(kotlin("test"))
+    testImplementation(platform("org.junit:junit-bom:6.0.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+kotlin {
+    jvmToolchain(25)
+    sourceSets.main {
+        kotlin.srcDir(generated)
+    }
+}
+
+val generateClient = tasks.register<JavaExec>("generateClient") {
+    classpath = generator.runtimeClasspath
+    mainClass.set("org.example.GenerateClient")
+    inputs.file("schema.volan")
+    outputs.dir(generated)
+    args(
+        layout.projectDirectory.file("schema.volan").asFile.absolutePath,
+        generated.get().asFile.absolutePath
+    )
+}
+
+tasks.named("compileKotlin") {
+    dependsOn(generateClient)
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.withType<JavaExec>().configureEach {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
+tasks.register<JavaExec>("runKotlinExample") {
+    dependsOn(tasks.named("classes"))
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("org.example.MainKt")
+}
+
+tasks.register<JavaExec>("runJavaExample") {
+    dependsOn(tasks.named("classes"))
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("Main")
+}
+```
+
+The runtime executes operations, volan-dialect-postgres renders PostgreSQL SQL and the PostgreSQL JDBC driver opens connections. The BOM aligns Volan libraries; the build-only generator uses alpha.1 as well.
+
+`generateClient` reads the schema and writes Kotlin files to `build/generated/volan`. `compileKotlin` depends on it, so a normal build updates the client before compilation. The generated directory is registered as main sources: Kotlin compiles the client and Java can use the resulting classes. The two `run…Example` tasks launch the entry points with the application runtime classpath.
+
+Alpha.1 has no published Volan build plugin, so the task needs this small `GenerateClient` program. Create it at the path below:
+
+```java title="src/generator/java/org/example/GenerateClient.java"
+package org.example;
+
+import io.github.thirtyeighttwentysix.volan.codegen.VolanGenerator;
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader;
+import io.github.thirtyeighttwentysix.volan.schema.SourceFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class GenerateClient {
+    public static void main(String[] args) throws Exception {
+        var source = new SourceFile("schema.volan", Files.readString(Path.of(args[0])));
+        VolanGenerator.writeTo(SchemaLoader.loadOrThrow(source), Path.of(args[1]));
+    }
+}
+```
+
+## Run a query
+
+Both entry points open the client and run the entire temporary-table scenario through tx inside a transaction. Queries share its connection, which is required for a PostgreSQL temporary table.
+
+<Tabs>
+<Tab title="Kotlin">
+
+```kotlin title="src/main/kotlin/org/example/Main.kt"
+package org.example
+
+import org.example.generated.VolanClient
+
+fun main() {
+    VolanClient.builder()
+        .url(System.getenv("DATABASE_URL") ?: "jdbc:postgresql://localhost:55433/volan_example")
+        .username(System.getenv("DATABASE_USER") ?: "volan")
+        .password(System.getenv("DATABASE_PASSWORD") ?: "volan")
+        .build().use { db ->
+            db.transaction { tx ->
+                tx.rawExecute("""
+                    CREATE TEMP TABLE "User" (
+                        "id" SERIAL PRIMARY KEY,
+                        "email" TEXT NOT NULL UNIQUE,
+                        "name" TEXT
+                    ) ON COMMIT DROP
+                """.trimIndent())
+                val created = tx.user.create {
+                    email = "alice@example.org"
+                    name = "Alice"
+                }
+                val found = tx.user.findUnique { where { id eq created.id } }
+                check(found == created)
+                println("${found.name}: ${found.email}")
+                println("Users: ${tx.user.count()}")
+            }
+        }
+}
+```
+
+`create` returns the saved record, including the database-assigned `id`. `findUnique` binds that identifier as an SQL parameter. `check` stops the run if the saved and returned records differ. `use` closes the client even if an operation fails.
+
+</Tab>
+<Tab title="Java">
+
+```java title="src/main/java/Main.java"
+import org.example.generated.VolanClient;
+
+void main() {
+    var url = System.getenv().getOrDefault("DATABASE_URL", "jdbc:postgresql://localhost:55433/volan_example");
+    var username = System.getenv().getOrDefault("DATABASE_USER", "volan");
+    var password = System.getenv().getOrDefault("DATABASE_PASSWORD", "volan");
+    try (var db = VolanClient.builder().url(url).username(username).password(password).build()) {
+        db.transaction(tx -> {
+            tx.rawExecute("""
+                CREATE TEMP TABLE "User" (
+                    "id" SERIAL PRIMARY KEY,
+                    "email" TEXT NOT NULL UNIQUE,
+                    "name" TEXT
+                ) ON COMMIT DROP
+                """);
+            var created = tx.getUser().create(data -> {
+                data.setEmail("alice@example.org");
+                data.setName("Alice");
+            });
+            var found = tx.getUser().findUnique(query ->
+                query.where(where -> where.getId().eq(created.getId())));
+            if (!created.equals(found)) {
+                throw new IllegalStateException("The saved user was not returned");
+            }
+            IO.println(found.getName() + ": " + found.getEmail());
+            IO.println("Users: " + tx.getUser().count());
+            return null;
+        });
+    }
+}
+```
+
+`getUser()` returns the model repository. The `data` callback fills a write form through setters; the `query` callback describes the read condition. Try-with-resources closes the client. This `Main.java` uses a compact Java 25 entry point and has no package declaration.
+
+</Tab>
+</Tabs>
+
+## Run and check the output
+
+From the project root on Linux/macOS:
+
+```bash
+./gradlew runKotlinExample
+./gradlew runJavaExample
+```
+
+On Windows:
+
+```powershell
+.\gradlew.bat runKotlinExample
+.\gradlew.bat runJavaExample
+```
+
+If the project has no wrapper yet, run the same tasks with an installed `gradle`. Run only the task for an entry point you added. The first build downloads dependencies and generates the client; later builds use Gradle's normal incremental behavior.
+
+Each run prints:
+
+```text
+Alice: alice@example.org
+Users: 1
+```
+
+The count is one because each transaction creates its own empty temporary table. ON COMMIT DROP removes that table at commit, so Kotlin and Java runs do not share rows. An exception causes transaction rollback.
+
+## Why CREATE TABLE is here
+
+Generation creates the API, not database tables. CREATE TEMP TABLE supplies a short-lived structure for this example. Queries use tx so they stay on the connection where the table exists.
+
+For persistent application tables, use reviewed [migrations](/v0.1.0-alpha.1/en/migrations) and a regular CREATE TABLE. Do not put this temporary-table scenario into a production startup. When finished, remove only the dedicated example container with `docker rm -f volan-alpha1-example`.
+
+## Keep going
+
+[Schema](/v0.1.0-alpha.1/en/schema) adds user posts and explains the foreign key. [Queries](/v0.1.0-alpha.1/en/queries) covers filtering, updates and pagination. For an existing database, [Schema sync](/v0.1.0-alpha.1/en/sync) explains introspection and reviewing a change plan.
