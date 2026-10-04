@@ -17,10 +17,10 @@
             "pages": [
               "en/introduction",
               "en/installation",
-              "en/schema",
-              "en/frameworks",
+              "en/quickstart",
               "en/build",
-              "en/quickstart"
+              "en/schema",
+              "en/frameworks"
             ]
           },
           {
@@ -38,8 +38,8 @@
             "pages": [
               "en/databases",
               "en/sync",
-              "en/production",
-              "en/migrations"
+              "en/migrations",
+              "en/production"
             ]
           },
           {
@@ -49,9 +49,9 @@
               "en/limitations",
               "en/errors",
               "en/examples",
+              "en/versions",
               "en/benchmarks",
-              "en/faq",
-              "en/versions"
+              "en/faq"
             ]
           }
         ]
@@ -66,39 +66,39 @@
               "ru/installation",
               "ru/quickstart",
               "ru/build",
-              "ru/frameworks",
-              "ru/schema"
-            ]
-          },
-          {
-            "group": "База данных",
-            "pages": [
-              "ru/migrations",
-              "ru/production",
-              "ru/databases",
-              "ru/sync"
-            ]
-          },
-          {
-            "group": "Справочник",
-            "pages": [
-              "ru/cli",
-              "ru/examples",
-              "ru/benchmarks",
-              "ru/errors",
-              "ru/limitations",
-              "ru/versions",
-              "ru/faq"
+              "ru/schema",
+              "ru/frameworks"
             ]
           },
           {
             "group": "API",
             "pages": [
-              "ru/async",
-              "ru/transactions",
+              "ru/queries",
               "ru/relations",
-              "ru/observability",
-              "ru/queries"
+              "ru/transactions",
+              "ru/async",
+              "ru/observability"
+            ]
+          },
+          {
+            "group": "База данных",
+            "pages": [
+              "ru/databases",
+              "ru/sync",
+              "ru/migrations",
+              "ru/production"
+            ]
+          },
+          {
+            "group": "Справочник",
+            "pages": [
+              "ru/limitations",
+              "ru/cli",
+              "ru/errors",
+              "ru/examples",
+              "ru/benchmarks",
+              "ru/versions",
+              "ru/faq"
             ]
           }
         ]
