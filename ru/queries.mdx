@@ -1,0 +1,57 @@
+---
+title: "Запросы"
+description: "Запросы — Volan"
+---
+
+Читай и изменяй записи через репозиторий каждой модели. Примеры используют [схему User/Post](/ru/schema) и подключённый клиент с созданными таблицами.
+
+## CRUD
+
+```kotlin
+val created = db.user.create { email = "alice@example.org"; name = "Alice" }
+val users = db.user.findMany {
+    where { email endsWith "@example.org" }
+    orderBy { id.asc() }
+    take = 20
+    skip = 0
+}
+db.user.update {
+    where { id eq created.id }
+    data { name = null }
+}
+val affected = db.user.updateMany {
+    where { name.isNull() }
+    data { name = "Unnamed" }
+}
+db.user.delete { where { id eq created.id } }
+```
+
+```java
+var users = db.getUser().findMany(q -> {
+    q.where(w -> w.getEmail().endsWith("@example.org"));
+    q.orderBy(o -> o.getId().asc());
+    q.setTake(20);
+});
+db.getUser().createMany(many -> {
+    many.row(d -> d.setEmail("one@example.org"));
+    many.row(d -> d.setEmail("two@example.org"));
+});
+```
+
+`findMany` возвращает список, `findFirst` и `findUnique` — nullable-запись. Варианты `OrThrow` выбрасывают `VolanNotFoundException`. `create`, `update` и `delete` возвращают запись; одиночная запись с неоднозначным совпадением нескольких строк запрещена. `createMany`, `updateMany`, `deleteMany` возвращают число затронутых строк. Bulk insert сохраняет defaults пропущенных полей и объединяет все batches одной транзакцией.
+
+`upsert { where { ... }; create { ... }; update { ... } }` использует find/create-or-update. Это не атомарный server upsert: конкурентные вставки могут столкнуться с unique constraint.
+
+## Фильтры
+
+Скалярные поля предоставляют `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `oneOf`, `notOneOf`. Для строк доступны `contains`, `startsWith`, `endsWith` и `ignoringCase()`. Nullable-поля поддерживают `isNull()`, `isNotNull()`. Условия группируются через `and`, `or`, `not`. В Java используются getters и методы: `w.getId().eq(1)`, `w.or(o -> { ...; })`.
+
+Значения передаются параметрами. В raw SQL передавай их списком parameters; не вставляй пользовательский ввод в SQL. Case conversion зависит от СУБД; встроенное преобразование SQLite работает с ASCII.
+
+## Пагинация
+
+`take` ограничивает результат, `skip` пропускает строки. Задавай стабильный порядок с уникальным полем для разрешения совпадений. `cursor(id = lastId)` обходит записи по первичному ключу и исключает строку курсора, если не задано `inclusive = true`. Для составного ключа нужны все части. Cursor вместе с явным `orderBy` пока запрещён; для такого порядка используй offset.
+
+## Агрегаты
+
+`count()` и `exists()` не загружают сущности. `aggregate { count(); sum { views }; average { views } }` возвращает агрегаты. `groupBy { by { authorId }; count(); having { count gt 1L } }` — сгруппированные значения. Чтение невыбранных полей вызывает исключение. [Связи](/ru/relations) объясняют частичные результаты.

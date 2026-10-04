@@ -24,7 +24,11 @@
           },
           {
             "group": "API",
-            "pages": []
+            "pages": [
+              "en/transactions",
+              "en/queries",
+              "en/relations"
+            ]
           },
           {
             "group": "Reference",
@@ -51,7 +55,11 @@
           },
           {
             "group": "API",
-            "pages": []
+            "pages": [
+              "ru/queries",
+              "ru/relations",
+              "ru/transactions"
+            ]
           },
           {
             "group": "База данных",

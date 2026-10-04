@@ -1,0 +1,30 @@
+---
+title: "Transactions"
+description: "Transactions — Volan"
+---
+
+Run related writes through a connected client's `transaction` callback.
+
+```kotlin
+val created = db.transaction { tx ->
+    val user = tx.user.create { email = "transaction@example.org" }
+    tx.post.create { title = "Welcome"; authorId = user.id }
+    user
+}
+```
+
+Java uses `db.transaction(tx -> { ...; return result; })`, or `transactionAsync(...).join()` outside another transaction.
+
+The complete callback uses one thread and connection. Returning normally commits; throwing rolls back. Nested synchronous transactions create savepoints. DDL rollback is a separate [database guarantee](/en/databases), not implied by DML transactions.
+
+## Isolation and retry
+
+`Isolation.DEFAULT` follows the driver. Explicit levels depend on the provider; SQLite supports SERIALIZABLE and READ_UNCOMMITTED. Use `RetryPolicy.NONE` by default. A configured retry repeats the entire outer callback for retryable transaction failures, so it must be safe to execute again. Keep payments, HTTP calls, messages and other irreversible side effects outside it.
+
+A connected transaction cannot dispatch async or coroutine work onto another thread. Use synchronous operations on `tx`. Do not return a future from the callback or launch child coroutines inside it.
+
+For coroutine access dispatch the entire `transaction` through [suspendQuery](/en/async). Its callback remains synchronous. Clients created over a bare QueryExecutor do not own connections or supply connected transaction guards.
+
+## Lifecycle
+
+Keep transactions short and close the client at application shutdown after outstanding work finishes. A supplied DataSource remains caller-owned. Do not assume Spring's `@Transactional` automatically joins Volan's thread-bound transaction.
