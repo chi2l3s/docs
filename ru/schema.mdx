@@ -1,0 +1,57 @@
+---
+title: "Схема"
+description: "Синтаксис схемы, ключи, типы и генерация клиента."
+---
+
+Опиши таблицы и генерацию клиента в `schema.volan`. Этот корректный пример SQLite используется на страницах API:
+```prisma
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "example.generated"
+  javaFriendly = true
+}
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+  posts Post[]
+}
+model Post {
+  id Int @id @default(autoincrement())
+  title String
+  views Int @default(0)
+  authorId Int
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+```
+
+## Поля и ключи
+
+`String` — обязательное поле, `String?` — nullable, `Post[]` — список связанных записей. Nullable-списки и вложенные списки запрещены. Скалярные типы: String, Int, Long, Float, Double, Decimal, Boolean, DateTime, Date, Time, Json, Bytes, Uuid. Хранение зависит от [СУБД](/ru/databases); SQLite не поддерживает Decimal и скалярные массивы.
+
+| Атрибут | Назначение |
+|---|---|
+| `@id`, `@@id([a,b])` | Простой или составной первичный ключ |
+| `@unique`, `@@unique([a,b])` | Уникальное ограничение |
+| `@@index([a,b])` | Индекс |
+| `@map("column")`, `@@map("table")` | Разные имена в клиенте и SQL |
+| `@default(...)` | Совместимый литерал, enum, now(), uuid(), autoincrement() |
+| `@updatedAt` | Timestamp, обновляемый runtime |
+| `@relation(...)` | Связь и внешний ключ |
+| `@@ignore` | Не генерировать клиент таблицы без подходящего ключа |
+
+Нужен ровно один первичный ключ, кроме ignored-моделей. Типы внешнего ключа и уникального ключа назначения должны совпадать. Для связи один к одному нужен уникальный внешний ключ. SetNull требует nullable-полей. Неявная связь многие ко многим задаётся парными списками без стороны с внешним ключом.
+
+Нативные типы `@db` доступны только для PostgreSQL. `@@fulltext` не добавляет типизированный поисковый API. Не называй скалярное поле `count` или ключевым словом Kotlin; выбери безопасный alias с mapping.
+
+## Генерация
+
+`volan init` создаёт схему, а не проект сборки. `volan validate` проверяет синтаксис и семантику, `volan generate` записывает Kotlin в `build/generated/volan` по умолчанию. Команды preview требуют совпадающий runtime alpha.3. Для alpha.2 используй [прямую генерацию](/ru/quickstart).
+
+Генерация не читает credentials и не подключается к БД. `env("DATABASE_URL")` разрешается, когда подключение нужно операции с базой. `//` и документация `///` сохраняются при форматировании; block comments запрещены. Атрибут поля пишется на строке этого поля.
+
+[Полная грамматика и коды диагностики](https://github.com/thirtyeighttwentysix/volan/blob/main/docs/schema-language.md).
