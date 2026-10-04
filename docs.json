@@ -16,33 +16,21 @@
             "group": "Start",
             "pages": [
               "en/introduction",
-              "en/build",
               "en/installation",
-              "en/quickstart",
               "en/schema",
-              "en/frameworks"
+              "en/frameworks",
+              "en/build",
+              "en/quickstart"
             ]
           },
           {
             "group": "API",
             "pages": [
-              "en/transactions",
               "en/queries",
               "en/relations",
+              "en/transactions",
               "en/async",
               "en/observability"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "en/limitations",
-              "en/cli",
-              "en/errors",
-              "en/examples",
-              "en/faq",
-              "en/versions",
-              "en/benchmarks"
             ]
           },
           {
@@ -50,8 +38,20 @@
             "pages": [
               "en/databases",
               "en/sync",
-              "en/migrations",
-              "en/production"
+              "en/production",
+              "en/migrations"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "en/cli",
+              "en/limitations",
+              "en/errors",
+              "en/examples",
+              "en/benchmarks",
+              "en/faq",
+              "en/versions"
             ]
           }
         ]
@@ -71,34 +71,34 @@
             ]
           },
           {
-            "group": "API",
-            "pages": [
-              "ru/queries",
-              "ru/relations",
-              "ru/transactions",
-              "ru/async",
-              "ru/observability"
-            ]
-          },
-          {
             "group": "База данных",
             "pages": [
-              "ru/sync",
-              "ru/databases",
               "ru/migrations",
-              "ru/production"
+              "ru/production",
+              "ru/databases",
+              "ru/sync"
             ]
           },
           {
             "group": "Справочник",
             "pages": [
               "ru/cli",
-              "ru/limitations",
-              "ru/errors",
               "ru/examples",
-              "ru/faq",
+              "ru/benchmarks",
+              "ru/errors",
+              "ru/limitations",
               "ru/versions",
-              "ru/benchmarks"
+              "ru/faq"
+            ]
+          },
+          {
+            "group": "API",
+            "pages": [
+              "ru/async",
+              "ru/transactions",
+              "ru/relations",
+              "ru/observability",
+              "ru/queries"
             ]
           }
         ]
@@ -127,5 +127,17 @@
   "description": "Volan JVM ORM documentation: installation, schema, Kotlin and Java queries, migrations and database guarantees. Документация на русском и английском.",
   "appearance": {
     "default": "system"
-  }
+  },
+  "redirects": [
+    {
+      "source": "/index",
+      "destination": "/en/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/quickstart",
+      "destination": "/en/quickstart",
+      "permanent": true
+    }
+  ]
 }
