@@ -1,0 +1,21 @@
+# First query
+
+This project uses published Volan `0.1.0-alpha.2` libraries and the matching generator. It creates a temporary SQLite database, saves Alice, reads the record by ID and closes the client.
+
+Use JDK 25. From this directory, run either entry point:
+
+```bash
+./gradlew runKotlinExample
+./gradlew runJavaExample
+```
+
+On Windows, use `gradlew.bat`. Each run prints:
+
+```text
+Alice: alice@example.org
+Users: 1
+```
+
+The in-memory database is discarded after the run. For persistent data, configure a file or server database and apply migrations separately.
+
+Read the complete guide in [Russian](https://volan.mintlify.app/ru/quickstart) or [English](https://volan.mintlify.app/en/quickstart).

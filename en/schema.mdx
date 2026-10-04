@@ -1,9 +1,12 @@
 ---
 title: "Schema"
-description: "Describe tables and client generation in schema.volan."
+description: "Describe the models, keys and relations used to generate your client."
 ---
 
-Describe tables and client generation in `schema.volan`. This valid SQLite example is used by the API pages:
+`schema.volan` answers a few concrete questions: which records your application stores, which fields are required, what makes a record unique and how models relate to each other. Volan generates its read and write API from that description.
+
+In the schema below, a user can have many posts and every post has one required author. [Queries](/en/queries), [Relations](/en/relations) and [Transactions](/en/transactions) use this model. When extending the first quickstart, add `Post`, regenerate the client and update the database structure.
+
 ```prisma
 datasource db {
   provider = "sqlite"
@@ -11,7 +14,7 @@ datasource db {
 }
 generator client {
   provider = "volan-kotlin"
-  package = "example.generated"
+  package = "org.example.generated"
   javaFriendly = true
 }
 model User {
@@ -55,3 +58,21 @@ Exactly one primary key is required unless ignored. Foreign key types and refere
 Generation does not read datasource credentials or connect. `env("DATABASE_URL")` is resolved when a database operation needs it. `//` comments and `///` documentation survive formatting; block comments are invalid. Field attributes belong on the field's line.
 
 [Full syntax, diagnostics and grammar](https://github.com/thirtyeighttwentysix/volan/blob/main/docs/schema-language.md).
+
+## Why a relation has two fields
+
+In `Post`, `authorId` is the scalar foreign key stored in the table. `author` describes the relation in the client API. On the user side, `posts` is the inverse list; it does not become a column in the `User` table.
+
+`fields: [authorId]` identifies the foreign key and `references: [id]` identifies the author's unique target field. With `onDelete: Cascade`, the database foreign key deletes a user's posts when that user is deleted. Choose that behavior to match application rules; keeping posts after user deletion requires a different relation model.
+
+## Required, nullable and defaulted
+
+`email String` has no default, so creating a user requires an email. `name String?` permits SQL NULL. Omitting `views Int @default(0)` lets the database default supply zero. In an update form, leaving a field unassigned means keeping its current value; assigning `name = null` explicitly clears it.
+
+A default is not a business rule. An initial `views = 0` does not prevent an application from writing a negative value. Application validation and database constraints complement the schema types.
+
+## Client and database names
+
+Mapping lets application code use readable names while an existing database keeps its SQL names. `@map` maps a column and `@@map` maps a table; Kotlin and Java use the model names. It also provides a safe alias when a database name conflicts with a generated API name.
+
+Renaming a schema field does not prove that the database needs a rename operation. A sync plan may see a drop followed by an add. To preserve data, prepare and review an explicit SQL rename migration.

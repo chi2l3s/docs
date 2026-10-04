@@ -1,9 +1,11 @@
 ---
 title: "CLI"
-description: "Use the CLI for schema files, generation and explicit database synchronization."
+description: "Validate and format schemas, generate clients and run explicit database operations."
 ---
 
-Use the CLI for schema files, generation and explicit database synchronization. Java 17+ is required. [Install the CLI](/en/installation) and check [version compatibility](/en/versions).
+Use the CLI when schema work should be a separate, inspectable step: before a commit, in CI or while connecting an existing database. It reads `schema.volan`, reports diagnostics and performs the operation you request.
+
+It needs Java 17+. [Install it](/en/installation), then check [generator compatibility](/en/versions). The current preview generates the alpha.3 API and cannot replace the generator in an alpha.2 application build.
 
 ```bash
 volan --help
@@ -31,3 +33,21 @@ Format checks syntax; validate also checks semantics. `--check` and `--stdout` a
 Database URL must use JDBC syntax; URL/provider consistency matters. DATABASE_USER and DATABASE_PASSWORD supply server credentials. Never put real secrets in schema or command examples. `--resolve` and `--dry-run` cannot be combined.
 
 Read [Schema sync](/en/sync) and [Migrations](/en/migrations) before applying changes. There are no migrate, studio, self-update or native-image CLI commands. init does not create a Gradle or Maven project.
+
+## A regular schema workflow
+
+After changing a model, run `validate`: formatted text can still contain an invalid relation or key. Run `format --check` to verify shared formatting before a commit. Both commands can run without a database connection.
+
+Generation updates the client API and compilation checks its uses. If generation is wired into the build, a separate manual `generate` is usually unnecessary. Database changes are another step: inspect a plan or dry-run, then apply reviewed changes.
+
+## Commands in CI
+
+`format --check` leaves the file unchanged and exits unsuccessfully when formatting differs, making it useful as a check. `--stdout` prints formatting or pull output for inspection or external saving; it cannot be combined with `--check`.
+
+Pin the CLI or codegen version alongside the runtime for generation. Updating a system executable then cannot unexpectedly change a build's generated API. Schema checks and compilation need no credentials; only commands that access the database need them.
+
+## Explicit paths and database targets
+
+Paths are resolved from the current directory. Pass `--schema` explicitly when running elsewhere and check the output location. SQLite JDBC file paths are relative too. Before push, verify that the command points at the intended development database.
+
+SQL plans and recovery are explicit database operations, described in [Schema sync](/en/sync) and [Migrations](/en/migrations).

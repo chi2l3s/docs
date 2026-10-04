@@ -1,9 +1,12 @@
 ---
 title: "Errors"
-description: "Errors — Volan"
+description: "Locate a failure at the right stage: schema, generation, connection or query."
 ---
 
-Handle failures at the application boundary without exposing SQL or secrets to HTTP clients.
+Volan failures usually belong to a specific stage. Schema diagnostics appear before generation; compilation failures can indicate a client/runtime mismatch; connection failures concern configuration; constraint exceptions concern data or database state.
+
+Identify the failing stage first. That is faster than changing schema, driver and URL at once. Return an application-level HTTP response and keep the detailed cause in diagnostics.
+
 | Exception | Action |
 |---|---|
 | VolanConfigurationException | Check JDBC URL, dialect JAR and driver |
@@ -27,3 +30,21 @@ If generated code fails unexpectedly, first align generator/runtime/plugin versi
 Java async failures arrive through CompletionException/ExecutionException; inspect the cause. Distinguish a business conflict from a transient connection or retryable transaction failure. Avoid retrying every exception blindly.
 
 Migration edited/missing/unfinished history is a deployment stop, not an ordinary transient query failure. Follow [recovery](/en/migrations).
+
+## Missing rows and write conflicts
+
+`findUnique` can return null without an error: no row matched. `findUniqueOrThrow` turns that state into `VolanNotFoundException`. Choose based on the operation's meaning and handle absence once at the service boundary.
+
+For `VolanUniqueConstraintException`, inspect the business key and concurrent writes. An `exists` check cannot prevent another transaction from inserting between the check and create. The database constraint remains the final uniqueness check, and the application must explain that conflict.
+
+## Result access failures
+
+`VolanRelationNotLoadedException` means code accessed a relation the query did not load. `VolanFieldNotSelectedException` means it accessed an omitted projection field. Fix the query shape or DTO fields rather than blindly repeating the query.
+
+For `VolanMappingException`, compare field types and actual data. An enum value absent from the schema or time text written by manual SQL in an incompatible format can cause mapping to fail. Capture a minimal example with the schema, operation and appropriately redacted data.
+
+## Check connections in order
+
+Verify the JDBC URL, provider, dialect module and driver, then server availability and credentials. For SQLite, check the absolute file path and working directory. A missing-table error calls for verifying that migrations ran against this same database.
+
+Do not retry every exception. A wrong field, unloaded relation or invalid schema will not improve with another query. For temporary write failures, consider whether the previous attempt may already have completed and inspect state by a business key when necessary.

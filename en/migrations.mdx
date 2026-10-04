@@ -1,9 +1,11 @@
 ---
 title: "Migrations"
-description: "Deploy reviewed SQL files through Migrator and keep their checksums in the database."
+description: "Update database structure with reviewed SQL files and a recorded application history."
 ---
 
-Deploy reviewed SQL files through Migrator and keep their checksums in the database. There is no `volan migrate` CLI command. Use the library's `volan-migrate`, matching the runtime version.
+A migration ties a model change to concrete SQL your team can review, commit and apply during deployment. With existing data, adding a field or changing a key must account for stored rows as well as the new schema.
+
+`Migrator` reads migration directories, checks the recorded history and applies new files. Its API needs `volan-migrate` on the runtime version. There is currently no `volan migrate` CLI command.
 
 ## Create and apply
 
@@ -73,3 +75,25 @@ volan db push --schema schema.volan --url jdbc:h2:file:./data --resolve
 Reserve `_volan_push` and `_volan_migrations`. Push interlocks with the default versioned journal; custom journal users must coordinate unfinished states themselves. Nontransactional scripts must not change session, transaction, schema/database or locking state, directly or through routines. Executable MySQL/MariaDB version comments are refused.
 
 [Detailed script restrictions and recovery](https://github.com/thirtyeighttwentysix/volan/blob/main/docs/migrations.md).
+
+## Change a database with existing rows
+
+Consider a user table that already contains rows and a new required field. Adding NOT NULL without a suitable default can fail because the database has no value for existing users. Decide how to populate old rows, then prepare SQL and verify the result.
+
+For a column rename, do not rely on schema comparison inferring the intent: it may look like a drop and an add. Test the migration against the previous structure with representative data. An empty database does not reveal every transition problem.
+
+## Why the file stays unchanged
+
+A checksum links the journal entry to migration text. Editing a file after it ran in one environment can produce different structures under the same identifier. Usually, fix an applied migration with a new file and keep the original in history.
+
+`edited` means local text differs from the applied file; `missing` means an applied file is absent from the directory; `unfinished` requires inspecting an interrupted run. Do not hide these states by deleting journal entries. Establish how history and actual database state differ first.
+
+## Plan deployment
+
+Run migrations on a dedicated connection before starting code that needs the new structure. For multiple application instances, choose who applies them. A dedicated deployment task is often easier to control than concurrent migration attempts during every instance startup.
+
+A lock coordinates Volan writers within the documented scope. It does not prevent manual DDL from another tool. Coordinate team and process activity during complex changes. For H2/MySQL/MariaDB, allow time to inspect partial progress and recover.
+
+## What markApplied means
+
+This operation records your assertion that the migration already reached its intended state. It neither executes skipped SQL nor proves table correctness. Use it only after checking actual structure and data against the original goal. Partial push uses a separate `resolvePush` operation that checks structure and target fingerprint; the two mechanisms solve different problems.

@@ -1,9 +1,11 @@
 ---
 title: "Databases"
-description: "Choose a provider using its storage and DDL guarantees."
+description: "Compare type storage, queries and migration behavior across providers."
 ---
 
-Choose a provider using its storage and DDL guarantees. Alpha.2 supports PostgreSQL/SQLite; the other providers require [matching alpha.3 artifacts](/en/build).
+The same client model does not imply identical storage across databases. Providers differ in types, time precision, arrays, distinct queries and DDL behavior. Those differences matter when designing a schema and when moving an application between providers.
+
+Alpha.2 supports PostgreSQL and SQLite. H2, MySQL and MariaDB require [alpha.3 artifacts from source](/en/build). The table below describes implemented capabilities within those version boundaries.
 
 | Capability | PostgreSQL | SQLite | H2 | MySQL/MariaDB |
 |---|---|---|---|---|
@@ -43,3 +45,21 @@ MySQL/MariaDB use InnoDB, utf8mb4_bin, UTC and strict session settings. String a
 Readers preserve only representable database shapes and reject unsupported definitions. Views, triggers, custom collations, generated columns, unsupported indexes and cross-schema/database relations can prevent pull/plan/push. Preserve the original schema for enum declarations, generator configuration, aliases and updatedAt.
 
 [Full provider storage and catalogue restrictions](https://github.com/thirtyeighttwentysix/volan/blob/main/docs/dialects.md). [DDL recovery](/en/migrations).
+
+## Match the provider and URL
+
+The schema provider selects type validation and database structure rules. A connected client selects its runtime dialect from the JDBC URL and installed modules. A SQLite schema and a PostgreSQL URL are not a portable configuration; choose one consistent provider and verify it against the target database.
+
+An external DataSource manages connections itself. The URL is still needed for dialect selection. Built-in SQLite pool behavior does not apply automatically to another pool: private in-memory database lifetime and connection counts depend on that DataSource.
+
+## Verify types with real values
+
+Money needs precision, beyond a field that compiles. SQLite does not support Volan Decimal; use an integer in the smallest monetary unit and define its scale explicitly. When moving timestamps, account for MySQL/MariaDB storing microseconds rather than all nine fractional digits.
+
+Hand-written SQL must follow storage conventions too. Arbitrary date text can satisfy SQLite storage affinity but fail to map to the expected client type. A mapping error calls for inspecting the stored value and schema, not only the driver.
+
+## Test and deployment databases
+
+H2 or SQLite can provide quick local feedback, but a passing test does not prove PostgreSQL/MySQL behavior. Test string filters, defaults, foreign keys, precision and migration SQL against the deployment provider. DDL is especially different: PostgreSQL/SQLite rollback guarantees do not carry over to H2/MySQL/MariaDB.
+
+Strict introspection stops at structures Volan cannot represent without loss. That avoids presenting an incomplete schema as a complete database description. When a reader refuses a structure, inspect it and decide whether to simplify it or manage that part through a separate SQL process.

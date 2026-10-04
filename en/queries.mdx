@@ -1,9 +1,11 @@
 ---
 title: "Queries"
-description: "Read and write through the repository generated for each model."
+description: "Create and update records, filter rows and control how much a query returns."
 ---
 
-Read and write through the repository generated for each model. Examples use the [User/Post schema](/en/schema) and an initialized connected client.
+Start with the model repository: `db.user` in Kotlin or `db.getUser()` in Java. A repository takes an operation description, builds SQL and returns records, projections or a row count. Ordinary operations do not require assembling column names as strings.
+
+These examples use the [User/Post schema](/en/schema). `db` is an open client and the tables must already exist. The blocks show operations inside an application; [First query](/en/quickstart) covers the complete connection and table setup.
 
 ## CRUD
 
@@ -55,3 +57,25 @@ Values are bound parameters. For raw SQL, bind values in the parameters list; ne
 ## Summaries
 
 `count()` and `exists()` do not load entities. `aggregate { count(); sum { views }; average { views } }` returns summaries. `groupBy { by { authorId }; count(); having { count gt 1L } }` returns grouped values. Reading fields not selected/grouped throws. [Projections and relations](/en/relations) explain partial results.
+
+## Choose a read method
+
+Use `findUnique` when you have a primary or unique key, such as a user's `id`. Use `findFirst` when several rows can match and your application wants the first one; set an order so that “first” has a defined meaning. `findMany` returns a list, including an empty list when no rows match.
+
+A nullable result lets you handle a missing user as part of normal application behavior: return 404, offer registration or continue without the record. An `OrThrow` variant suits an internal operation that requires the row to exist. Avoid treating an expected missing record as an exceptional failure.
+
+## Follow the CRUD example
+
+The example creates Alice, reads users with the selected email suffix, orders by `id` and limits the page to twenty rows. The update clears only that user's name. `updateMany` then changes NULL names to `Unnamed` and returns the affected count. The delete addresses the created user by `id` again.
+
+A write filter defines its scope. Before a bulk update or delete, check how many rows match and which authorization conditions are needed. Add tenant and soft-delete conditions to `where` explicitly; the runtime does not supply them for your application.
+
+## Order and page size
+
+`take` prevents an unbounded read but does not make its order stable. When ordering by a non-unique field, use a unique key to break ties. Otherwise, adjacent pages can overlap or miss rows.
+
+Offset works well for straightforward numbered pages, but large `skip` values still make the database process skipped rows. Cursor pagination traverses the primary key; the current API cannot combine it with an arbitrary `orderBy`. Choose pagination around the order you need, as well as the UI.
+
+## When you do not need entities
+
+Use `exists` to check for a match and `count` to count rows. Select a projection when an HTTP response only needs emails. Aggregates calculate on the database side, so the application does not have to load every post to total its views. Relation filters likewise do not load the relation itself.
