@@ -1,0 +1,57 @@
+---
+title: "Schema"
+description: "Describe tables and client generation in schema.volan. This valid SQLite example is used by the API pages:"
+---
+
+Describe tables and client generation in `schema.volan`. This valid SQLite example is used by the API pages:
+```prisma
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "example.generated"
+  javaFriendly = true
+}
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+  posts Post[]
+}
+model Post {
+  id Int @id @default(autoincrement())
+  title String
+  views Int @default(0)
+  authorId Int
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+```
+
+## Fields and keys
+
+`String` is required, `String?` nullable, `Post[]` a relation list. Optional lists and nested lists are invalid. Scalars: String, Int, Long, Float, Double, Decimal, Boolean, DateTime, Date, Time, Json, Bytes, Uuid. Supported storage depends on [database](/en/databases); SQLite rejects Decimal and scalar arrays.
+
+| Attribute | Purpose |
+|---|---|
+| `@id`, `@@id([a,b])` | Single or composite primary key |
+| `@unique`, `@@unique([a,b])` | Unique constraint |
+| `@@index([a,b])` | Index |
+| `@map("column")`, `@@map("table")` | Keep client names separate from SQL names |
+| `@default(...)` | Compatible literal, enum, now(), uuid(), autoincrement() |
+| `@updatedAt` | Runtime-maintained timestamp |
+| `@relation(...)` | Relation and foreign key |
+| `@@ignore` | Omit client for a table without a usable key |
+
+Exactly one primary key is required unless ignored. Foreign key types and referenced unique keys must match. One-to-one foreign keys need a unique constraint. SetNull needs nullable foreign keys. Implicit many-to-many uses paired lists without an owning foreign key.
+
+`@db` native overrides are PostgreSQL-specific. `@@fulltext` does not provide a typed full-text query API. Do not use a scalar named `count` or Kotlin keywords as field names; map a safe alias instead.
+
+## Generation
+
+`volan init` creates this kind of schema, not a build project. `volan validate` checks syntax and semantics; `volan generate` emits Kotlin into `build/generated/volan` by default. These preview commands require matching alpha.3 runtime. Alpha.2 uses [direct generation](/en/quickstart).
+
+Generation does not read datasource credentials or connect. `env("DATABASE_URL")` is resolved when a database operation needs it. `//` comments and `///` documentation survive formatting; block comments are invalid. Field attributes belong on the field's line.
+
+[Full syntax, diagnostics and grammar](https://github.com/thirtyeighttwentysix/volan/blob/main/docs/schema-language.md).

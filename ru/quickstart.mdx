@@ -1,0 +1,153 @@
+---
+title: "Первый запрос"
+description: "Создай таблицу SQLite и выполни запрос с опубликованными библиотеками alpha.2. Нужны Java 17+ и Gradle 9.8.0 либо Gradle wrapper репозитория. Docker и CLI не нужны."
+---
+
+Создай таблицу SQLite и выполни запрос с опубликованными библиотеками alpha.2. Нужны Java 17+ и Gradle 9.8.0 либо Gradle wrapper репозитория. Docker и CLI не нужны.
+
+## Файлы
+
+Создай пустой проект. В `settings.gradle.kts` запиши `rootProject.name = "volan-first-query"`. Добавь `schema.volan`:
+```prisma
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "example.generated"
+  javaFriendly = true
+}
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+}
+```
+
+Добавь `build.gradle.kts`. Alpha.2 использует прямой вызов генератора; build plugins для неё недоступны:
+```kotlin
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins { kotlin("jvm") version "2.4.20" }
+repositories { mavenCentral() }
+val generator = sourceSets.create("generator")
+val generated = layout.buildDirectory.dir("generated/volan")
+dependencies {
+    add(generator.implementationConfigurationName,
+        "io.github.thirtyeighttwentysix:volan-codegen:0.1.0-alpha.2")
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:0.1.0-alpha.2"))
+    implementation("io.github.thirtyeighttwentysix:volan-runtime")
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-sqlite")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.53.4.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
+}
+val generateClient = tasks.register<JavaExec>("generateClient") {
+    classpath = generator.runtimeClasspath
+    mainClass.set("example.GenerateClient")
+    inputs.file("schema.volan")
+    outputs.dir(generated)
+    args(layout.projectDirectory.file("schema.volan").asFile.absolutePath,
+         generated.get().asFile.absolutePath)
+}
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        freeCompilerArgs.add("-Xemit-jvm-type-annotations")
+    }
+    sourceSets.main { kotlin.srcDir(generated) }
+}
+tasks.named("compileKotlin") { dependsOn(generateClient) }
+tasks.withType<JavaCompile>().configureEach { options.release.set(17) }
+tasks.test { useJUnitPlatform() }
+```
+
+Добавь `src/generator/java/example/GenerateClient.java`:
+```java
+package example;
+
+import io.github.thirtyeighttwentysix.volan.codegen.VolanGenerator;
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader;
+import io.github.thirtyeighttwentysix.volan.schema.SourceFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class GenerateClient {
+    public static void main(String[] args) throws Exception {
+        var source = new SourceFile("schema.volan", Files.readString(Path.of(args[0])));
+        VolanGenerator.writeTo(SchemaLoader.loadOrThrow(source), Path.of(args[1]));
+    }
+}
+```
+
+## Kotlin
+
+Добавь `src/test/kotlin/example/KotlinTest.kt`:
+```kotlin
+package example
+
+import example.generated.VolanClient
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+
+class KotlinTest {
+    @Test fun firstQuery() {
+        VolanClient.builder().url("jdbc:sqlite::memory:").build().use { db ->
+            db.rawExecute("""CREATE TABLE "User" (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "email" TEXT NOT NULL UNIQUE,
+                "name" TEXT
+            )""")
+            val created = db.user.create {
+                email = "kotlin@example.org"
+                name = "Kotlin"
+            }
+            val found = db.user.findUnique { where { id eq created.id } }
+            assertEquals(created, found)
+            println(found?.email)
+        }
+    }
+}
+```
+
+## Java
+
+Добавь `src/test/java/example/JavaTest.java`:
+```java
+package example;
+
+import example.generated.VolanClient;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class JavaTest {
+    @Test void firstQuery() {
+        try (var db = VolanClient.builder().url("jdbc:sqlite::memory:").build()) {
+            db.rawExecute("""
+                CREATE TABLE "User" (
+                    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                    "email" TEXT NOT NULL UNIQUE,
+                    "name" TEXT
+                )
+                """);
+            var created = db.getUser().create(d -> {
+                d.setEmail("java@example.org");
+                d.setName("Java");
+            });
+            var found = db.getUser().findUnique(q ->
+                q.where(w -> w.getId().eq(created.getId())));
+            assertEquals(created, found);
+            System.out.println(found.getEmail());
+        }
+    }
+}
+```
+
+## Запуск
+
+Выполни `gradle test` либо `./gradlew -p /path/to/project test` через wrapper репозитория. На Windows используется `.\gradlew.bat`. Оба теста должны пройти. Они явно создают таблицы, добавляют строку, читают её по id и проверяют равенство. Email: `kotlin@example.org` и `java@example.org`; Gradle может сохранять вывод в отчёт тестов.
+
+Каждый тест создаёт отдельный клиент для SQLite в памяти и закрывает его. Встроенный пул SQLite сохраняет одно соединение: таблица доступна между операциями этого клиента. Закрытие клиента уничтожает эту приватную БД.
+
+Генерация читает схему и записывает Kotlin-файлы, не подключаясь к БД и не создавая таблицы. Для файловой БД используй `jdbc:sqlite:./data.db` и однократно создай структуру через [Миграции](/ru/migrations). Не выполняй этот CREATE TABLE при каждом запуске приложения.
