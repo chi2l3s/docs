@@ -1,0 +1,37 @@
+---
+title: "Observability"
+description: "Observe physical statements with QueryInterceptor; add Micrometer only when needed."
+---
+
+Observe physical statements with `QueryInterceptor`; add Micrometer only when needed. Both features require alpha.3, aligned with runtime through [staged artifacts](/en/build). The synchronous core has no coroutine or Micrometer dependencies.
+
+## Interceptors
+
+Implement `QueryInterceptor.intercept(query: QueryContext, next: Supplier<T>): T`. Register through `VolanClient.builder().interceptor(interceptor)`. Interceptors must be thread-safe and call `next.get()` exactly once on the same thread. First registered is outermost; duplicate or cross-thread downstream execution is refused.
+
+Hooks wrap pool checkout, preparation, binding, execution, mapping and cleanup for generated queries, raw SQL, relation reads and nested writes. Pool validation, dialect initialization, transaction-control SQL and migration commands executed directly through JDBC are outside them.
+
+QueryContext contains SQL, QUERY/EXECUTE operation and dialect; it contains no bound values. Caller-written SQL literals may still contain sensitive data. Avoid logging credentials or unredacted SQL. An interceptor failure propagates and can roll back an enclosing transaction; it cannot undo an autocommit write already completed. These hooks do not add tenant or soft-delete predicates.
+
+## Micrometer
+
+Add `io.github.thirtyeighttwentysix:volan-micrometer` and provide a MeterRegistry:
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.micrometer.MicrometerQueryInterceptor
+
+val db = VolanClient.builder()
+    .url(url)
+    .interceptor(MicrometerQueryInterceptor(registry))
+    .build()
+```
+
+The `volan.query` timer measures attempted statements, including checkout and mapping.
+
+| Tag | Values |
+|---|---|
+| dialect | Provider id |
+| operation | query, execute |
+| outcome | success, error, cancelled |
+
+No SQL, parameter values or exception messages are metric labels. An include contributes one sample per statement; a successful statement later rolled back remains a successful statement sample. Registry/exporter lifecycle belongs to the application; Volan does not close them.

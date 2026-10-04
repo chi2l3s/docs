@@ -1,0 +1,22 @@
+---
+title: "Versions"
+description: "Keep generated API, runtime and plugins on the same library version."
+---
+
+Keep generated API, runtime and plugins on the same library version. Availability was verified against Maven Central metadata and GitHub releases on 4 October 2026.
+
+| Version | Distribution | Scope |
+|---|---|---|
+| 0.1.0-alpha.1 | Central, GitHub library release | PostgreSQL |
+| 0.1.0-alpha.2 | Latest Central library release | PostgreSQL and SQLite |
+| cli-v0.1.0-alpha.3-preview.1 | GitHub CLI release | Separate executable preview |
+| 0.1.0-alpha.3-SNAPSHOT | Main source default | Development libraries/plugins |
+| 0.1.0-alpha.3 local candidate | Staged Maven repository | Local verification, not Central |
+
+[Central metadata](https://repo.maven.apache.org/maven2/io/github/thirtyeighttwentysix/volan-runtime/maven-metadata.xml), [alpha.2 notes](https://github.com/thirtyeighttwentysix/volan/releases/tag/v0.1.0-alpha.2), [CLI release](https://github.com/thirtyeighttwentysix/volan/releases/tag/cli-v0.1.0-alpha.3-preview.1).
+
+The CLI preview includes generation targeting alpha.3. Do not pair that output with alpha.2 runtime. Alpha.2 direct generation is shown in [First query](/en/quickstart); alpha.3 generation/plugins need [staging](/en/build).
+
+A CLI installation/update does not update application dependencies. Library alpha.1/alpha.2 releases do not include CLI install archives. No alpha.3 library release is published at this verification point.
+
+Before upgrading, read release notes, regenerate, compile Kotlin and Java consumers, test on the target database and review migration SQL. Alpha versions can change API. M11 documentation and examples precede M12 benchmarks/extensions and 1.0; milestone completion is not a library artifact version.

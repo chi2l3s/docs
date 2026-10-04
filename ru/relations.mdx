@@ -1,0 +1,45 @@
+---
+title: "Связи"
+description: "Загружай связи явно через include, а отдельные колонки — через projectMany / projectFirst."
+---
+
+Загружай связи явно через `include`, а отдельные колонки — через `projectMany` / `projectFirst`. Примеры используют [схему](/ru/schema).
+
+```kotlin
+val loaded = db.user.findMany {
+    include { posts { orderBy { id.asc() } } }
+}
+val titles = loaded.flatMap { it.posts }.map { it.title }
+
+val emails = db.user.projectMany { select { email } }.map { it.email }
+
+val author = db.user.create {
+    email = "author@example.org"
+    posts.create { title = "First" }
+}
+db.user.count { where { posts { some { views gt 0 } } } }
+```
+
+Java: `q.include(i -> i.posts())`, `q.select(s -> s.email())`, `data.getPosts().create(post -> post.setTitle("First"))`.
+
+## Загруженные поля
+
+Чтение связи без include вызывает `VolanRelationNotLoadedException`. Загруженная nullable-связь может быть null, список — пустым. Это отличается от незагруженной связи. Проекция использует один сгенерированный `UserProjection`, а не отдельный класс для каждой комбинации колонок. Чтение пропущенной колонки вызывает `VolanFieldNotSelectedException`.
+
+`select` и `include` задают разные формы результата; не объединяй проекцию и загрузку связей в одном запросе. Для HTTP явно создавай DTO: reflection-based сериализатор может обратиться к незагруженным getters.
+
+## Число запросов
+
+Loader собирает ключи родителей и читает связанные записи batches. Прямая связь использует один statement на batch ключей; неявная many-to-many дополнительно читает пары join table и затем целевые строки. Вложенные includes повторяют это для каждой запрошенной связи.
+
+Это устраняет запрос на каждого родителя. Один дополнительный statement для любого размера результата не гарантируется: chunks ключей, ветви и глубина увеличивают число запросов. Текущий предел — 500 ключей родителей, дополнительно ограниченный числом параметров диалекта.
+
+`take` / `skip` внутри include применяются к batch связанного запроса; не считай это контрактом top-N для каждого родителя. Ограничивай страницу родителей и запрашивай детей явно, когда нужен отдельный лимит на каждого.
+
+## Фильтры и запись
+
+Фильтры to-many: `some`, `every`, `none`; to-one: `matches` / `notMatches`. Они фильтруют строки, не загружая связи автоматически.
+
+Вложенные операции `create` и `update` выполняются транзакционно; connect/disconnect и связанные записи доступны в поддерживаемых сгенерированных формах. Вложенность update глубже одного уровня связей и удаление owning-side required relation ограничены. Более глубокая запись должна знать остальные обязательные ключи. См. [Ограничения](/ru/limitations).
+
+SQLite/MySQL/MariaDB требуют выбрать ровно distinct-колонки: `projectMany { select { email }; distinct { email } }` либо groupBy. PostgreSQL/H2 также поддерживают distinct с выбором представляющей строки.

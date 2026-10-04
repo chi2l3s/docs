@@ -1,0 +1,33 @@
+---
+title: "CLI"
+description: "Use the CLI for schema files, generation and explicit database synchronization."
+---
+
+Use the CLI for schema files, generation and explicit database synchronization. Java 17+ is required. [Install the CLI](/en/installation) and check [version compatibility](/en/versions).
+
+```bash
+volan --help
+volan init --provider sqlite --package example.generated --java-friendly
+volan validate --schema schema.volan
+volan format --schema schema.volan --check
+volan generate --schema schema.volan --output build/generated/volan
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db --dry-run
+volan db pull --url jdbc:sqlite:./data.db --stdout
+```
+
+| Command | Options | Result |
+|---|---|---|
+| init | --schema, --provider, --package, --java-friendly | Create schema; refuse overwrite |
+| validate | --schema | Syntax and semantic diagnostics |
+| format | --schema, --check, --stdout | Format, compare or print |
+| generate | --schema, --output | Generated Kotlin and ownership manifest |
+| db pull | --schema, --url, --stdout, --force | Introspect database |
+| db push | --schema, --url, --dry-run, --accept-data-loss, --resolve | Plan, apply or verify repaired push |
+
+Defaults: schema path `schema.volan`, init provider `postgresql`, package `com.example.volan`, Java callbacks disabled unless `--java-friendly`.
+
+Format checks syntax; validate also checks semantics. `--check` and `--stdout` are mutually exclusive. Format check exits nonzero on differences and changes no file. Generation resolves output relative to the current project directory, validates the schema and does not open a database.
+
+Database URL must use JDBC syntax; URL/provider consistency matters. DATABASE_USER and DATABASE_PASSWORD supply server credentials. Never put real secrets in schema or command examples. `--resolve` and `--dry-run` cannot be combined.
+
+Read [Schema sync](/en/sync) and [Migrations](/en/migrations) before applying changes. There are no migrate, studio, self-update or native-image CLI commands. init does not create a Gradle or Maven project.

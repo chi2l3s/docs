@@ -1,0 +1,22 @@
+---
+title: "Версии"
+description: "Используй одну версию generated API, runtime и plugins."
+---
+
+Используй одну версию generated API, runtime и plugins. Доступность сверена с Maven Central metadata и GitHub releases 4 октября 2026 года.
+
+| Версия | Поставка | Возможности |
+|---|---|---|
+| 0.1.0-alpha.1 | Central, GitHub library release | PostgreSQL |
+| 0.1.0-alpha.2 | Последний library release в Central | PostgreSQL и SQLite |
+| cli-v0.1.0-alpha.3-preview.1 | CLI release на GitHub | Отдельный executable preview |
+| 0.1.0-alpha.3-SNAPSHOT | Версия исходников main | Development libraries/plugins |
+| 0.1.0-alpha.3 local candidate | Локальный staged Maven repository | Проверка без публикации в Central |
+
+[Central metadata](https://repo.maven.apache.org/maven2/io/github/thirtyeighttwentysix/volan-runtime/maven-metadata.xml), [alpha.2 release notes](https://github.com/thirtyeighttwentysix/volan/releases/tag/v0.1.0-alpha.2), [CLI release](https://github.com/thirtyeighttwentysix/volan/releases/tag/cli-v0.1.0-alpha.3-preview.1).
+
+CLI preview генерирует код для alpha.3. Не используй его с runtime alpha.2. Прямая генерация alpha.2 показана на странице [Первый запрос](/ru/quickstart); alpha.3 generator/plugins требуют [staging](/ru/build).
+
+Установка или обновление CLI не меняет зависимости приложения. Library releases alpha.1/alpha.2 не содержат установочных CLI-архивов. На момент проверки библиотечная alpha.3 не опубликована.
+
+Перед обновлением прочитай release notes, повтори генерацию, скомпилируй Kotlin и Java consumers, проверь целевую БД и SQL миграций. Alpha API может меняться. M11 включает документацию и примеры, M12 — расширение benchmark и 1.0; завершённый milestone не обозначает версию artifact.

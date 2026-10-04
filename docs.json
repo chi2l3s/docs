@@ -1,72 +1,143 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Volan",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#315D78",
+    "light": "#45758F",
+    "dark": "#84ACC4"
   },
-  "favicon": "/favicon.svg",
   "navigation": {
-    "pages": [
+    "languages": [
       {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
+        "language": "en",
+        "groups": [
+          {
+            "group": "Start",
+            "pages": [
+              "en/introduction",
+              "en/installation",
+              "en/quickstart",
+              "en/build",
+              "en/schema",
+              "en/frameworks"
+            ]
+          },
+          {
+            "group": "API",
+            "pages": [
+              "en/queries",
+              "en/relations",
+              "en/transactions",
+              "en/async",
+              "en/observability"
+            ]
+          },
+          {
+            "group": "Database",
+            "pages": [
+              "en/databases",
+              "en/sync",
+              "en/migrations",
+              "en/production"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "en/cli",
+              "en/limitations",
+              "en/errors",
+              "en/examples",
+              "en/versions",
+              "en/benchmarks",
+              "en/faq"
+            ]
+          }
+        ]
+      },
+      {
+        "language": "ru",
+        "groups": [
+          {
+            "group": "Начало",
+            "pages": [
+              "ru/introduction",
+              "ru/installation",
+              "ru/quickstart",
+              "ru/build",
+              "ru/schema",
+              "ru/frameworks"
+            ]
+          },
+          {
+            "group": "API",
+            "pages": [
+              "ru/queries",
+              "ru/relations",
+              "ru/transactions",
+              "ru/async",
+              "ru/observability"
+            ]
+          },
+          {
+            "group": "База данных",
+            "pages": [
+              "ru/databases",
+              "ru/sync",
+              "ru/migrations",
+              "ru/production"
+            ]
+          },
+          {
+            "group": "Справочник",
+            "pages": [
+              "ru/cli",
+              "ru/limitations",
+              "ru/errors",
+              "ru/examples",
+              "ru/versions",
+              "ru/benchmarks",
+              "ru/faq"
+            ]
+          }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    ]
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:support@mintlify.com"
+        "href": "https://github.com/thirtyeighttwentysix/volan",
+        "label": "GitHub"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
-    }
+    ]
   },
   "contextual": {
     "options": [
       "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
+      "view"
     ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/thirtyeighttwentysix/volan"
     }
-  }
+  },
+  "description": "Volan JVM ORM documentation: installation, schema, Kotlin and Java queries, migrations and database guarantees. Документация на русском и английском.",
+  "appearance": {
+    "default": "system"
+  },
+  "redirects": [
+    {
+      "source": "/index",
+      "destination": "/en/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/quickstart",
+      "destination": "/en/quickstart",
+      "permanent": true
+    }
+  ]
 }

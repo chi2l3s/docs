@@ -1,0 +1,75 @@
+---
+title: "Migrations"
+description: "Deploy reviewed SQL files through Migrator and keep their checksums in the database."
+---
+
+Deploy reviewed SQL files through Migrator and keep their checksums in the database. There is no `volan migrate` CLI command. Use the library's `volan-migrate`, matching the runtime version.
+
+## Create and apply
+
+Use the schema and sync from [Schema sync](/en/sync); set `url = "jdbc:sqlite:./data.db"`. Plan against the database version preceding this migration, not one already changed by push.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.migrate.MigrationDirectory
+import io.github.thirtyeighttwentysix.volan.migrate.Migrator
+import java.nio.file.Path
+import java.time.Instant
+import java.sql.DriverManager
+
+val directory = MigrationDirectory(Path.of("migrations"))
+DriverManager.getConnection(url).use { connection ->
+    val plan = sync.plan(connection, schema)
+    if (!plan.isEmpty) {
+        println(plan.warnings)
+        directory.write(Instant.now(), "add_posts", plan.toSql(SqliteDialect))
+    }
+}
+// Review and commit migrations/*/migration.sql before deployment.
+DriverManager.getConnection(url).use { connection ->
+    Migrator(directory).apply(connection)
+}
+```
+
+Folders are `yyyyMMddHHmmss_description/migration.sql`. Names cannot overwrite existing migrations. SHA-256 checksums normalize CRLF to LF. Retain reviewed files unchanged after deployment.
+
+`Migrator.status(connection)` reports applied, pending, edited, missing and unfinished entries. Apply refuses inconsistent history. `markApplied(connection, migration)` records a reviewed existing baseline or completed repair; it executes no SQL and is not a structural verification.
+
+## PostgreSQL and SQLite
+
+Each file and journal entry commit together; failure rolls back. Dedicated connections must begin in auto-commit mode. PostgreSQL advisory locks serialize Volan writers in the current schema. SQLite uses BEGIN IMMEDIATE, rechecks history after acquiring the lock and checks foreign keys before commit. Table rebuilds retain surviving data and AUTOINCREMENT history. A required new column without a default can fail on populated tables.
+
+Scripts must not contain their own transaction control. PostgreSQL CREATE INDEX CONCURRENTLY is outside the transactional migrator. Adding an enum value and using it may require separate commits/migrations.
+
+## H2, MySQL, MariaDB
+
+These providers require alpha.3. DDL has implicit commit. H2 acquires exclusive mode; use a maintenance window, a dedicated administrator connection and no outstanding application transactions. MySQL/MariaDB acquire a database-specific named session lock, waiting up to 60 seconds. Locks coordinate Volan writers, not unrelated application SQL or other tools.
+
+The journal commits a start record, acknowledges each completed statement in `applied_steps`, then sets `finished_at`. Failure leaves committed steps and an unfinished record. Further apply stops; partial scripts are never replayed automatically. After a crash, the acknowledged count is only a lower bound: another statement may already have committed.
+
+## Recovery
+
+1. Stop competing schema/application writes. Retain the original SQL and checksum.
+2. Read status/journal and inspect the actual database. Compare with the intended final structure.
+3. Manually complete or repair the changes, or restore a consistent backup.
+4. Once the intended state exists, finish the original record:
+```kotlin
+val original = directory.read().single { it.id == failedMigrationId }
+DriverManager.getConnection(url).use { connection ->
+    val migrator = Migrator(directory)
+    migrator.markApplied(connection, original)
+    migrator.apply(connection)
+}
+```
+
+Do not edit a partially applied script or delete its journal to force replay. markApplied preserves original checksum, start and acknowledged progress; it trusts your repair.
+
+An unfinished push uses `_volan_push` and blocks push/versioned apply. Repair to the original target, then run:
+```bash
+volan db push --schema schema.volan --url jdbc:h2:file:./data --resolve
+```
+
+`sync.resolvePush(connection, originalSchema)` is the library equivalent. It checks the original target fingerprint and actual structure, performs no repair DDL and refuses a changed/incomplete target.
+
+Reserve `_volan_push` and `_volan_migrations`. Push interlocks with the default versioned journal; custom journal users must coordinate unfinished states themselves. Nontransactional scripts must not change session, transaction, schema/database or locking state, directly or through routines. Executable MySQL/MariaDB version comments are refused.
+
+[Detailed script restrictions and recovery](https://github.com/thirtyeighttwentysix/volan/blob/main/docs/migrations.md).

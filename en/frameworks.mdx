@@ -1,0 +1,75 @@
+---
+title: "Web frameworks"
+description: "Create one generated client per application and close it after in-flight database work finishes."
+---
+
+Create one generated client per application and close it after in-flight database work finishes. There is no Volan Spring Boot starter or Ktor plugin. Use ordinary framework lifecycle and the [build setup](/en/quickstart).
+
+## Spring Boot
+
+Register the generated client as a singleton bean. Add runtime, dialect and JDBC driver; run reviewed migrations before serving requests. In an existing Boot application:
+
+```java
+package example;
+
+import example.generated.VolanClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration(proxyBeanMethods = false)
+public class DatabaseConfig {
+    @Bean(destroyMethod = "close")
+    public VolanClient volanClient() {
+        return VolanClient.builder()
+            .url(System.getenv("DATABASE_URL"))
+            .username(System.getenv("DATABASE_USER"))
+            .password(System.getenv("DATABASE_PASSWORD"))
+            .build();
+    }
+}
+```
+
+Constructor-inject VolanClient into a service. A synchronous Spring MVC service can call `db.getUser().count()` on its request worker. For WebFlux, dispatch JDBC to a bounded worker executor; JDBC does not become reactive. Use Volan transaction callbacks; do not assume `@Transactional` automatically joins them.
+
+If Boot already owns a DataSource, use `.dataSource(dataSource).url(jdbcUrl)` to select the dialect. Volan leaves the supplied DataSource open; Boot owns its destruction. Avoid inadvertently creating a second pool. [Spring bean lifecycle](https://docs.spring.io/spring-framework/reference/core/beans/java/bean-annotation.html).
+
+## Ktor
+
+The following alpha.2 integration uses coroutine dispatch without the alpha.3 Volan coroutine module. It assumes Ktor and kotlinx-coroutines are already configured. Set DATABASE_URL to a migrated file database, such as `jdbc:sqlite:./data.db`, and invoke `volanModule()` from the application's module:
+
+```kotlin
+package example
+
+import example.generated.VolanClient
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationStopped
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+fun Application.volanModule() {
+    val db = VolanClient.builder()
+        .url(requireNotNull(System.getenv("DATABASE_URL")))
+        .build()
+    monitor.subscribe(ApplicationStopped) { db.close() }
+    val jdbcWorkers = Dispatchers.IO.limitedParallelism(4)
+    routing {
+        get("/users/count") {
+            val count = withContext(jdbcWorkers) { db.user.count() }
+            call.respondText(count.toString())
+        }
+    }
+}
+```
+
+GET `/users/count` returns the row count as text. Create the client once when the module starts, not in each route. Align worker concurrency with pool size; SQLite's built-in pool has one connection. The lifecycle hook follows [Ktor events](https://ktor.io/docs/server-events.html). Drain application jobs before closing the client.
+
+For alpha.3 use `db.suspendQuery(access) { user.count() }` and its [cancellation semantics](/en/async) instead of plain withContext.
+
+## HTTP data
+
+Map rows or projections to DTOs containing explicitly selected scalar fields. Do not serialize generated entities blindly: serializers may read unloaded relations. Translate not-found and constraint failures into application-specific HTTP responses; omit internal SQL and credentials.
+
+The snippets demonstrate lifecycle and JDBC dispatch. They do not establish automatic framework transaction integration. Independent Spring Boot/Ktor example projects with CI remain part of M11.

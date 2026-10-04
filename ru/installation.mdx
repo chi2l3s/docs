@@ -1,0 +1,34 @@
+---
+title: "Установка"
+description: "Перед установкой CLI нужна Java 17+."
+---
+
+Перед установкой CLI нужна Java 17+. Установщик работает без администратора: скачивает архив, проверяет SHA-256 и запуск, настраивает пользовательский PATH. Java он не устанавливает.
+
+## CLI
+
+Windows, PowerShell 5.1 или 7:
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.ps1)))
+```
+
+Linux/macOS, Bash с `curl`, `tar` и `sha256sum` или `shasum`:
+```bash
+curl -fsSL https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.sh | bash
+```
+
+Выполни `volan --help`. Windows обновляет текущую сессию PowerShell; другие терминалы перезапусти. На Unix открой новый терминал либо выполни `source "$HOME/.config/volan/env.sh"` в Bash/Zsh или `source "$HOME/.config/volan/env.fish"` в Fish.
+
+Каталоги по умолчанию: `%LOCALAPPDATA%\Programs\Volan` и `~/.local/share/volan`. Повторный запуск обновляет CLI. `JAVA_HOME` имеет приоритет над PATH. `VOLAN_INSTALL_DIR` задаёт другой каталог, `VOLAN_TAG=cli-v0.1.0-alpha.3-preview.1` фиксирует релиз. PowerShell также принимает `-InstallDir` и `-Tag`.
+
+Для ручной установки скачай `volan-cli.zip` или `volan-cli.tar.gz` и `SHA256SUMS` из [релиза CLI](https://github.com/thirtyeighttwentysix/volan/releases/tag/cli-v0.1.0-alpha.3-preview.1), проверь хеш, распакуй и добавь `volan/bin` в PATH. WinGet, Homebrew, Scoop и команды self-update нет.
+
+## Библиотеки
+
+Координаты используют namespace `io.github.thirtyeighttwentysix`. Alpha.2 нужны runtime, диалект, JDBC-драйвер и совпадающий по версии `volan-codegen` для сборки. BOM выравнивает версии библиотек. [Первый запрос](/ru/quickstart) содержит полную сборку из Central.
+
+Установленный preview генерирует API alpha.3. Для runtime alpha.2 используй генератор alpha.2 из Central либо [подготовь совпадающие artifacts alpha.3](/ru/build).
+
+## Удаление
+
+Удали выделенный каталог установки и его запись из пользовательского PATH. На Unix также удали `~/.config/volan/env.sh`, `env.fish` и блоки установщика с заголовком `# Volan CLI` в настройках оболочки. Перезапусти терминал. Файлы схемы проекта хранятся отдельно.

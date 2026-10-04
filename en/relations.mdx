@@ -1,0 +1,45 @@
+---
+title: "Relations"
+description: "Load relations explicitly with include; read selected columns with projectMany / projectFirst."
+---
+
+Load relations explicitly with `include`; read selected columns with `projectMany` / `projectFirst`. Examples use the [schema](/en/schema).
+
+```kotlin
+val loaded = db.user.findMany {
+    include { posts { orderBy { id.asc() } } }
+}
+val titles = loaded.flatMap { it.posts }.map { it.title }
+
+val emails = db.user.projectMany { select { email } }.map { it.email }
+
+val author = db.user.create {
+    email = "author@example.org"
+    posts.create { title = "First" }
+}
+db.user.count { where { posts { some { views gt 0 } } } }
+```
+
+Java equivalents: `q.include(i -> i.posts())`, `q.select(s -> s.email())`, `data.getPosts().create(post -> post.setTitle("First"))`.
+
+## Loaded and selected fields
+
+An entity relation throws `VolanRelationNotLoadedException` unless included. Loaded nullable relations can be null; loaded lists can be empty. That differs from not loaded. A projection uses one generated `UserProjection` type, not a separate class for every column combination. Reading an omitted column raises `VolanFieldNotSelectedException`.
+
+`select` and `include` are separate query shapes; do not combine projection and relation loading in one query. For HTTP responses, map explicitly to DTOs: reflection-based serializers can access unloaded relation getters.
+
+## Query counts
+
+The loader collects parent keys and reads related rows in batches. A direct relation uses one statement per key batch; implicit many-to-many additionally reads join-table pairs and then target rows. Nested includes repeat this for each requested relation.
+
+This avoids one query per parent. It does not guarantee a fixed single extra statement for arbitrary result sizes: key chunks, multiple branches and nesting add statements. The current chunk cap is 500 parent keys, further limited by dialect parameter capacity.
+
+`take` / `skip` inside an include apply to its related query batch; do not assume a per-parent top-N contract. Bound the parent page and query children explicitly when each parent's limit matters.
+
+## Relation filters and writes
+
+To-many filters provide `some`, `every`, `none`; to-one uses `matches` / `notMatches`. They filter rows without implicitly loading relations.
+
+Nested `create` and `update` relation operations run transactionally, with connect/disconnect and related writes where supported by the generated relation shape. Update nesting beyond one relation level and deletion of an owning-side required relation are limited. A deeper write must already know other required keys. See [Limitations](/en/limitations).
+
+SQLite/MySQL/MariaDB distinct projections must select exactly the distinct columns; use `projectMany { select { email }; distinct { email } }` or grouping. PostgreSQL/H2 also support representative-row distinct queries.

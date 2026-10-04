@@ -1,0 +1,29 @@
+---
+title: "Ошибки"
+description: "Обрабатывай ошибки на границе приложения, не показывая SQL и секреты HTTP-клиенту."
+---
+
+Обрабатывай ошибки на границе приложения, не показывая SQL и секреты HTTP-клиенту.
+| Исключение | Действие |
+|---|---|
+| VolanConfigurationException | Проверь JDBC URL, JAR диалекта и драйвер |
+| VolanValidationException | Заполни обязательные поля записи |
+| VolanNotFoundException | Обработай отсутствие записи в OrThrow |
+| VolanRelationNotLoadedException | Добавь include или не читай связь |
+| VolanFieldNotSelectedException | Выбери поле до чтения |
+| VolanUniqueConstraintException | Обработай повтор бизнес-ключа |
+| VolanForeignKeyException | Проверь целевую запись и delete action |
+| VolanConstraintException | Проверь NOT NULL или CHECK |
+| VolanMappingException | Согласуй данные с типами и enum схемы |
+| VolanConnectionException | Проверь доступность БД и размер пула |
+| VolanTimeoutException | Проверь timeout пула/statement и нагрузку |
+| VolanTransactionException | Повторяй только при retryable и безопасном callback |
+| VolanQueryException | Проверь cause и generated/ручной SQL |
+| VolanUnsupportedException | Измени неподдерживаемую форму запроса |
+Диагностика схемы использует E00xx для lexer, E01xx для parser и E02xx для semantic validation. Сообщение содержит имя файла, фрагмент исходника и исправление, когда оно очевидно. Например, E0209 — отсутствие primary key, E0224 — references не уникальны. Ограничения provider могут вызвать E0235.
+
+При ошибке generated code сначала согласуй версии generator/runtime/plugin и повтори генерацию. Не исправляй generated files вручную. Отсутствие таблицы означает неприменённый DDL либо подключение к другой БД.
+
+Java async передаёт ошибки через CompletionException/ExecutionException; читай cause. Различай бизнес-конфликт, временную недоступность и retryable transaction failure. Не повторяй все исключения автоматически.
+
+Edited/missing/unfinished migration history останавливает deployment; это не обычная временная ошибка запроса. Следуй [восстановлению](/ru/migrations).

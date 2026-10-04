@@ -1,0 +1,57 @@
+---
+title: "Queries"
+description: "Read and write through the repository generated for each model."
+---
+
+Read and write through the repository generated for each model. Examples use the [User/Post schema](/en/schema) and an initialized connected client.
+
+## CRUD
+
+```kotlin
+val created = db.user.create { email = "alice@example.org"; name = "Alice" }
+val users = db.user.findMany {
+    where { email endsWith "@example.org" }
+    orderBy { id.asc() }
+    take = 20
+    skip = 0
+}
+db.user.update {
+    where { id eq created.id }
+    data { name = null }
+}
+val affected = db.user.updateMany {
+    where { name.isNull() }
+    data { name = "Unnamed" }
+}
+db.user.delete { where { id eq created.id } }
+```
+
+```java
+var users = db.getUser().findMany(q -> {
+    q.where(w -> w.getEmail().endsWith("@example.org"));
+    q.orderBy(o -> o.getId().asc());
+    q.setTake(20);
+});
+db.getUser().createMany(many -> {
+    many.row(d -> d.setEmail("one@example.org"));
+    many.row(d -> d.setEmail("two@example.org"));
+});
+```
+
+`findMany` returns a list; `findFirst` and `findUnique` return nullable rows. Their `OrThrow` variants raise `VolanNotFoundException`. `create`, `update` and `delete` return the row; single-row writes reject ambiguous multi-row matches. `createMany`, `updateMany`, `deleteMany` return affected counts. Bulk inserts preserve defaults for omitted fields and keep all batches in one transaction.
+
+`upsert { where { ... }; create { ... }; update { ... } }` uses find/create-or-update. It is not an atomic server upsert: concurrent creates can race and hit a unique constraint.
+
+## Filters
+
+Scalar handles provide `eq`, `notEq`, `gt`, `gte`, `lt`, `lte`, `oneOf`, `notOneOf`; applicable string filters include `contains`, `startsWith`, `endsWith` and `ignoringCase()`. Nullable fields expose `isNull()` and `isNotNull()`. Group predicates with `and`, `or`, `not`. Java uses getters and method calls: `w.getId().eq(1)`, `w.or(o -> { ...; })`.
+
+Values are bound parameters. For raw SQL, bind values in the parameters list; never concatenate user input into SQL. Dialects differ in case conversion; SQLite's built-in conversion is ASCII.
+
+## Pagination
+
+`take` limits and `skip` offsets. Use a deterministic order, including a unique tie-breaker. `cursor(id = lastId)` pages by primary key and excludes the cursor row unless `inclusive = true`. Supply every component of a composite key. Cursors with explicit `orderBy` are currently refused; use offset paging for that order.
+
+## Summaries
+
+`count()` and `exists()` do not load entities. `aggregate { count(); sum { views }; average { views } }` returns summaries. `groupBy { by { authorId }; count(); having { count gt 1L } }` returns grouped values. Reading fields not selected/grouped throws. [Projections and relations](/en/relations) explain partial results.

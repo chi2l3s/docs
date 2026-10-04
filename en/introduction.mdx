@@ -1,0 +1,24 @@
+---
+title: "Overview"
+description: "Volan generates a Kotlin client with Java entry points from a schema.volan file."
+---
+
+Volan generates a Kotlin client with Java entry points from a `schema.volan` file. The client executes JDBC queries; tables must exist before the first repository call.
+
+## Choose a version
+
+| Distribution | Available now | Scope |
+|---|---|---|
+| Maven Central libraries | `0.1.0-alpha.2` | PostgreSQL and SQLite |
+| GitHub CLI | `cli-v0.1.0-alpha.3-preview.1` | Standalone preview, generator targets alpha.3 |
+| Source main | `0.1.0-alpha.3-SNAPSHOT` | H2, MySQL, MariaDB, build plugins, coroutines and metrics |
+
+Alpha.3 libraries and plugins are not published to Central. Match generator and runtime versions. The CLI preview is not an alpha.2 generator.
+
+Start with [Installation](/en/installation), then run [First query](/en/quickstart). For development plugins use [Build](/en/build). Read [Databases](/en/databases) before choosing types and migration procedures.
+
+## Runtime contract
+
+Queries use generated mapping, explicit relations and bound values. There are no lazy proxies or automatic tenant filters. JDBC remains blocking even through coroutine or future wrappers. APIs can change before 1.0.
+
+[Versions](/en/versions) records release boundaries. [Limitations](/en/limitations) lists unsupported shapes. M0–M10 are milestones, not library modules. M11 still includes pending framework examples and CI coverage.

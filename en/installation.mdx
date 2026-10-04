@@ -1,0 +1,34 @@
+---
+title: "Installation"
+description: "Install Java 17+ before the CLI."
+---
+
+Install Java 17+ before the CLI. Installers require no administrator privileges, download the archive, verify SHA-256, check startup and configure user PATH. They do not install Java.
+
+## CLI
+
+Windows, PowerShell 5.1 or 7:
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.ps1)))
+```
+
+Linux/macOS, Bash with `curl`, `tar`, and `sha256sum` or `shasum`:
+```bash
+curl -fsSL https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.sh | bash
+```
+
+Run `volan --help`. Windows updates the current PowerShell environment; restart other terminals. On Unix open a new terminal or run `source "$HOME/.config/volan/env.sh"` in Bash/Zsh, or `source "$HOME/.config/volan/env.fish"` in Fish.
+
+Defaults: `%LOCALAPPDATA%\Programs\Volan` and `~/.local/share/volan`. Repeat installation to update. `JAVA_HOME` takes precedence over PATH. Use `VOLAN_INSTALL_DIR` for a custom directory and `VOLAN_TAG=cli-v0.1.0-alpha.3-preview.1` to pin the CLI release. PowerShell also accepts `-InstallDir` and `-Tag`.
+
+Manual installation: download `volan-cli.zip` or `volan-cli.tar.gz` and `SHA256SUMS` from the [CLI release](https://github.com/thirtyeighttwentysix/volan/releases/tag/cli-v0.1.0-alpha.3-preview.1), verify, extract, add `volan/bin` to PATH. No WinGet, Homebrew, Scoop or self-update command is implemented.
+
+## Libraries
+
+All coordinates use `io.github.thirtyeighttwentysix`. Alpha.2 needs runtime, dialect, JDBC driver and a matching `volan-codegen` at build time. The BOM aligns libraries. [First query](/en/quickstart) includes a complete Central build.
+
+The installed preview generates alpha.3 API. Use the alpha.2 generator from Central for alpha.2, or [stage matching alpha.3 artifacts](/en/build).
+
+## Removal
+
+Delete the dedicated installation directory and its user PATH entry. On Unix also remove `~/.config/volan/env.sh`, `env.fish` and the installer blocks headed `# Volan CLI` in shell startup files. Restart the terminal. Keep project schemas separately.

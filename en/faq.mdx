@@ -1,0 +1,40 @@
+---
+title: "FAQ"
+description: "## Does init create an application?"
+---
+
+## Does init create an application?
+
+It creates schema.volan only. Configure [Gradle/Maven](/en/build), generate the client and create tables explicitly.
+
+## Why does CLI-generated code fail with alpha.2?
+
+The current CLI preview targets alpha.3. Use the [alpha.2 generator](/en/quickstart) or a full matching staged alpha.3 set.
+
+## Do builds create or migrate tables?
+
+No. Generation is database-independent. Run [schema sync](/en/sync) or reviewed [Migrator](/en/migrations) operations separately.
+
+## Can Java use the generated client?
+
+Yes, enable javaFriendly = true and compile the generated Kotlin first. Call getters, setters and Consumer callbacks; futures dispatch blocking JDBC.
+
+## Is suspendQuery reactive?
+
+No. It moves blocking JDBC to a bounded dispatcher. [Cancellation](/en/async) requests Statement.cancel and waits for coroutine cleanup; it cannot undo a commit.
+
+## Does include make one query per user?
+
+It loads related keys in batches. [Relations](/en/relations) explains chunk counts, many-to-many and pagination limits.
+
+## Can I serialize the entity directly?
+
+A serializer can read unloaded getters and throw. Map selected fields to a DTO.
+
+## Can I retry an interrupted H2 migration?
+
+Not automatically. Inspect and repair committed DDL, then mark the original migration applied. For a partial push, use resolve after matching its original target.
+
+## Is Volan ready for 1.0?
+
+It is pre-1.0. APIs and provider restrictions remain explicit; M11 examples and M12 work are not all complete.

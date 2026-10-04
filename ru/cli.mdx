@@ -1,0 +1,33 @@
+---
+title: "CLI"
+description: "Используй CLI для схемы, генерации и явной синхронизации БД."
+---
+
+Используй CLI для схемы, генерации и явной синхронизации БД. Нужна Java 17+. [Установи CLI](/ru/installation) и проверь [совместимость версий](/ru/versions).
+
+```bash
+volan --help
+volan init --provider sqlite --package example.generated --java-friendly
+volan validate --schema schema.volan
+volan format --schema schema.volan --check
+volan generate --schema schema.volan --output build/generated/volan
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db --dry-run
+volan db pull --url jdbc:sqlite:./data.db --stdout
+```
+
+| Команда | Параметры | Результат |
+|---|---|---|
+| init | --schema, --provider, --package, --java-friendly | Создать схему без перезаписи |
+| validate | --schema | Диагностика синтаксиса и семантики |
+| format | --schema, --check, --stdout | Форматировать, сравнить или напечатать |
+| generate | --schema, --output | Kotlin и manifest собственных файлов |
+| db pull | --schema, --url, --stdout, --force | Прочитать структуру БД |
+| db push | --schema, --url, --dry-run, --accept-data-loss, --resolve | План, применение или проверка восстановления |
+
+По умолчанию: `schema.volan`, provider init `postgresql`, package `com.example.volan`, Java callbacks выключены без `--java-friendly`.
+
+Format проверяет синтаксис; validate — также семантику. `--check` и `--stdout` несовместимы. Format check завершается с ненулевым кодом при отличиях, не меняя файл. Генерация разрешает output относительно текущего проекта, проверяет схему и не открывает БД.
+
+URL должен использовать JDBC; provider и URL должны соответствовать. DATABASE_USER и DATABASE_PASSWORD задают credentials серверной БД. Не записывай реальные секреты в схему или команды. `--resolve` и `--dry-run` несовместимы.
+
+Перед применением прочитай [Синхронизацию](/ru/sync) и [Миграции](/ru/migrations). Команд migrate, studio, self-update и native-image CLI нет. Init не создаёт Gradle/Maven-проект.

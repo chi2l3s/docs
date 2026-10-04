@@ -1,0 +1,21 @@
+---
+title: "Application setup"
+description: "Configure a shared client and an explicit migration process before accepting traffic."
+---
+
+Configure a shared client and an explicit migration process before accepting traffic.
+
+1. Keep generator, runtime, optional modules and plugins aligned. Pin dependencies and preserve the source schema.
+2. Create one thread-safe connected client for the application's lifetime. Set JDBC URL and credentials through configuration; generated clients do not automatically read datasource credentials.
+3. Apply reviewed versioned migrations on a dedicated connection before starting application writes. Check history and structural drift separately.
+4. Set pool capacity and a bounded JDBC worker budget together. SQLite uses one built-in pooled connection. Check pool/network/server timeouts independently of coroutine timeouts.
+5. Bound parent pages and includes. Select DTO fields explicitly, bind raw SQL parameters and keep external calls outside transactions.
+6. During shutdown, stop accepting work, await outstanding operations, close the client, then shut down caller-owned executors/DataSources/registries.
+
+For nontransactional DDL use a maintenance window and a tested restore/repair procedure. Journal progress does not replace backups or prove the next statement did not commit. Test on the same provider and supported catalogue shapes as production.
+
+Protect DATABASE_PASSWORD through your secret manager. Do not commit literal URLs containing passwords, expose SQL in HTTP failures or use SQL as a metric tag. Interceptors do not enforce tenant isolation or soft-delete rules; apply those predicates deliberately in application queries.
+
+H2 memory storage and SQLite private memory storage are for temporary data. Use a file/server database for persistence and retain its backups.
+
+Alpha APIs may change. Review [limitations](/en/limitations) and release notes before deployment; use a staged alpha.3 only with its full matching dependency set.
