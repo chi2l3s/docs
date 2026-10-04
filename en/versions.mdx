@@ -1,9 +1,11 @@
 ---
 title: "Versions"
-description: "Keep generated API, runtime and plugins on the same library version."
+description: "Align generator, client, runtime and plugin versions before running an application."
 ---
 
-Keep generated API, runtime and plugins on the same library version. Availability was verified against Maven Central metadata and GitHub releases on 4 October 2026.
+Generated code calls the runtime API. That makes the generator version as important as the dependency version: a newer generator may emit calls an older runtime does not provide. Update them together and regenerate when the version changes.
+
+Library availability was checked against Maven Central on October 5, 2026. The latest published library version is `0.1.0-alpha.2`; the CLI preview and alpha.3 sources are separate distributions.
 
 | Version | Distribution | Scope |
 |---|---|---|
@@ -19,4 +21,16 @@ The CLI preview includes generation targeting alpha.3. Do not pair that output w
 
 A CLI installation/update does not update application dependencies. Library alpha.1/alpha.2 releases do not include CLI install archives. No alpha.3 library release is published at this verification point.
 
-Before upgrading, read release notes, regenerate, compile Kotlin and Java consumers, test on the target database and review migration SQL. Alpha versions can change API. M11 documentation and examples precede M12 benchmarks/extensions and 1.0; milestone completion is not a library artifact version.
+Before upgrading, read release notes, regenerate, compile Kotlin and Java consumers, test on the target database and review migration SQL. Alpha versions can change API.
+
+## Recognize a mismatch
+
+If generated files refer to a missing method or class, compare codegen and runtime versions first. Deleting that line from generated code only hides the problem until the next generation. Likewise, an alpha.3 plugin does not become alpha.2-compatible merely because Gradle downloaded its JAR.
+
+The BOM selects Volan application library versions. It does not update the system CLI, select a plugin version or replace existing generated output. Those are separate configuration pieces to check.
+
+## Upgrade an application
+
+Keep schema and migration changes in version control, update the matching libraries and generator, regenerate and compile. Check Kotlin and Java uses when the project has both. Test operations on the target provider and verify the database transition from the previous release separately.
+
+Staged alpha.3 lets you evaluate new capabilities before publication. Its repository URI must be available to every required build stage. Treat it as a local candidate rather than a Central release, and do not mix it with alpha.2.

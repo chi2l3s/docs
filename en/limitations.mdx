@@ -1,21 +1,42 @@
 ---
 title: "Limitations"
-description: "Check these boundaries before building on the alpha API."
+description: "Check API boundaries before choosing your data model and application architecture."
 ---
 
-Check these boundaries before building on the alpha API. Implemented source features do not imply a published alpha.3 release.
+It is easier to account for a limitation before it becomes an architectural assumption. Volan is in alpha: some query forms are unsupported, and some features are available only in alpha.3 sources. These cases need an explicit application decision.
 
-- No R2DBC, studio, optimistic @version locking, replicas, sharding or multi-schema models.
-- No typed full-text search despite supported full-text index DDL.
-- Cursor plus explicit orderBy is refused. Scalar array filters/ordering are deferred.
-- Projection shapes share one generated class. Omitted fields and unloaded relations fail when read.
-- Include pagination is a related-query batch limit, not a guaranteed limit per parent.
-- Nested update writes beyond one relation level, deletion of an owning-side required relation and writes needing an unknown grandparent key are limited.
-- Scalar field named count conflicts with summary accessors. Kotlin keyword field names are not escaped consistently; use safe names with @map.
-- Introspection refuses catalogue definitions it cannot preserve. Handwritten expression/partial indexes and provider-specific unsupported tables may block synchronization.
-- H2/MySQL/MariaDB DDL cannot roll back as one migration. Recovery requires inspecting and repairing the database.
-- Upsert is find/create-or-update, so concurrent creation needs unique constraints and application handling.
-- Cancellation is a JDBC request, not a hard deadline or undo after commit.
-- The runtime does not promise 100% coverage or production stability before 1.0.
+## Queries and results
 
-[Database restrictions](/en/databases), [errors](/en/errors), and [current roadmap](https://github.com/thirtyeighttwentysix/volan/blob/main/ROADMAP.md).
+| Scenario | Current boundary | Application approach |
+|---|---|---|
+| Cursor with arbitrary `orderBy` | Combination is rejected | Use offset for that order or traverse the primary key |
+| Top-N children for every included parent | `take` limits a related batch | Query children explicitly when a separate per-parent limit is required |
+| Arbitrary projection shape | One generated projection class | Access selected fields and build an explicit DTO |
+| Accessing an unloaded relation | Getter throws | Add include or omit the relation from the response |
+| Concurrent upsert | Find/create-or-update, without atomic server upsert | Keep a unique constraint and handle conflicts |
+| Scalar-array filtering and ordering | Deferred | Change the query model or use reviewed raw SQL |
+| Typed full-text search | Not implemented | Index DDL does not imply a query API |
+
+## Relation writes
+
+Nested writes support small related operations, but they do not represent every change graph. Nested update beyond one relation level, deleting an owning-side required relation and writes with unknown ancestor keys are restricted.
+
+For a complex operation, split supported writes into explicit steps inside a [transaction](/en/transactions). Key acquisition and write order then stay visible. Deleting or disconnecting a required relation must preserve the schema rule: a child cannot remain without its required parent.
+
+## Names and schema
+
+`count` conflicts with aggregates. Kotlin keywords are not escaped in every generated API form. Choose a safe client alias and retain the existing SQL name through `@map` when needed.
+
+Multi-schema models, optimistic `@version` locking, read replicas and sharding are not implemented. Tenant isolation and soft delete need explicit application predicates. QueryInterceptor observes statements; it does not automatically add those rules.
+
+## Providers and migrations
+
+Introspection accepts representable structures and refuses definitions it cannot preserve correctly. Expression/partial indexes, triggers, generated columns, unsupported tables and other definitions can block pull or planning. Each provider has further [type and catalog limits](/en/databases).
+
+H2/MySQL/MariaDB DDL implicitly commits. The journal records progress but does not make an entire file rollback-safe. A failure requires inspecting actual database state and [manual recovery](/en/migrations). PostgreSQL/SQLite have the documented transactional guarantees, which still require reviewing SQL and data before deployment.
+
+## Async and compatibility
+
+There is no R2DBC: JDBC occupies workers through futures and coroutines alike. Active statement cancellation in alpha.3 is a driver request, not a hard deadline or reversal of a completed commit. See [Async](/en/async).
+
+A feature implemented in source does not mean alpha.3 is published. Choose [compatible versions](/en/versions), regenerate on upgrades and verify against the target database. The API can change before 1.0; production stability and 100% coverage are not promised.

@@ -1,9 +1,11 @@
 ---
 title: "Build"
-description: "Configure generation during compilation."
+description: "Connect client generation to compilation and understand each build dependency."
 ---
 
-Configure generation during compilation. Alpha.2 uses the complete direct-generator setup in [First query](/en/quickstart). The Gradle/Maven plugins below are implemented for alpha.3 and currently require locally staged artifacts.
+The generated client belongs to the build just like your application classes. When `schema.volan` changes, generation must run before code that uses the client is compiled. A stale field reference then fails during compilation instead of after the service starts.
+
+For published alpha.2, use the complete setup in [First query](/en/quickstart). The Gradle and Maven plugins below target alpha.3. They are implemented but currently need artifacts staged from source; alpha.3 is not available from Central yet.
 
 ## Stage alpha.3
 
@@ -123,3 +125,21 @@ Maven defaults: `schema.volan`, `target/generated-sources/volan`. Override with 
 ## Generated output
 
 Output directories are build products owned by generation. Build plugins override the schema's output setting. Do not put application code there or modify the `.volan-generated-files` manifest. Generation removes obsolete owned sources, refuses collisions and links inside output. Compilation never modifies the database.
+
+## What a build does
+
+Generation reads and validates the schema, then writes models, repositories and query forms to the generated sources directory. Kotlin compiles those files with the application; Java can then refer to the compiled client classes. Tests run after compilation.
+
+None of those steps needs a live database. Generation does not check for tables or apply DDL, so CI can build without production credentials. Migrations and integration tests check the real database structure separately.
+
+## When the client looks stale
+
+If a new getter is missing after a schema change, run generation and compilation first. Check that `schemaFile` points to the intended file and the output directory is registered as sources. Two different output directories can leave old and new clients with the same class names.
+
+Do not edit generated files by hand: the next generation replaces them. Change the schema or application code. When removing a model, check both generated source and old bytecode; Maven builds without incremental Kotlin compilation need `clean`.
+
+## Dependency repositories
+
+Gradle resolves build plugins through `pluginManagement` and application libraries through regular repositories. Maven separates `<pluginRepositories>` from `<repositories>` as well. Local staging needs both: a runtime can resolve successfully while its plugin remains unavailable.
+
+Keep the generator, runtime and plugin on one release for a reproducible build. The BOM aligns libraries but does not select a Maven or Gradle plugin version. Pin those explicitly and update them together.

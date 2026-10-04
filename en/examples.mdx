@@ -1,13 +1,15 @@
 ---
 title: "Examples"
-description: "Run existing independent consumers to check generation and runtime together."
+description: "Choose an example for your first run, framework integration or client build checks."
 ---
 
-Run existing independent consumers to check generation and runtime together.
+An example is useful when its purpose is clear. The first run covers the complete path from a schema to a SQLite row. Framework snippets cover client lifecycle and JDBC scheduling. Independent consumers verify that published or staged artifacts work outside Volan's own source project.
+
+Start with [First query](/en/quickstart) when learning the ORM. Use [Web frameworks](/en/frameworks) for an existing service. The build-plugin consumers below are for trying alpha.3 from source.
 
 | Example | Coverage | Requirements |
 |---|---|---|
-| [First query](/en/quickstart) | Alpha.2 Kotlin/Java, explicit SQLite DDL, insert/read, closing | Java 17+, Gradle |
+| [First query](/en/quickstart) | Alpha.2 Kotlin/Java, SQLite, create/read, closing | JDK 25, Gradle |
 | [plugin-smoke/gradle](https://github.com/thirtyeighttwentysix/volan/tree/main/plugin-smoke/gradle) | Alpha.3 plugin, Kotlin/Java H2 CRUD, coroutines, metrics | Staged artifacts |
 | [plugin-smoke/maven](https://github.com/thirtyeighttwentysix/volan/tree/main/plugin-smoke/maven) | Alpha.3 generation and Java H2 CRUD | Maven 3.9+, staged artifacts |
 | [release-smoke](https://github.com/thirtyeighttwentysix/volan/tree/main/release-smoke) | Independent artifacts, SQLite/H2 and server consumers | Docker for server tests |
@@ -41,4 +43,15 @@ python scripts/verify-plugins.py --version 0.1.0-alpha.3 --repository build/rele
 
 The verifier copies consumers before modifying schemas, checks ordinary builds, configuration cache, deleted-model source/bytecode removal and Gradle build-cache restoration. Use `--maven /path/to/mvn` if Maven is not on PATH. The SQLite release test needs no Docker; do not interpret a focused test as the complete server suite.
 
-The new first-query snippets are compiled and executed against Central alpha.2. Full framework sample projects and their CI smoke tests are still M11 work; [Web frameworks](/en/frameworks) documents the integration pattern.
+
+## Verify your project in steps
+
+First reproduce the small scenario unchanged: generation, compilation, table creation, a write and a read. Then change one part at a time, such as provider, model or integration lifecycle. Changing everything at once makes failures harder to locate.
+
+API examples share the User/Post schema. To run them after the quickstart, add Post, regenerate the client and apply the matching DDL. Generation alone is insufficient because it does not alter SQLite tables.
+
+## What a consumer demonstrates
+
+A consumer builds from external artifacts and checks generation together with the runtime. It catches publication problems internal module tests may miss: missing dependencies, incorrect plugin markers or unregistered generated sources.
+
+An H2 consumer does not prove every PostgreSQL/MySQL guarantee. Run the target provider's checks and test migrations on the previous structure with data. A complete web lifecycle is also a separate concern from a small CRUD scenario.

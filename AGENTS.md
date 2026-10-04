@@ -1,33 +1,15 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
+# Volan documentation
 
-# Documentation project instructions
+This repository publishes Russian and English documentation at https://volan.mintlify.app.
 
-## About this project
-
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Use the Mintlify MCP server, `https://mcp.mintlify.com`, to edit content and settings via MCP
-- Use the Mintlify docs MCP server, `https://www.mintlify.com/docs/mcp`, to query information about using Mintlify via MCP
-
-## Terminology
-
-{/* Add product-specific terms and preferred usage */}
-{/* Example: Use "workspace" not "project", "member" not "user" */}
-
-## Style preferences
-
-{/* Add any project-specific style rules below */}
-
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
-
-## Content boundaries
-
-{/* Define what should and shouldn't be documented */}
-{/* Example: Don't document internal admin features */}
+- Edit documentation pages, examples and assets through this GitHub repository. Use the Mintlify dashboard for SEO, branding, search and deployment settings.
+- Keep the same topics and navigation order in `ru/` and `en/`. Write complete translations.
+- Explain each operation's purpose, inputs, result and limits. Use natural prose and concrete application scenarios. Avoid marketing claims and unexplained lists of API names.
+- Keep reader-facing content about the ORM. Omit task history, milestone bookkeeping and the process used to prepare the documentation.
+- Preserve release boundaries: published alpha.2, standalone CLI preview and staged alpha.3 are different distributions. Verify availability before changing version claims.
+- Align generator and runtime versions. Check actual API signatures in source or generated code and execute runnable examples.
+- Keep `examples/first-query` identical to the code blocks in both quickstarts. Verify both entry points with its wrapper.
+- Generation does not create tables. Runnable examples must create or migrate their tables and close owned resources.
+- Apply the user's clear-design preferences: no gradients, neon, emoji, decorative separators or default Lucide icons. Use the existing Volan logo assets.
+- Run `npx mint validate` and `npx mint broken-links` after MDX changes. Inspect desktop and mobile pages after publication.
+- Preserve unrelated local changes and stage only files belonging to the task.

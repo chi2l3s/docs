@@ -1,9 +1,11 @@
 ---
 title: "Transactions"
-description: "Run related writes through a connected client's transaction callback."
+description: "Keep related writes together and understand commit and rollback boundaries."
 ---
 
-Run related writes through a connected client's `transaction` callback.
+When creating a user and their first post is one application operation, both writes should succeed together. Without a transaction, the user can be saved while the post fails. `transaction` keeps related operations on one connection and rolls back unfinished changes.
+
+The callback below creates an author, uses the returned `id` in a post and returns the user. Use the supplied `tx` for database work inside the callback: it represents the current transaction.
 
 ```kotlin
 val created = db.transaction { tx ->
@@ -28,3 +30,21 @@ For coroutine access dispatch the entire `transaction` through [suspendQuery](/e
 ## Lifecycle
 
 Keep transactions short and close the client at application shutdown after outstanding work finishes. A supplied DataSource remains caller-owned. Do not assume Spring's `@Transactional` automatically joins Volan's thread-bound transaction.
+
+## When changes become durable
+
+A normal callback return lets Volan commit. An exception escaping the callback causes rollback. Do not swallow an error inside the callback if it should fail the whole operation: returning normally can let the outer transaction commit.
+
+A nested synchronous transaction creates a savepoint so its own part can roll back. It does not create an independent commit. Even a successful nested callback remains subject to the outer transaction, whose rollback discards those changes too.
+
+## Keep external effects out of retries
+
+A transaction retry runs the entire callback again. If it sent an email, the next attempt can send another even when the SQL changes from the first attempt were rolled back. Save database state inside the transaction and trigger external effects after success. Stronger coordination needs an application mechanism, such as processing a stored event.
+
+Changing captured inputs can make retries inconsistent as well. Prepare immutable input values before entering the callback. Retry is not a general conflict resolver: only retry failures for which the operation is safe to run again.
+
+## Keep the callback synchronous
+
+A connected transaction is bound to its thread and connection. Moving an individual query to a future or child coroutine creates work outside the expected context. Move the whole transaction to a JDBC worker and use synchronous `tx` operations inside it.
+
+A transaction holds database resources. A slow HTTP call in the callback increases connection and lock holding time. Validate inputs before opening the transaction and keep only the necessary database work inside.

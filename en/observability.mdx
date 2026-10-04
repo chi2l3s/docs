@@ -1,9 +1,11 @@
 ---
 title: "Observability"
-description: "Observe physical statements with QueryInterceptor; add Micrometer only when needed."
+description: "Measure real database work and distinguish repository operations from SQL statements."
 ---
 
-Observe physical statements with `QueryInterceptor`; add Micrometer only when needed. Both features require alpha.3, aligned with runtime through [staged artifacts](/en/build). The synchronous core has no coroutine or Micrometer dependencies.
+One repository call does not always mean one SQL statement. An `include` can add relation reads, and a nested write can execute several writes. Observe physical statements with `QueryInterceptor` to understand where time goes and how much database work ran.
+
+Interceptors and the Micrometer module are available in alpha.3. Use the matching runtime from [staged artifacts](/en/build). The synchronous core works without Micrometer or coroutines when you do not need them.
 
 ## Interceptors
 
@@ -35,3 +37,21 @@ The `volan.query` timer measures attempted statements, including checkout and ma
 | outcome | success, error, cancelled |
 
 No SQL, parameter values or exception messages are metric labels. An include contributes one sample per statement; a successful statement later rolled back remains a successful statement sample. Registry/exporter lifecycle belongs to the application; Volan does not close them.
+
+## Interpret a measurement
+
+`volan.query` time includes acquiring a connection and mapping rows into objects. A higher duration can mean slow SQL, a pool wait or a large result. The timer alone cannot prove the cause; compare pool metrics, result size and database-side measurements.
+
+Several samples for a user-with-posts read are expected with includes. A successful sample describes one statement, not a successful HTTP response or the final transaction commit. A later failure can roll back writes whose individual statements succeeded.
+
+## Keep metrics comparable
+
+Bounded tags let you compare providers, operations and outcomes without creating a separate series for each user. Do not add email addresses, record IDs, full SQL or error text as labels. Those values increase cardinality and can disclose application data.
+
+Use diagnostic logs or application tracing, with appropriate value redaction, to investigate a specific slow query. Keep persistent metric categories small and stable. The application owns the registry and exporter; the client supplies measurements through the registered interceptor.
+
+## An interceptor's responsibility
+
+`next.get()` performs the database operation. Call it exactly once and return its result or propagate its error. The interceptor runs in the query context; moving downstream work to another thread violates transaction guards. A hook is not a place to execute SQL again.
+
+Add tenant conditions to typed queries. Observing a statement does not turn arbitrary SQL into an application query with correct tenant isolation.

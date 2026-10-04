@@ -1,18 +1,20 @@
 ---
 title: "Web frameworks"
-description: "Create one generated client per application and close it after in-flight database work finishes."
+description: "Fit the client into Spring Boot or Ktor lifecycle and query from your service."
 ---
 
-Create one generated client per application and close it after in-flight database work finishes. There is no Volan Spring Boot starter or Ktor plugin. Use ordinary framework lifecycle and the [build setup](/en/quickstart).
+In a web application, the client outlives a single HTTP request. Create it at startup, inject it into services and close it after active work finishes during shutdown. That avoids creating a connection pool for every endpoint.
+
+Volan currently has no Spring Boot starter or Ktor plugin. Integration uses the framework's regular mechanisms. First configure [client generation](/en/quickstart) and apply the database structure; the examples below fit that client into the application lifecycle.
 
 ## Spring Boot
 
 Register the generated client as a singleton bean. Add runtime, dialect and JDBC driver; run reviewed migrations before serving requests. In an existing Boot application:
 
 ```java
-package example;
+package org.example;
 
-import example.generated.VolanClient;
+import org.example.generated.VolanClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,9 +40,9 @@ If Boot already owns a DataSource, use `.dataSource(dataSource).url(jdbcUrl)` to
 The following alpha.2 integration uses coroutine dispatch without the alpha.3 Volan coroutine module. It assumes Ktor and kotlinx-coroutines are already configured. Set DATABASE_URL to a migrated file database, such as `jdbc:sqlite:./data.db`, and invoke `volanModule()` from the application's module:
 
 ```kotlin
-package example
+package org.example
 
-import example.generated.VolanClient
+import org.example.generated.VolanClient
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStopped
 import io.ktor.server.response.respondText
@@ -72,4 +74,21 @@ For alpha.3 use `db.suspendQuery(access) { user.count() }` and its [cancellation
 
 Map rows or projections to DTOs containing explicitly selected scalar fields. Do not serialize generated entities blindly: serializers may read unloaded relations. Translate not-found and constraint failures into application-specific HTTP responses; omit internal SQL and credentials.
 
-The snippets demonstrate lifecycle and JDBC dispatch. They do not establish automatic framework transaction integration. Independent Spring Boot/Ktor example projects with CI remain part of M11.
+
+## From route to database
+
+The HTTP handler parses and validates input. A service performs the query or transaction and returns the required fields. At the HTTP boundary, those fields become a DTO and a response. This separation lets you test the database operation without running a full web server.
+
+The Ktor route is deliberately small: GET `/users/count` returns a text count. An empty table returns `0`, which is normal. A missing table produces a database exception; client lifecycle setup does not replace migrations.
+
+## Give resources an owner
+
+Close the client when finished if it owns the built-in pool. If Spring Boot created the DataSource, Boot owns its shutdown. A supplied executor likewise belongs to the application. Coordinate shutdown order so active operations can finish before their resources disappear.
+
+A relative SQLite URL depends on the server working directory. Starting from another directory can open a different file and look like missing data. Set the deployment path explicitly and verify which file is in use.
+
+## Transactions and responses
+
+Use `db.transaction` for related database operations. A Spring `@Transactional` annotation alone does not prove that Volan joins the same connection-bound transaction. In Kotlin, move the entire operation to a worker and keep transaction callback queries synchronous.
+
+Map missing rows to endpoint behavior, unique-key violations to understandable data conflicts and temporary unavailability to a suitable service response. Do not return an entire SQL exception to the caller. Keep the cause in application diagnostics and build the response from selected fields.
