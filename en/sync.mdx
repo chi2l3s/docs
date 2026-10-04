@@ -1,0 +1,51 @@
+---
+title: "Schema sync"
+description: "Schema sync — Volan"
+---
+
+Inspect a database with pull or align a development database with push. Generation and compilation never run these operations automatically.
+
+## CLI
+
+```bash
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db --dry-run
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db
+volan db pull --url jdbc:sqlite:./data.db --stdout
+```
+
+CLI preview supports these commands independently of runtime generation. DATABASE_URL must be a JDBC URL. Push reads the datasource URL unless `--url` overrides it; pull uses DATABASE_URL or `--url`. For server databases set DATABASE_USER and DATABASE_PASSWORD through your environment or secret manager.
+
+Pull prints with `--stdout` or creates `--schema introspected.volan`. Existing files require `--force`. Export uses env("DATABASE_URL"), not credentials. Preserve the original schema: pull cannot recover all client declarations.
+
+## Library
+
+Alpha.2 SQLite setup: add `volan-migrate` to the dependencies of [First query](/en/quickstart), aligned by the BOM.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+import io.github.thirtyeighttwentysix.volan.dialect.sqlite.SqliteDialect
+import io.github.thirtyeighttwentysix.volan.migrate.DatabaseSync
+import io.github.thirtyeighttwentysix.volan.migrate.SqliteReader
+import java.nio.file.Files
+import java.nio.file.Path
+import java.sql.DriverManager
+
+val schema = SchemaLoader.load("schema.volan",
+    Files.readString(Path.of("schema.volan"))).schemaOrThrow()
+val sync = DatabaseSync(SqliteReader(), SqliteDialect)
+DriverManager.getConnection("jdbc:sqlite:./data.db").use { connection ->
+    val plan = sync.plan(connection, schema)
+    println(plan.toSql(SqliteDialect))
+    sync.push(connection, schema)
+}
+```
+
+Use dedicated JDBC connections beginning in auto-commit mode. Render and review the plan before applying; never auto-accept destructive changes from untrusted input. `sync.plan` is actual → desired; `sync.drift(connection, SchemaMapper.map(expectedSchema))` is expected → actual. These compare structure, not table data, and read only catalogue data.
+
+## Safety and history
+
+Warnings require explicit `--accept-data-loss`. A warning can indicate failure on existing rows as well as data loss. Renames are modeled as drop/add; use reviewed ALTER RENAME SQL to retain data.
+
+PostgreSQL/SQLite push verifies structure before transaction commit. H2/MySQL/MariaDB can leave committed DDL and use a private `_volan_push` journal with [manual recovery](/en/migrations). A successful repeat is empty.
+
+Push does not create migration files or append versioned history. Deploy reviewed [versioned migrations](/en/migrations) for production. Use DatabaseSync.plan rather than generic SchemaDiffer for SQLite rebuilds and MySQL catalogue-dependent alterations.

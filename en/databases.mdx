@@ -1,0 +1,45 @@
+---
+title: "Databases"
+description: "Databases — Volan"
+---
+
+Choose a provider using its storage and DDL guarantees. Alpha.2 supports PostgreSQL/SQLite; the other providers require [matching alpha.3 artifacts](/en/build).
+
+| Capability | PostgreSQL | SQLite | H2 | MySQL/MariaDB |
+|---|---|---|---|---|
+| Library availability | alpha.2 | alpha.2 | alpha.3 source | alpha.3 source |
+| CRUD, relations, summaries | Yes | Yes | Yes | Yes, InnoDB |
+| Transactions/savepoints | Yes | Yes | Yes | Yes |
+| Arrays | Yes | No | Yes | No |
+| Decimal | Yes | No | NUMERIC(65,30) | DECIMAL(65,30) |
+| Native @db overrides | Yes | No | No | No |
+| Distinct | DISTINCT ON | Selected columns | DISTINCT ON | Selected columns |
+| Push/versioned migrations | Transactional | Transactional | Durable progress, manual repair | Durable progress, manual repair |
+| Full-text index DDL | Yes | No | No | Yes |
+| Typed full-text search | Deferred | Deferred | Deferred | Deferred |
+
+## Dependencies
+
+Add runtime, provider module and JDBC driver. Dialects are discovered through ServiceLoader from JDBC URL. The MySQL module includes MariaDB provider support.
+
+| provider | Module | JDBC URL | Tested driver/server |
+|---|---|---|---|
+| postgresql | volan-dialect-postgres | jdbc:postgresql://localhost:5432/app | PostgreSQL JDBC 42.7.13 |
+| sqlite | volan-dialect-sqlite | jdbc:sqlite:./data.db | Xerial 3.53.4.0 |
+| h2 | volan-dialect-h2 | jdbc:h2:file:./data | H2 2.5.252 regular mode |
+| mysql | volan-dialect-mysql | jdbc:mysql://localhost:3306/app | Connector/J 26.7.0, MySQL 8.4 |
+| mariadb | volan-dialect-mysql | jdbc:mariadb://localhost:3306/app | MariaDB Java 3.5.10, MariaDB 11.4 |
+
+## Storage differences
+
+SQLite requires 3.35+ for RETURNING. Its built-in pool uses one persistent connection, even with a larger maxPoolSize. External DataSource owns connection count and lifetime. DateTime is UTC ISO text with nine fractional digits; Date/Time use ISO text, UUID canonical text, Boolean integer 0/1, Bytes BLOB. Keep external SQL and defaults consistent. Decimal is rejected: use scaled Long for exact amounts. Enum columns pull as String.
+
+H2 uses TIMESTAMP(9) WITH TIME ZONE, TIME(9), NUMERIC(65,30), native JSON and scalar arrays. JSON whitespace may normalize. Regular mode is tested; compatibility modes are not. Private memory databases use one connection. Named memory databases retain their contents during client lifetime.
+
+MySQL/MariaDB use InnoDB, utf8mb4_bin, UTC and strict session settings. String and enum storage is VARCHAR(191), UUID CHAR(36), Bytes LONGBLOB, Decimal(65,30), UTC DATETIME(6) and TIME(6). Longer strings fail; temporal values have microsecond precision. Supply UUID primary keys in application code: uuid() defaults on primary keys are rejected. Arrays, native overrides and SetDefault actions are rejected.
+
+## Introspection
+
+Readers preserve only representable database shapes and reject unsupported definitions. Views, triggers, custom collations, generated columns, unsupported indexes and cross-schema/database relations can prevent pull/plan/push. Preserve the original schema for enum declarations, generator configuration, aliases and updatedAt.
+
+[Full provider storage and catalogue restrictions](https://github.com/thirtyeighttwentysix/volan/blob/main/docs/dialects.md). [DDL recovery](/en/migrations).

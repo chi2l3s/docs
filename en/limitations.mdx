@@ -1,0 +1,21 @@
+---
+title: "Limitations"
+description: "Limitations — Volan"
+---
+
+Check these boundaries before building on the alpha API. Implemented source features do not imply a published alpha.3 release.
+
+- No R2DBC, studio, optimistic @version locking, replicas, sharding or multi-schema models.
+- No typed full-text search despite supported full-text index DDL.
+- Cursor plus explicit orderBy is refused. Scalar array filters/ordering are deferred.
+- Projection shapes share one generated class. Omitted fields and unloaded relations fail when read.
+- Include pagination is a related-query batch limit, not a guaranteed limit per parent.
+- Nested update writes beyond one relation level, deletion of an owning-side required relation and writes needing an unknown grandparent key are limited.
+- Scalar field named count conflicts with summary accessors. Kotlin keyword field names are not escaped consistently; use safe names with @map.
+- Introspection refuses catalogue definitions it cannot preserve. Handwritten expression/partial indexes and provider-specific unsupported tables may block synchronization.
+- H2/MySQL/MariaDB DDL cannot roll back as one migration. Recovery requires inspecting and repairing the database.
+- Upsert is find/create-or-update, so concurrent creation needs unique constraints and application handling.
+- Cancellation is a JDBC request, not a hard deadline or undo after commit.
+- The runtime does not promise 100% coverage or production stability before 1.0.
+
+[Database restrictions](/en/databases), [errors](/en/errors), and [current roadmap](https://github.com/thirtyeighttwentysix/volan/blob/main/ROADMAP.md).

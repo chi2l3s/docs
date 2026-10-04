@@ -28,16 +28,25 @@
               "en/transactions",
               "en/queries",
               "en/relations",
-              "en/async"
+              "en/async",
+              "en/observability"
             ]
           },
           {
             "group": "Reference",
-            "pages": []
+            "pages": [
+              "en/limitations",
+              "en/cli",
+              "en/errors"
+            ]
           },
           {
             "group": "Database",
-            "pages": []
+            "pages": [
+              "en/databases",
+              "en/sync",
+              "en/migrations"
+            ]
           }
         ]
       },
@@ -59,16 +68,26 @@
             "pages": [
               "ru/queries",
               "ru/relations",
-              "ru/transactions"
+              "ru/transactions",
+              "ru/async",
+              "ru/observability"
             ]
           },
           {
             "group": "База данных",
-            "pages": []
+            "pages": [
+              "ru/sync",
+              "ru/databases",
+              "ru/migrations"
+            ]
           },
           {
             "group": "Справочник",
-            "pages": []
+            "pages": [
+              "ru/cli",
+              "ru/limitations",
+              "ru/errors"
+            ]
           }
         ]
       }

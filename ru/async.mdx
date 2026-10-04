@@ -1,0 +1,51 @@
+---
+title: "Корутины и async"
+description: "Корутины и async — Volan"
+---
+
+Переноси блокирующий JDBC с потоков обработки запросов. Java futures доступны в alpha.2; coroutine wrappers и отмена активного JDBC требуют alpha.3.
+
+## Kotlin
+
+Добавь `io.github.thirtyeighttwentysix:volan-coroutines`, согласованный с runtime через BOM alpha.3 из [локального репозитория](/ru/build).
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.coroutines.CoroutineAccess
+import io.github.thirtyeighttwentysix.volan.coroutines.suspendQuery
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withTimeout
+
+val access = CoroutineAccess(Dispatchers.IO.limitedParallelism(4))
+val users = withTimeout(2_000) {
+    db.suspendQuery(access) { user.findMany { take = 20 } }
+}
+val created = db.suspendQuery(access) {
+    transaction { tx ->
+        tx.user.create { email = "async@example.org" }
+    }
+}
+```
+
+`suspendQuery` сохраняет типы сгенерированного receiver и результата клиента или репозитория. По умолчанию используется общий `Dispatchers.IO.limitedParallelism(16)`. Переданный dispatcher принадлежит приложению. Согласуй параллелизм с бюджетом соединений. Query и mapper callbacks работают на worker; не меняй захваченные входные данные параллельно.
+
+## Java
+
+```java
+var workers = java.util.concurrent.Executors.newFixedThreadPool(4);
+try (var db = VolanClient.builder().url(url).asyncExecutor(workers).build()) {
+    var result = db.getUser().findManyAsync(q -> q.setTake(20));
+    var users = result.join();
+} finally {
+    workers.shutdown();
+}
+```
+
+Репозитории, transaction, rawQuery и rawExecute имеют варианты `*Async`, возвращающие CompletableFuture. По умолчанию используется ForkJoinPool.commonPool(). Для сервиса выдели отдельный executor. Volan не закрывает его. Заверши работу до закрытия клиента. `join()` оборачивает ошибки в CompletionException, `get()` — в ExecutionException. Пустое nullable-чтение нормально завершается с null.
+
+## Отмена
+
+Alpha.3 пропускает отменённые queued callbacks и вызывает `Statement.cancel()` для активного JDBC. Следующие statements запрещены, незавершённая транзакция откатывается. Корутина завершается после освобождения worker, statement и соединения. Future становится cancelled сразу, без ожидания cleanup. Alpha.2 лишь пропускает queued Java-операции.
+
+Отмена не гарантирует жёсткий дедлайн. Драйвер, получение соединения и commit могут занять время. Она не отменяет завершённую запись или уже начавшийся commit. Настрой таймауты пула, сети и сервера отдельно. `mayInterruptIfRunning` не управляет отменой JDBC. JDBC остаётся блокирующим; это не R2DBC.
+
+[Правила callback транзакции](/ru/transactions).

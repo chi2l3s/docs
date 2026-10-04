@@ -1,0 +1,51 @@
+---
+title: "Синхронизация"
+description: "Синхронизация — Volan"
+---
+
+Прочитай структуру через pull или приведи development-БД к схеме через push. Генерация и компиляция не выполняют эти операции автоматически.
+
+## CLI
+
+```bash
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db --dry-run
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db
+volan db pull --url jdbc:sqlite:./data.db --stdout
+```
+
+CLI preview поддерживает эти команды отдельно от генерации runtime. DATABASE_URL должен быть JDBC URL. Push читает URL datasource, если он не переопределён `--url`; pull использует DATABASE_URL или `--url`. Для серверной БД задай DATABASE_USER и DATABASE_PASSWORD через окружение или secret manager.
+
+Pull печатает схему с `--stdout` либо создаёт `--schema introspected.volan`. Замена файла требует `--force`. Экспорт использует env("DATABASE_URL"), не credentials. Сохраняй исходную схему: pull не восстановит все объявления клиента.
+
+## Библиотека
+
+Для SQLite alpha.2 добавь `volan-migrate` в зависимости [первого запроса](/ru/quickstart), выравнивая версию через BOM.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+import io.github.thirtyeighttwentysix.volan.dialect.sqlite.SqliteDialect
+import io.github.thirtyeighttwentysix.volan.migrate.DatabaseSync
+import io.github.thirtyeighttwentysix.volan.migrate.SqliteReader
+import java.nio.file.Files
+import java.nio.file.Path
+import java.sql.DriverManager
+
+val schema = SchemaLoader.load("schema.volan",
+    Files.readString(Path.of("schema.volan"))).schemaOrThrow()
+val sync = DatabaseSync(SqliteReader(), SqliteDialect)
+DriverManager.getConnection("jdbc:sqlite:./data.db").use { connection ->
+    val plan = sync.plan(connection, schema)
+    println(plan.toSql(SqliteDialect))
+    sync.push(connection, schema)
+}
+```
+
+Используй отдельные JDBC-соединения, начинающие в auto-commit. Перед применением отобрази и проверь план; не принимай разрушительные изменения автоматически из недоверенного ввода. `sync.plan` — actual → desired, `sync.drift(connection, SchemaMapper.map(expectedSchema))` — expected → actual. Сравнивается структура, а не данные; операции лишь читают каталоги.
+
+## Безопасность и история
+
+Предупреждения требуют явного `--accept-data-loss`. Warning может означать ошибку на существующих строках, а не только потерю данных. Rename представляется как drop/add; для сохранения данных используй проверенный ALTER RENAME SQL.
+
+PostgreSQL/SQLite push проверяет структуру до commit транзакции. H2/MySQL/MariaDB могут оставить committed DDL и используют отдельный журнал `_volan_push` с [ручным восстановлением](/ru/migrations). Успешный повторный push пуст.
+
+Push не создаёт migration files и не добавляет versioned history. Для production применяй [версионируемые миграции](/ru/migrations). Для SQLite rebuild и MySQL catalogue-dependent alterations используй DatabaseSync.plan вместо общего SchemaDiffer.
