@@ -1,0 +1,44 @@
+---
+title: "Examples"
+description: "Examples — Volan"
+---
+
+Run existing independent consumers to check generation and runtime together.
+
+| Example | Coverage | Requirements |
+|---|---|---|
+| [First query](/en/quickstart) | Alpha.2 Kotlin/Java, explicit SQLite DDL, insert/read, closing | Java 17+, Gradle |
+| [plugin-smoke/gradle](https://github.com/thirtyeighttwentysix/volan/tree/main/plugin-smoke/gradle) | Alpha.3 plugin, Kotlin/Java H2 CRUD, coroutines, metrics | Staged artifacts |
+| [plugin-smoke/maven](https://github.com/thirtyeighttwentysix/volan/tree/main/plugin-smoke/maven) | Alpha.3 generation and Java H2 CRUD | Maven 3.9+, staged artifacts |
+| [release-smoke](https://github.com/thirtyeighttwentysix/volan/tree/main/release-smoke) | Independent artifacts, SQLite/H2 and server consumers | Docker for server tests |
+
+The H2 plugin consumer schema is:
+
+```prisma
+datasource db {
+  provider = "h2"
+  url = env("UNSET_PLUGIN_SMOKE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "example.generated"
+  javaFriendly = true
+}
+model User {
+  id Int @id @default(autoincrement())
+  name String
+}
+```
+
+Its Kotlin/Java tests create the User table explicitly before writing, then close the client. [Build](/en/build) contains complete Gradle/Maven configuration.
+
+From the source repository after staging alpha.3:
+
+```bash
+python scripts/verify-plugins.py --version 0.1.0-alpha.3 --repository build/release-repository
+./gradlew -p release-smoke test "-PvolanVersion=0.1.0-alpha.2" --tests smoke.PublishedSqliteTest
+```
+
+The verifier copies consumers before modifying schemas, checks ordinary builds, configuration cache, deleted-model source/bytecode removal and Gradle build-cache restoration. Use `--maven /path/to/mvn` if Maven is not on PATH. The SQLite release test needs no Docker; do not interpret a focused test as the complete server suite.
+
+The new first-query snippets are compiled and executed against Central alpha.2. Full framework sample projects and their CI smoke tests are still M11 work; [Web frameworks](/en/frameworks) documents the integration pattern.

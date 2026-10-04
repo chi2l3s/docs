@@ -1,0 +1,75 @@
+---
+title: "Фреймворки"
+description: "Фреймворки — Volan"
+---
+
+Создай один generated client на приложение и закрой его после завершения активных обращений к БД. Starter Spring Boot и plugin Ktor для Volan отсутствуют. Используй обычный lifecycle фреймворка и [настройку сборки](/ru/quickstart).
+
+## Spring Boot
+
+Зарегистрируй клиент singleton bean. Добавь runtime, диалект и JDBC-драйвер; примени проверенные миграции до приёма запросов. В существующем Boot-приложении:
+
+```java
+package example;
+
+import example.generated.VolanClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration(proxyBeanMethods = false)
+public class DatabaseConfig {
+    @Bean(destroyMethod = "close")
+    public VolanClient volanClient() {
+        return VolanClient.builder()
+            .url(System.getenv("DATABASE_URL"))
+            .username(System.getenv("DATABASE_USER"))
+            .password(System.getenv("DATABASE_PASSWORD"))
+            .build();
+    }
+}
+```
+
+Передай VolanClient в сервис через constructor injection. Синхронный сервис Spring MVC может вызвать `db.getUser().count()` на request worker. В WebFlux переноси JDBC на ограниченный worker executor; JDBC не становится reactive. Используй callback транзакции Volan; `@Transactional` не гарантирует автоматическое присоединение.
+
+Если Boot уже владеет DataSource, передай `.dataSource(dataSource).url(jdbcUrl)` для выбора диалекта. Volan не закрывает переданный DataSource; lifecycle принадлежит Boot. Не создавай второй пул случайно. [Lifecycle Spring bean](https://docs.spring.io/spring-framework/reference/core/beans/java/bean-annotation.html).
+
+## Ktor
+
+Интеграция alpha.2 ниже переносит JDBC через корутины без модуля Volan alpha.3. Ktor и kotlinx-coroutines должны быть настроены в приложении. Задай DATABASE_URL для файловой БД с применёнными миграциями, например `jdbc:sqlite:./data.db`, и вызови `volanModule()` из модуля приложения:
+
+```kotlin
+package example
+
+import example.generated.VolanClient
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationStopped
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+fun Application.volanModule() {
+    val db = VolanClient.builder()
+        .url(requireNotNull(System.getenv("DATABASE_URL")))
+        .build()
+    monitor.subscribe(ApplicationStopped) { db.close() }
+    val jdbcWorkers = Dispatchers.IO.limitedParallelism(4)
+    routing {
+        get("/users/count") {
+            val count = withContext(jdbcWorkers) { db.user.count() }
+            call.respondText(count.toString())
+        }
+    }
+}
+```
+
+GET `/users/count` возвращает количество строк текстом. Создавай клиент один раз при запуске модуля, не в каждом route. Согласуй workers с размером пула; встроенный SQLite pool имеет одно соединение. Hook соответствует [событиям Ktor](https://ktor.io/docs/server-events.html). До закрытия клиента заверши jobs приложения.
+
+В alpha.3 вместо обычного withContext используй `db.suspendQuery(access) { user.count() }` с [описанной отменой](/ru/async).
+
+## Данные HTTP
+
+Преобразуй записи и проекции в DTO с явно выбранными скалярными полями. Не сериализуй generated entities автоматически: serializer может прочитать незагруженные связи. Преобразуй not-found и constraint failures в HTTP-ответы приложения, скрывая внутренний SQL и credentials.
+
+Примеры показывают lifecycle и перенос JDBC. Они не подтверждают автоматическую интеграцию транзакций фреймворка. Отдельные Spring Boot/Ktor проекты с CI остаются частью M11.

@@ -1,0 +1,21 @@
+---
+title: "Приложение"
+description: "Приложение — Volan"
+---
+
+Настрой общий клиент и явный процесс миграций до приёма трафика.
+
+1. Согласуй generator, runtime, optional modules и plugins. Фиксируй зависимости и сохраняй исходную схему.
+2. Создай один thread-safe connected client на всё время жизни приложения. Передавай JDBC URL и credentials через конфигурацию; generated client не читает credentials datasource автоматически.
+3. Примени проверенные versioned migrations на отдельном соединении до записи приложения. Проверяй историю и structural drift отдельно.
+4. Согласуй размер пула и ограниченный бюджет JDBC workers. Встроенный SQLite pool имеет одно соединение. Настраивай pool/network/server timeouts отдельно от coroutine timeout.
+5. Ограничивай страницы родителей и includes. Явно выбирай поля DTO, передавай raw SQL parameters и выполняй внешние обращения вне транзакций.
+6. При остановке прекрати приём работы, дождись активных операций, закрой клиент, затем caller-owned executors/DataSources/registries.
+
+Для nontransactional DDL используй maintenance window и проверенный restore/repair процесс. Progress journal не заменяет backups и не доказывает, что следующий statement не завершился. Проверяй приложение на той же СУБД и поддерживаемой структуре каталогов, что production.
+
+Храни DATABASE_PASSWORD в secret manager. Не коммить URL с паролями, не раскрывай SQL через HTTP-ошибки и не используй его как metric tag. Перехватчики не обеспечивают tenant isolation и soft-delete; добавляй эти predicates в запросы явно.
+
+H2 memory и приватная SQLite memory подходят для временных данных. Для сохранения используй файл или серверную БД и резервные копии.
+
+Alpha API может меняться. Перед deployment прочитай [Ограничения](/ru/limitations) и release notes; staged alpha.3 требует полного совпадающего набора зависимостей.

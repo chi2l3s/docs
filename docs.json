@@ -19,7 +19,8 @@
               "en/build",
               "en/installation",
               "en/quickstart",
-              "en/schema"
+              "en/schema",
+              "en/frameworks"
             ]
           },
           {
@@ -37,7 +38,11 @@
             "pages": [
               "en/limitations",
               "en/cli",
-              "en/errors"
+              "en/errors",
+              "en/examples",
+              "en/faq",
+              "en/versions",
+              "en/benchmarks"
             ]
           },
           {
@@ -45,7 +50,8 @@
             "pages": [
               "en/databases",
               "en/sync",
-              "en/migrations"
+              "en/migrations",
+              "en/production"
             ]
           }
         ]
@@ -60,6 +66,7 @@
               "ru/installation",
               "ru/quickstart",
               "ru/build",
+              "ru/frameworks",
               "ru/schema"
             ]
           },
@@ -78,7 +85,8 @@
             "pages": [
               "ru/sync",
               "ru/databases",
-              "ru/migrations"
+              "ru/migrations",
+              "ru/production"
             ]
           },
           {
@@ -86,7 +94,11 @@
             "pages": [
               "ru/cli",
               "ru/limitations",
-              "ru/errors"
+              "ru/errors",
+              "ru/examples",
+              "ru/faq",
+              "ru/versions",
+              "ru/benchmarks"
             ]
           }
         ]
