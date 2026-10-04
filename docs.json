@@ -27,7 +27,8 @@
             "pages": [
               "en/transactions",
               "en/queries",
-              "en/relations"
+              "en/relations",
+              "en/async"
             ]
           },
           {

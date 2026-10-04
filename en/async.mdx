@@ -1,0 +1,51 @@
+---
+title: "Async"
+description: "Coroutine and Java future execution and cancellation."
+---
+
+Dispatch blocking JDBC away from request threads. Java futures exist in alpha.2; coroutine wrappers and active JDBC cancellation require alpha.3.
+
+## Kotlin
+
+Add `io.github.thirtyeighttwentysix:volan-coroutines` aligned with runtime via the alpha.3 BOM from the [staged repository](/en/build).
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.coroutines.CoroutineAccess
+import io.github.thirtyeighttwentysix.volan.coroutines.suspendQuery
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withTimeout
+
+val access = CoroutineAccess(Dispatchers.IO.limitedParallelism(4))
+val users = withTimeout(2_000) {
+    db.suspendQuery(access) { user.findMany { take = 20 } }
+}
+val created = db.suspendQuery(access) {
+    transaction { tx ->
+        tx.user.create { email = "async@example.org" }
+    }
+}
+```
+
+`suspendQuery` retains generated receiver and result types for clients and repositories. The shared default uses `Dispatchers.IO.limitedParallelism(16)`. A supplied dispatcher is application-owned. Size concurrency with the connection budget. Query and mapper callbacks execute on the worker; captured inputs must not be modified concurrently.
+
+## Java
+
+```java
+var workers = java.util.concurrent.Executors.newFixedThreadPool(4);
+try (var db = VolanClient.builder().url(url).asyncExecutor(workers).build()) {
+    var result = db.getUser().findManyAsync(q -> q.setTake(20));
+    var users = result.join();
+} finally {
+    workers.shutdown();
+}
+```
+
+Repositories, transactions, rawQuery and rawExecute have `*Async` equivalents returning CompletableFuture. Default executor: ForkJoinPool.commonPool(). Use a dedicated executor for services. Volan does not shut it down. Finish work before closing the client. `join()` wraps failures in CompletionException; `get()` in ExecutionException. Empty nullable reads complete normally with null.
+
+## Cancellation
+
+Alpha.3 cancellation skips queued callbacks and requests `Statement.cancel()` for active JDBC work. Later statements are refused and an uncommitted transaction rolls back. Coroutine completion waits for worker, statement and connection cleanup. Future cancellation becomes visible immediately and does not wait for cleanup. Alpha.2 only skips queued Java work.
+
+Cancellation is not a hard deadline. Drivers, pool checkout or commit may take time. It cannot undo committed writes or a commit already started. Configure connection, network and server timeouts separately. `mayInterruptIfRunning` does not control JDBC cancellation. JDBC remains blocking; this is not R2DBC.
+
+[Transaction callback rules](/en/transactions).
