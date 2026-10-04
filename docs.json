@@ -4,8 +4,8 @@
   "name": "Volan",
   "colors": {
     "primary": "#315D78",
-    "light": "#45758F",
-    "dark": "#84ACC4"
+    "light": "#84ACC4",
+    "dark": "#315D78"
   },
   "navigation": {
     "languages": [
@@ -124,7 +124,7 @@
       "github": "https://github.com/thirtyeighttwentysix/volan"
     }
   },
-  "description": "Volan JVM ORM documentation: installation, schema, Kotlin and Java queries, migrations and database guarantees. Документация на русском и английском.",
+  "description": "Volan is a schema-first JVM ORM for Kotlin and Java. Learn typed queries, relations, transactions and database migrations with runnable examples.",
   "appearance": {
     "default": "system"
   },
@@ -139,5 +139,19 @@
       "destination": "/en/quickstart",
       "permanent": true
     }
-  ]
+  ],
+  "seo": {
+    "metatags": {
+      "og:site_name": "Volan",
+      "twitter:card": "summary"
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": {
+    "light": "/logo/favicon-light.svg",
+    "dark": "/logo/favicon-dark.svg"
+  }
 }
