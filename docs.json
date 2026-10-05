@@ -440,7 +440,8 @@
   "contextual": {
     "options": [
       "copy",
-      "view"
+      "view",
+      "chatgpt"
     ]
   },
   "footer": {
@@ -707,6 +708,11 @@
   "styling": {
     "codeblocks": {
       "theme": "catppuccin-latte"
+    }
+  },
+  "integrations": {
+    "telemetry": {
+      "enabled": true
     }
   }
 }
