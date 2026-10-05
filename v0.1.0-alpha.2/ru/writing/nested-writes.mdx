@@ -14,7 +14,7 @@ Volan 0.1.0-alpha.2. Опубликованные библиотеки для Po
 ## Создай родителя и ребёнка
 
 <CodeGroup>
-```kotlin Kotlin title="nested-create"
+```kotlin Kotlin
 val author = db.user.create {
     email = "author@example.org"
     posts.create { title = "First post" }
@@ -27,7 +27,7 @@ val loaded = db.user.findUniqueOrThrow {
 println(loaded.posts.map { it.title })
 ```
 
-```java Java title="nested-create-java"
+```java Java
 var author = db.getUser().create(data -> {
     data.setEmail("author@example.org");
     data.getPosts().create(post -> post.setTitle("First post"));
@@ -47,7 +47,7 @@ Runtime получает выданный ключ пользователя и �
 
 ## `connect`: используй существующую строку
 
-```kotlin title="nested-connect"
+```kotlin
 val existingAuthor = db.user.create { email = "existing-author@example.org" }
 val post = db.post.create {
     title = "Connected post"
@@ -62,7 +62,7 @@ println(post.authorId)
 
 ## `connectOrCreate`: найди по ключу или вставь
 
-```kotlin title="nested-connect-or-create"
+```kotlin
 val post = db.post.create {
     title = "Shared author"
     author.connectOrCreate {
@@ -81,7 +81,7 @@ println(post.authorId)
 
 ## Измени уже связанные строки
 
-```kotlin title="nested-update"
+```kotlin
 val author = db.user.create {
     email = "nested-edit@example.org"
     posts.create { title = "Before" }

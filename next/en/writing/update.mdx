@@ -14,7 +14,7 @@ These fragments use an open `db` and the [User/Post schema](/next/en/schema). Th
 ## Change one user's name
 
 <CodeGroup>
-```kotlin Kotlin title="update-one"
+```kotlin Kotlin
 val created = db.user.create { email = "edit@example.org"; name = "Before" }
 val updated = db.user.update {
     where { id eq created.id }
@@ -23,7 +23,7 @@ val updated = db.user.update {
 println(updated.name)
 ```
 
-```java Java title="update-one-java"
+```java Java
 var created = db.getUser().create(data -> {
     data.setEmail("edit@example.org");
     data.setName("Before");
@@ -50,7 +50,7 @@ The method name is not a safety check. Include required tenant or owner conditio
 
 ## An omitted field versus explicit null
 
-```kotlin title="update-null"
+```kotlin
 val created = db.user.create { email = "clear@example.org"; name = "Alice" }
 val cleared = db.user.update {
     where { id eq created.id }
@@ -65,7 +65,7 @@ Runtime maintains `@updatedAt` during typed writes. Ordinary column defaults do 
 
 ## Update a set and inspect its count
 
-```kotlin title="update-many"
+```kotlin
 val affected = db.user.updateMany {
     where { name.isNull() }
     data { name = "Unnamed" }

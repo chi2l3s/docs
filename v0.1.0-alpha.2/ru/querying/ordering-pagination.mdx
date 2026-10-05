@@ -13,7 +13,7 @@ Volan 0.1.0-alpha.2. Опубликованные библиотеки для Po
 
 ## Порядок с разрешением совпадений
 
-```kotlin title="ordering"
+```kotlin
 val posts = db.post.findMany {
     orderBy {
         views.desc()
@@ -29,7 +29,7 @@ val posts = db.post.findMany {
 
 ## Offset: перейти на известную страницу
 
-```kotlin title="offset-page"
+```kotlin
 val pageNumber = 2
 val pageSize = 10
 val page = db.post.findMany {
@@ -45,7 +45,7 @@ Offset удобен для перехода по номерам. На глубо
 
 ## Cursor: продолжить после ключа
 
-```kotlin title="cursor-page"
+```kotlin
 val firstPage = db.post.findMany {
     orderBy { id.asc() }
     take = 10
@@ -69,7 +69,7 @@ Cursor не делает запрос автоматически быстрым 
 
 ## Проекции: получить только нужные поля
 
-```kotlin title="projection"
+```kotlin
 val choices = db.user.projectMany {
     select { id; email }
     orderBy { id.asc() }
@@ -84,7 +84,7 @@ choices.forEach { choice -> println("${choice.id}: ${choice.email}") }
 
 ## Distinct: уникальные значения колонок
 
-```kotlin title="distinct"
+```kotlin
 val authors = db.post.projectMany {
     select { authorId }
     distinct { authorId }

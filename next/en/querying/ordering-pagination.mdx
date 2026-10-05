@@ -13,7 +13,7 @@ These fragments use an open `db` and the [User/Post models](/next/en/schema). Pa
 
 ## Order with a tie-breaker
 
-```kotlin title="ordering"
+```kotlin
 val posts = db.post.findMany {
     orderBy {
         views.desc()
@@ -29,7 +29,7 @@ Alongside `asc()` and `desc()`, the API provides `ascNullsFirst()`, `ascNullsLas
 
 ## Offset: jump to a numbered page
 
-```kotlin title="offset-page"
+```kotlin
 val pageNumber = 2
 val pageSize = 10
 val page = db.post.findMany {
@@ -45,7 +45,7 @@ Offset suits numbered navigation. Deep pages still require the database to proce
 
 ## Cursor: continue after a key
 
-```kotlin title="cursor-page"
+```kotlin
 val firstPage = db.post.findMany {
     orderBy { id.asc() }
     take = 10
@@ -69,7 +69,7 @@ A cursor does not guarantee speed on any schema: assess indexes, filters and que
 
 ## Projections: fetch only needed columns
 
-```kotlin title="projection"
+```kotlin
 val choices = db.user.projectMany {
     select { id; email }
     orderBy { id.asc() }
@@ -84,7 +84,7 @@ Results are `UserProjection` objects rather than complete entities. A projection
 
 ## Distinct: unique column values
 
-```kotlin title="distinct"
+```kotlin
 val authors = db.post.projectMany {
     select { authorId }
     distinct { authorId }

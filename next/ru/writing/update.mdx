@@ -14,7 +14,7 @@ Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; б�
 ## Измени имя конкретного пользователя
 
 <CodeGroup>
-```kotlin Kotlin title="update-one"
+```kotlin Kotlin
 val created = db.user.create { email = "edit@example.org"; name = "Before" }
 val updated = db.user.update {
     where { id eq created.id }
@@ -23,7 +23,7 @@ val updated = db.user.update {
 println(updated.name)
 ```
 
-```java Java title="update-one-java"
+```java Java
 var created = db.getUser().create(data -> {
     data.setEmail("edit@example.org");
     data.setName("Before");
@@ -50,7 +50,7 @@ H2 использует возвращающий строки путь. В MySQL
 
 ## Пропущенное поле и явный null
 
-```kotlin title="update-null"
+```kotlin
 val created = db.user.create { email = "clear@example.org"; name = "Alice" }
 val cleared = db.user.update {
     where { id eq created.id }
@@ -65,7 +65,7 @@ println(cleared.name)
 
 ## Измени набор строк и проверь количество
 
-```kotlin title="update-many"
+```kotlin
 val affected = db.user.updateMany {
     where { name.isNull() }
     data { name = "Unnamed" }

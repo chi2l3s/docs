@@ -14,7 +14,7 @@ These fragments use an open `db` and existing [User/Post tables](/v0.1.0-alpha.2
 ## Create a parent and its children
 
 <CodeGroup>
-```kotlin Kotlin title="nested-create"
+```kotlin Kotlin
 val author = db.user.create {
     email = "author@example.org"
     posts.create { title = "First post" }
@@ -27,7 +27,7 @@ val loaded = db.user.findUniqueOrThrow {
 println(loaded.posts.map { it.title })
 ```
 
-```java Java title="nested-create-java"
+```java Java
 var author = db.getUser().create(data -> {
     data.setEmail("author@example.org");
     data.getPosts().create(post -> post.setTitle("First post"));
@@ -47,7 +47,7 @@ The parent and children have a transaction boundary even without an explicit `db
 
 ## `connect`: use an existing record
 
-```kotlin title="nested-connect"
+```kotlin
 val existingAuthor = db.user.create { email = "existing-author@example.org" }
 val post = db.post.create {
     title = "Connected post"
@@ -62,7 +62,7 @@ A missing target fails and rolls back the operation. If the author's key is alre
 
 ## `connectOrCreate`: find by a key or insert
 
-```kotlin title="nested-connect-or-create"
+```kotlin
 val post = db.post.create {
     title = "Shared author"
     author.connectOrCreate {
@@ -81,7 +81,7 @@ A lookup followed by insertion does not eliminate concurrent races. A unique con
 
 ## Change already related records
 
-```kotlin title="nested-update"
+```kotlin
 val author = db.user.create {
     email = "nested-edit@example.org"
     posts.create { title = "Before" }

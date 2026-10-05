@@ -13,7 +13,7 @@ Volan 0.1.0-alpha.2. Опубликованные библиотеки для Po
 
 ## Один результат по выбранным строкам
 
-```kotlin title="aggregate"
+```kotlin
 val stats = db.post.aggregate {
     where { views gt 0 }
     count()
@@ -47,7 +47,7 @@ println("Average: ${stats.averageOfViews}")
 
 ## По одному результату на автора
 
-```kotlin title="grouping"
+```kotlin
 val groups = db.post.groupBy {
     where { views gt 0 }
     by { authorId }

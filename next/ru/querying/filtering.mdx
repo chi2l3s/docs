@@ -24,7 +24,7 @@ Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; б�
 
 Операторы зависят от типа поля. Числа и временные типы поддерживают диапазоны. Enum и boolean имеют условия равенства и наборов; для enum не предлагается `gt`. Не нужно сравнивать статус с числом, чтобы выразить допустимые состояния.
 
-```kotlin title="filter-range"
+```kotlin
 val posts = db.post.findMany {
     where {
         views.between(100, 1000)
@@ -39,7 +39,7 @@ val posts = db.post.findMany {
 
 ## Регистр и null
 
-```kotlin title="filter-text-null"
+```kotlin
 val users = db.user.findMany {
     where {
         email.ignoringCase() endsWith "@example.org"
@@ -56,7 +56,7 @@ SQL `NULL` проверяется специальным условием, а н
 
 ## `or`, `and`, `not`
 
-```kotlin title="filter-groups"
+```kotlin
 val users = db.user.findMany {
     where {
         email endsWith "@example.org"
@@ -76,7 +76,7 @@ val users = db.user.findMany {
 
 ## Фильтры по связям
 
-```kotlin title="filter-relations"
+```kotlin
 val authors = db.user.findMany {
     where { posts { some { views gt 100 } } }
     orderBy { id.asc() }
@@ -93,7 +93,7 @@ val posts = db.post.findMany {
 
 ## Та же логика в Java
 
-```java title="filter-java"
+```java
 var users = db.getUser().findMany(q -> {
     q.where(w -> {
         w.getEmail().endsWith("@example.org");

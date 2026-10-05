@@ -14,7 +14,7 @@ These fragments use an open client `db` and an existing `User` table from the [s
 ## Read a list of values
 
 <CodeGroup>
-```kotlin Kotlin title="raw-read"
+```kotlin Kotlin
 val emailToFind = "alice@example.org"
 val emails = db.rawQuery(
     """SELECT "email" FROM "User" WHERE "email" = ?""",
@@ -22,7 +22,7 @@ val emails = db.rawQuery(
 ) { row -> row.getString("email") }
 ```
 
-```java Java title="raw-read-java"
+```java Java
 var emailToFind = "alice@example.org";
 var emails = db.rawQuery(
     "SELECT \"email\" FROM \"User\" WHERE \"email\" = ?",
@@ -46,7 +46,7 @@ Java's `List.of` rejects null. For nullable parameters, use a suitable collectio
 
 ## Nullable columns and your own DTO
 
-```kotlin title="raw-nullable"
+```kotlin
 data class UserLabel(val email: String, val name: String?)
 
 val labels = db.rawQuery(
@@ -63,7 +63,7 @@ The mapper runs once per row. Return data needed by the caller; do not return a 
 
 ## Change rows with `rawExecute`
 
-```kotlin title="raw-write"
+```kotlin
 val affected = db.rawExecute(
     """UPDATE "User" SET "name" = ? WHERE "email" = ?""",
     listOf("Alice", "alice@example.org"),

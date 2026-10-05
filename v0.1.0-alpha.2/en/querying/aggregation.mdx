@@ -13,7 +13,7 @@ These fragments use an open `db`, existing tables and the [User/Post schema](/v0
 
 ## One result for selected rows
 
-```kotlin title="aggregate"
+```kotlin
 val stats = db.post.aggregate {
     where { views gt 0 }
     count()
@@ -47,7 +47,7 @@ If the query calls only `count()`, reading `sumOfViews` raises `VolanAggregateNo
 
 ## One result per author
 
-```kotlin title="grouping"
+```kotlin
 val groups = db.post.groupBy {
     where { views gt 0 }
     by { authorId }

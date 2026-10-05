@@ -14,7 +14,7 @@ Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; б�
 ## Создай пользователя и получи его ключ
 
 <CodeGroup>
-```kotlin Kotlin title="create-one"
+```kotlin Kotlin
 val created = db.user.create {
     email = "alice@example.org"
     name = "Alice"
@@ -22,7 +22,7 @@ val created = db.user.create {
 println("Created user ${created.id}: ${created.email}")
 ```
 
-```java Java title="create-one-java"
+```java Java
 var created = db.getUser().create(data -> {
     data.setEmail("alice@example.org");
     data.setName("Alice");
@@ -43,7 +43,7 @@ Volan проверяет отсутствие обязательных поле�
 
 ## Несколько строк через `createMany`
 
-```kotlin title="create-many"
+```kotlin
 val inserted = db.user.createMany {
     row { email = "one@example.org" }
     row { email = "two@example.org"; name = "Two" }
@@ -59,7 +59,7 @@ println("Inserted rows: $inserted")
 
 ## Когда нужен `upsert`
 
-```kotlin title="upsert"
+```kotlin
 val user = db.user.upsert {
     where { email eq "subscriber@example.org" }
     create { email = "subscriber@example.org"; name = "Subscriber" }

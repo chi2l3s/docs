@@ -13,7 +13,7 @@ These examples are application fragments with an open client named `db`. They us
 
 ## `findMany`: a possibly empty list
 
-```kotlin title="reading-list"
+```kotlin
 val users = db.user.findMany {
     where { email endsWith "@example.org" }
     orderBy { id.asc() }
@@ -28,7 +28,7 @@ Without `where`, the method reads all rows. Without `take`, no automatic limit a
 
 ## `findFirst`: first in the requested order
 
-```kotlin title="reading-first"
+```kotlin
 val first = db.user.findFirst {
     where { name.isNotNull() }
     orderBy { id.asc() }
@@ -43,7 +43,7 @@ Several users can have a name. This query chooses the one with the smallest `id`
 ## `findUnique`: the condition must identify the record
 
 <CodeGroup>
-```kotlin Kotlin title="reading-unique"
+```kotlin Kotlin
 val userId = 1
 val user = db.user.findUnique {
     where { id eq userId }
@@ -51,7 +51,7 @@ val user = db.user.findUnique {
 println(user?.email ?: "User not found")
 ```
 
-```java Java title="reading-unique-java"
+```java Java
 var userId = 1;
 var user = db.getUser().findUnique(q -> {
     q.where(w -> w.getId().eq(userId));
@@ -66,7 +66,7 @@ Replace the demonstration `userId` with an application identifier. `id` is a pri
 
 ## `count` and `exists`: when records themselves are unnecessary
 
-```kotlin title="reading-summary"
+```kotlin
 val total = db.user.count {
     where { email endsWith "@example.org" }
 }

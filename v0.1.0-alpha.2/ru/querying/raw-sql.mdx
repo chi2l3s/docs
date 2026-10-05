@@ -14,7 +14,7 @@ Volan 0.1.0-alpha.2. Опубликованные библиотеки для Po
 ## Прочитай список значений
 
 <CodeGroup>
-```kotlin Kotlin title="raw-read"
+```kotlin Kotlin
 val emailToFind = "alice@example.org"
 val emails = db.rawQuery(
     """SELECT "email" FROM "User" WHERE "email" = ?""",
@@ -22,7 +22,7 @@ val emails = db.rawQuery(
 ) { row -> row.getString("email") }
 ```
 
-```java Java title="raw-read-java"
+```java Java
 var emailToFind = "alice@example.org";
 var emails = db.rawQuery(
     "SELECT \"email\" FROM \"User\" WHERE \"email\" = ?",
@@ -46,7 +46,7 @@ var emails = db.rawQuery(
 
 ## Nullable-колонки и собственный DTO
 
-```kotlin title="raw-nullable"
+```kotlin
 data class UserLabel(val email: String, val name: String?)
 
 val labels = db.rawQuery(
@@ -63,7 +63,7 @@ Mapper вызывается для каждой строки. Возвращай
 
 ## Измени строки через `rawExecute`
 
-```kotlin title="raw-write"
+```kotlin
 val affected = db.rawExecute(
     """UPDATE "User" SET "name" = ? WHERE "email" = ?""",
     listOf("Alice", "alice@example.org"),

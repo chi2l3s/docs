@@ -14,7 +14,7 @@ These examples target a test database with an open `db` and the [User/Post schem
 ## Delete a specific user
 
 <CodeGroup>
-```kotlin Kotlin title="delete-one"
+```kotlin Kotlin
 val created = db.user.create { email = "remove@example.org" }
 val deleted = db.user.delete {
     where { id eq created.id }
@@ -22,7 +22,7 @@ val deleted = db.user.delete {
 println("Deleted user: ${deleted.email}")
 ```
 
-```java Java title="delete-one-java"
+```java Java
 var created = db.getUser().create(data -> data.setEmail("remove@example.org"));
 var deleted = db.getUser().delete(q -> {
     q.where(w -> w.getId().eq(created.getId()));
@@ -47,7 +47,7 @@ The query does not add tenant isolation, soft deletion or ownership checks. If o
 
 ## Delete a set and receive a count
 
-```kotlin title="delete-many"
+```kotlin
 val deletedCount = db.user.deleteMany {
     where { email endsWith "@temporary.example.org" }
 }

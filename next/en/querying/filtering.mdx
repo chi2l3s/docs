@@ -24,7 +24,7 @@ These fragments use an open client `db` and the [User/Post schema](/next/en/sche
 
 Operators depend on field types. Numbers and temporal types support ranges. Enums and booleans provide equality and membership conditions; enum fields do not offer `gt`. You do not need numerical status comparisons to express allowed states.
 
-```kotlin title="filter-range"
+```kotlin
 val posts = db.post.findMany {
     where {
         views.between(100, 1000)
@@ -39,7 +39,7 @@ A post must have between 100 and 1000 views and contain the title substring. Typ
 
 ## Case and null
 
-```kotlin title="filter-text-null"
+```kotlin
 val users = db.user.findMany {
     where {
         email.ignoringCase() endsWith "@example.org"
@@ -56,7 +56,7 @@ Check SQL `NULL` through its dedicated conditions, rather than the string `"null
 
 ## `or`, `and` and `not`
 
-```kotlin title="filter-groups"
+```kotlin
 val users = db.user.findMany {
     where {
         email endsWith "@example.org"
@@ -76,7 +76,7 @@ An empty DSL group is not a denial condition: if the application adds no conditi
 
 ## Relation conditions
 
-```kotlin title="filter-relations"
+```kotlin
 val authors = db.user.findMany {
     where { posts { some { views gt 100 } } }
     orderBy { id.asc() }
@@ -93,7 +93,7 @@ To-one relations use `matches` and `notMatches`. These conditions select parent 
 
 ## The same logic in Java
 
-```java title="filter-java"
+```java
 var users = db.getUser().findMany(q -> {
     q.where(w -> {
         w.getEmail().endsWith("@example.org");

@@ -13,7 +13,7 @@ Volan 0.1.0-alpha.2. Опубликованные библиотеки для Po
 
 ## `findMany`: список, который может быть пустым
 
-```kotlin title="reading-list"
+```kotlin
 val users = db.user.findMany {
     where { email endsWith "@example.org" }
     orderBy { id.asc() }
@@ -28,7 +28,7 @@ users.forEach { user -> println(user.email) }
 
 ## `findFirst`: первая по заданному порядку
 
-```kotlin title="reading-first"
+```kotlin
 val first = db.user.findFirst {
     where { name.isNotNull() }
     orderBy { id.asc() }
@@ -43,7 +43,7 @@ println(first?.email ?: "No matching user")
 ## `findUnique`: условие должно идентифицировать строку
 
 <CodeGroup>
-```kotlin Kotlin title="reading-unique"
+```kotlin Kotlin
 val userId = 1
 val user = db.user.findUnique {
     where { id eq userId }
@@ -51,7 +51,7 @@ val user = db.user.findUnique {
 println(user?.email ?: "User not found")
 ```
 
-```java Java title="reading-unique-java"
+```java Java
 var userId = 1;
 var user = db.getUser().findUnique(q -> {
     q.where(w -> w.getId().eq(userId));
@@ -66,7 +66,7 @@ System.out.println(user == null ? "User not found" : user.getEmail());
 
 ## `count` и `exists`: когда сами записи не нужны
 
-```kotlin title="reading-summary"
+```kotlin
 val total = db.user.count {
     where { email endsWith "@example.org" }
 }
