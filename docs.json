@@ -2774,9 +2774,7 @@
     "family": "Geist"
   },
   "styling": {
-    "codeblocks": {
-      "theme": "catppuccin-latte"
-    }
+    "codeblocks": "system"
   },
   "integrations": {
     "telemetry": {
