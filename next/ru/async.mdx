@@ -4,16 +4,16 @@ description: "Выполняй JDBC на подходящих workers и учи�
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
 Запрос к БД может ждать сеть, свободное соединение или выполнение SQL. JDBC в это время занимает поток. В сервере такой запрос стоит выполнять на workers с ограниченным параллелизмом, чтобы ожидание БД не заняло все потоки обработки других событий.
 
-Java futures доступны в alpha.2. Модуль корутин Volan и отмена активного JDBC относятся к alpha.3. Оба подхода меняют организацию выполнения; сама работа JDBC остаётся блокирующей.
+Java futures доступны в alpha.2. Модуль корутин Volan и отмена активного JDBC относятся к Volan 1.0. Оба подхода меняют организацию выполнения; сама работа JDBC остаётся блокирующей.
 
 ## Kotlin
 
-Добавь `io.github.thirtyeighttwentysix:volan-coroutines`, согласованный с runtime через BOM alpha.3 из [локального репозитория](/next/ru/build).
+Добавь `io.github.thirtyeighttwentysix:volan-coroutines`, согласованный с runtime через BOM 1.0.0 из Maven Central; см. [Сборку](/next/ru/build).
 
 ```kotlin
 import io.github.thirtyeighttwentysix.volan.coroutines.CoroutineAccess
@@ -50,7 +50,7 @@ try (var db = VolanClient.builder().url(url).asyncExecutor(workers).build()) {
 
 ## Отмена
 
-Alpha.3 пропускает отменённые queued callbacks и вызывает `Statement.cancel()` для активного JDBC. Следующие statements запрещены, незавершённая транзакция откатывается. Корутина завершается после освобождения worker, statement и соединения. Future становится cancelled сразу, без ожидания cleanup. Alpha.2 лишь пропускает queued Java-операции.
+Volan 1.0 пропускает отменённые queued callbacks и вызывает `Statement.cancel()` для активного JDBC. Следующие statements запрещены, незавершённая транзакция откатывается. Корутина завершается после освобождения worker, statement и соединения. Future становится cancelled сразу, без ожидания cleanup. Alpha.2 лишь пропускает queued Java-операции.
 
 Отмена не гарантирует жёсткий дедлайн. Драйвер, получение соединения и commit могут занять время. Она не отменяет завершённую запись или уже начавшийся commit. Настрой таймауты пула, сети и сервера отдельно. `mayInterruptIfRunning` не управляет отменой JDBC. JDBC остаётся блокирующим; это не R2DBC.
 

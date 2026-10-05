@@ -4,7 +4,7 @@ description: "Choose the Volan pieces you need: application libraries and a CLI 
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 Volan ships in two separate forms. Application libraries become build dependencies and execute queries. The CLI is installed on your machine and helps validate schemas, generate code and manage database structure. [First query](/next/en/quickstart) only needs the libraries: its build already includes generation.
@@ -25,15 +25,13 @@ curl -fsSL https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scr
 
 Run `volan --help`. Windows updates the current PowerShell environment; restart other terminals. On Unix open a new terminal or run `source "$HOME/.config/volan/env.sh"` in Bash/Zsh, or `source "$HOME/.config/volan/env.fish"` in Fish.
 
-Defaults: `%LOCALAPPDATA%\Programs\Volan` and `~/.local/share/volan`. Repeat installation to update. `JAVA_HOME` takes precedence over PATH. Use `VOLAN_INSTALL_DIR` for a custom directory and `VOLAN_TAG=cli-v0.1.0-alpha.3-preview.1` to pin the CLI release. PowerShell also accepts `-InstallDir` and `-Tag`.
+Defaults: `%LOCALAPPDATA%\Programs\Volan` and `~/.local/share/volan`. Repeat installation to update. `JAVA_HOME` takes precedence over PATH. Use `VOLAN_INSTALL_DIR` for a custom directory and `VOLAN_TAG=v1.0.0` to pin the CLI release. PowerShell also accepts `-InstallDir` and `-Tag`.
 
-Manual installation: download `volan-cli.zip` or `volan-cli.tar.gz` and `SHA256SUMS` from the [CLI release](https://github.com/thirtyeighttwentysix/volan/releases/tag/cli-v0.1.0-alpha.3-preview.1), verify, extract, add `volan/bin` to PATH. No WinGet, Homebrew, Scoop or self-update command is implemented.
+Manual installation: download `volan-cli.zip` or `volan-cli.tar.gz` and `SHA256SUMS` from the [CLI release](https://github.com/thirtyeighttwentysix/volan/releases/tag/v1.0.0), verify, extract, add `volan/bin` to PATH. No WinGet, Homebrew, Scoop or self-update command is implemented.
 
 ## Libraries
 
-All coordinates use `io.github.thirtyeighttwentysix`. Alpha.3 needs runtime, dialect, JDBC driver and a matching `volan-codegen` at build time. The BOM aligns libraries. [First query](/next/en/quickstart) includes a complete build using the staged repository.
-
-The installed preview generates alpha.3 code. Stage matching alpha.3 runtime and dialects from the pinned source baseline in [Build](/next/en/build). The quickstart uses direct codegen from that repository.
+All coordinates use `io.github.thirtyeighttwentysix`. Use the 1.0.0 build plugin, BOM, database dialect and JDBC driver. [First query](/next/en/quickstart) generates during an ordinary build using Maven Central.
 
 ## Removal
 
@@ -49,4 +47,4 @@ A SQLite JDBC driver alone does not give Volan its SQL dialect, and a dialect de
 
 `volan --help` confirms that the shell can find the launcher and Java can execute it. Then `volan validate --schema schema.volan` checks an actual schema without connecting to a database. If the shell cannot find `volan`, open a new terminal first: an existing process may still have the old PATH.
 
-Updating the CLI and updating application libraries are separate operations. A new CLI does not edit `build.gradle.kts` or `pom.xml`; a new runtime dependency does not replace the installed executable. Compare their [versions](/next/en/versions) before generating code. This section targets the staged alpha.3 runtime.
+Updating the CLI and updating application libraries are separate operations. A new CLI does not edit `build.gradle.kts` or `pom.xml`; a new runtime dependency does not replace the installed executable. Compare their [versions](/next/en/versions) before generating code. This section targets 1.0.0.

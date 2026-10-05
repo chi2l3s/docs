@@ -4,10 +4,10 @@ description: "Check API boundaries before choosing your data model and applicati
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
-It is easier to account for a limitation before it becomes an architectural assumption. Volan is in alpha: some query forms are unsupported, and some features are available only in alpha.3 sources. These cases need an explicit application decision.
+It is easier to account for a limitation before it becomes an architectural assumption. Some query forms remain unsupported in 1.0.0. These cases need an explicit application decision.
 
 ## Queries and results
 
@@ -41,6 +41,6 @@ H2/MySQL/MariaDB DDL implicitly commits. The journal records progress but does n
 
 ## Async and compatibility
 
-There is no R2DBC: JDBC occupies workers through futures and coroutines alike. Active statement cancellation in alpha.3 is a driver request, not a hard deadline or reversal of a completed commit. See [Async](/next/en/async).
+There is no R2DBC: JDBC occupies workers through futures and coroutines alike. Active statement cancellation in Volan 1.0 is a driver request, not a hard deadline or reversal of a completed commit. See [Async](/next/en/async).
 
-A feature implemented in source does not mean alpha.3 is published. Choose [compatible versions](/next/en/versions), regenerate on upgrades and verify against the target database. The API can change before 1.0; production stability and 100% coverage are not promised.
+Choose [compatible versions](/next/en/versions), regenerate on upgrades and verify against the target database. Release 1.0.0 does not imply support for every SQL shape or 100% test coverage. The runtime 85% coverage gate is deferred.

@@ -4,7 +4,7 @@ description: "Describe the models, keys and relations used to generate your clie
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 `schema.volan` answers a few concrete questions: which records your application stores, which fields are required, what makes a record unique and how models relate to each other. Volan generates its read and write API from that description.
@@ -70,11 +70,11 @@ Exactly one primary key is required unless ignored. Foreign key types and refere
 
 ## Generation
 
-`volan init` creates this kind of schema, not a build project. `volan validate` checks syntax and semantics; `volan generate` emits Kotlin into `build/generated/volan` by default. These preview commands require matching alpha.3 runtime. Alpha.2 uses [direct generation](/next/en/quickstart).
+`volan init` creates this kind of schema, not a build project. `volan validate` checks syntax and semantics; `volan generate` emits Kotlin into `build/generated/volan` by default. Use the matching 1.0.0 runtime. The [build plugins](/next/en/build) generate during compilation.
 
 Generation does not read datasource credentials or connect. `env("DATABASE_URL")` is resolved when a database operation needs it. `//` comments and `///` documentation survive formatting; block comments are invalid. Field attributes belong on the field's line.
 
-[Full syntax, diagnostics and grammar](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/docs/schema-language.md).
+[Full syntax, diagnostics and grammar](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/schema-language.md).
 
 ## Why a relation has two fields
 

@@ -4,16 +4,16 @@ description: "Compare type storage, queries and migration behavior across provid
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 The same client model does not imply identical storage across databases. Providers differ in types, time precision, arrays, distinct queries and DDL behavior. Those differences matter when designing a schema and when moving an application between providers.
 
-Alpha.2 supports PostgreSQL and SQLite. H2, MySQL and MariaDB require [alpha.3 artifacts from source](/next/en/build). The table below describes implemented capabilities within those version boundaries.
+Version 1.0.0 supports PostgreSQL, SQLite, H2, MySQL and MariaDB. Resolve libraries from Central as described in [Build](/next/en/build).
 
 | Capability | PostgreSQL | SQLite | H2 | MySQL/MariaDB |
 |---|---|---|---|---|
-| Library availability | alpha.2 | alpha.2 | alpha.3 source | alpha.3 source |
+| Library availability | Central 1.0.0 | Central 1.0.0 | Central 1.0.0 | Central 1.0.0 |
 | CRUD, relations, summaries | Yes | Yes | Yes | Yes, InnoDB |
 | Transactions/savepoints | Yes | Yes | Yes | Yes |
 | Arrays | Yes | No | Yes | No |
@@ -48,7 +48,7 @@ MySQL/MariaDB use InnoDB, utf8mb4_bin, UTC and strict session settings. String a
 
 Readers preserve only representable database shapes and reject unsupported definitions. Views, triggers, custom collations, generated columns, unsupported indexes and cross-schema/database relations can prevent pull/plan/push. Preserve the original schema for enum declarations, generator configuration, aliases and updatedAt.
 
-[Full provider storage and catalogue restrictions](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/docs/dialects.md). [DDL recovery](/next/en/migrations).
+[Full provider storage and catalogue restrictions](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/dialects.md). [DDL recovery](/next/en/migrations).
 
 ## Match the provider and URL
 

@@ -4,7 +4,7 @@ description: "Подключи клиент к lifecycle Spring Boot или Ktor
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
 В web-приложении клиент живёт дольше одного HTTP-запроса. Создай его при запуске, передавай сервисам и закрой после завершения активной работы при остановке. Так пул соединений не создаётся заново для каждого endpoint.
@@ -41,7 +41,7 @@ public class DatabaseConfig {
 
 ## Ktor
 
-Этот пример alpha.3 переносит JDBC средствами kotlinx-coroutines. Для отмены активного запроса используй coroutine-адаптер Volan, описанный ниже. Ktor и kotlinx-coroutines должны быть настроены в приложении. Задай DATABASE_URL для файловой БД с применёнными миграциями, например `jdbc:sqlite:./data.db`, и вызови `volanModule()` из модуля приложения:
+Этот пример Volan 1.0 переносит JDBC средствами kotlinx-coroutines. Для отмены активного запроса используй coroutine-адаптер Volan, описанный ниже. Ktor и kotlinx-coroutines должны быть настроены в приложении. Задай DATABASE_URL для файловой БД с применёнными миграциями, например `jdbc:sqlite:./data.db`, и вызови `volanModule()` из модуля приложения:
 
 ```kotlin
 package org.example
@@ -72,7 +72,7 @@ fun Application.volanModule() {
 
 GET `/users/count` возвращает количество строк текстом. Создавай клиент один раз при запуске модуля, не в каждом route. Согласуй workers с размером пула; встроенный SQLite pool имеет одно соединение. Hook соответствует [событиям Ktor](https://ktor.io/docs/server-events.html). До закрытия клиента заверши jobs приложения.
 
-В alpha.3 вместо обычного withContext используй `db.suspendQuery(access) { user.count() }` с [описанной отменой](/next/ru/async).
+В Volan 1.0 вместо обычного withContext используй `db.suspendQuery(access) { user.count() }` с [описанной отменой](/next/ru/async).
 
 ## Данные HTTP
 

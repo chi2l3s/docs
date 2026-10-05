@@ -4,7 +4,7 @@ description: "Read an existing database or review changes needed to apply your s
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 For an existing database, start by reading its structure. `pull` inspects database catalogs and writes the representable structure as a Volan schema. With a schema already written, `push` plans a transition from the actual structure to the desired one and can apply it to a development database.
@@ -19,13 +19,13 @@ volan db push --schema schema.volan --url jdbc:sqlite:./data.db
 volan db pull --url jdbc:sqlite:./data.db --stdout
 ```
 
-CLI preview supports these commands independently of runtime generation. DATABASE_URL must be a JDBC URL. Push reads the datasource URL unless `--url` overrides it; pull uses DATABASE_URL or `--url`. For server databases set DATABASE_USER and DATABASE_PASSWORD through your environment or secret manager.
+The CLI supports these commands independently of runtime generation. DATABASE_URL must be a JDBC URL. Push reads the datasource URL unless `--url` overrides it; pull uses DATABASE_URL or `--url`. For server databases set DATABASE_USER and DATABASE_PASSWORD through your environment or secret manager.
 
 Pull prints with `--stdout` or creates `--schema introspected.volan`. Existing files require `--force`. Export uses env("DATABASE_URL"), not credentials. Preserve the original schema: pull cannot recover all client declarations.
 
 ## Library
 
-Alpha.2 SQLite setup: add `volan-migrate` to the dependencies of [First query](/next/en/quickstart), aligned by the BOM.
+SQLite setup: add `volan-migrate` to the dependencies of [First query](/next/en/quickstart), aligned by the BOM.
 
 ```kotlin
 import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader

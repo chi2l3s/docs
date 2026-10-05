@@ -4,7 +4,7 @@ description: "Выбери нужные части Volan: библиотеки �
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
 У Volan две отдельные поставки. Библиотеки добавляются в зависимости приложения и выполняют запросы. CLI устанавливается в систему и помогает проверять схему, генерировать код и работать со структурой базы. Для [первого запроса](/next/ru/quickstart) достаточно библиотек: генерация уже встроена в показанную сборку.
@@ -25,15 +25,13 @@ curl -fsSL https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scr
 
 Выполни `volan --help`. Windows обновляет текущую сессию PowerShell; другие терминалы перезапусти. На Unix открой новый терминал либо выполни `source "$HOME/.config/volan/env.sh"` в Bash/Zsh или `source "$HOME/.config/volan/env.fish"` в Fish.
 
-Каталоги по умолчанию: `%LOCALAPPDATA%\Programs\Volan` и `~/.local/share/volan`. Повторный запуск обновляет CLI. `JAVA_HOME` имеет приоритет над PATH. `VOLAN_INSTALL_DIR` задаёт другой каталог, `VOLAN_TAG=cli-v0.1.0-alpha.3-preview.1` фиксирует релиз. PowerShell также принимает `-InstallDir` и `-Tag`.
+Каталоги по умолчанию: `%LOCALAPPDATA%\Programs\Volan` и `~/.local/share/volan`. Повторный запуск обновляет CLI. `JAVA_HOME` имеет приоритет над PATH. `VOLAN_INSTALL_DIR` задаёт другой каталог, `VOLAN_TAG=v1.0.0` фиксирует релиз. PowerShell также принимает `-InstallDir` и `-Tag`.
 
-Для ручной установки скачай `volan-cli.zip` или `volan-cli.tar.gz` и `SHA256SUMS` из [релиза CLI](https://github.com/thirtyeighttwentysix/volan/releases/tag/cli-v0.1.0-alpha.3-preview.1), проверь хеш, распакуй и добавь `volan/bin` в PATH. WinGet, Homebrew, Scoop и команды self-update нет.
+Для ручной установки скачай `volan-cli.zip` или `volan-cli.tar.gz` и `SHA256SUMS` из [релиза CLI](https://github.com/thirtyeighttwentysix/volan/releases/tag/v1.0.0), проверь хеш, распакуй и добавь `volan/bin` в PATH. WinGet, Homebrew, Scoop и команды self-update нет.
 
 ## Библиотеки
 
-Координаты используют namespace `io.github.thirtyeighttwentysix`. Alpha.3 нужны runtime, диалект, JDBC-драйвер и совпадающий по версии `volan-codegen` для сборки. BOM выравнивает версии библиотек. [Первый запрос](/next/ru/quickstart) содержит полную сборку с подготовленным репозиторием.
-
-Установленный preview генерирует код alpha.3. Подготовь соответствующие runtime и диалекты из закреплённых исходников по [Сборке](/next/ru/build). Первый пример вызывает codegen напрямую из этого репозитория.
+Координаты используют namespace `io.github.thirtyeighttwentysix`. Подключи плагин сборки 1.0.0, BOM, диалект и JDBC-драйвер. [Первый запрос](/next/ru/quickstart) генерирует клиент обычной сборкой с зависимостями из Maven Central.
 
 ## Удаление
 
@@ -49,4 +47,4 @@ curl -fsSL https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scr
 
 `volan --help` подтверждает, что shell находит launcher и Java может его выполнить. Затем `volan validate --schema schema.volan` проверяет конкретный файл без подключения к базе. Если `volan` не найден, сначала открой новый терминал: старый процесс мог ещё не получить обновлённый PATH.
 
-Обновление CLI и обновление библиотек — отдельные действия. Новый CLI не меняет `build.gradle.kts` или `pom.xml`, а новая зависимость runtime не заменяет установленный executable. Перед генерацией сравни их [версии](/next/ru/versions). Этот раздел использует подготовленный runtime alpha.3 и генератор той же версии.
+Обновление CLI и обновление библиотек — отдельные действия. Новый CLI не меняет `build.gradle.kts` или `pom.xml`, а новая зависимость runtime не заменяет установленный executable. Перед генерацией сравни их [версии](/next/ru/versions). Раздел использует runtime и генератор версии 1.0.0.

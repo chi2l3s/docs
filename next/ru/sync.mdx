@@ -4,7 +4,7 @@ description: "Прочитай существующую базу или пров
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
 При подключении существующей базы удобно начать с её структуры. `pull` читает каталоги БД и создаёт представимое описание в формате Volan. Когда схема уже написана, `push` строит план перехода от фактической структуры к желаемой и может применить его к development-базе.
@@ -19,13 +19,13 @@ volan db push --schema schema.volan --url jdbc:sqlite:./data.db
 volan db pull --url jdbc:sqlite:./data.db --stdout
 ```
 
-CLI preview поддерживает эти команды отдельно от генерации runtime. DATABASE_URL должен быть JDBC URL. Push читает URL datasource, если он не переопределён `--url`; pull использует DATABASE_URL или `--url`. Для серверной БД задай DATABASE_USER и DATABASE_PASSWORD через окружение или secret manager.
+CLI поддерживает эти команды отдельно от генерации runtime. DATABASE_URL должен быть JDBC URL. Push читает URL datasource, если он не переопределён `--url`; pull использует DATABASE_URL или `--url`. Для серверной БД задай DATABASE_USER и DATABASE_PASSWORD через окружение или secret manager.
 
 Pull печатает схему с `--stdout` либо создаёт `--schema introspected.volan`. Замена файла требует `--force`. Экспорт использует env("DATABASE_URL"), не credentials. Сохраняй исходную схему: pull не восстановит все объявления клиента.
 
 ## Библиотека
 
-Для SQLite alpha.2 добавь `volan-migrate` в зависимости [первого запроса](/next/ru/quickstart), выравнивая версию через BOM.
+Для SQLite добавь `volan-migrate` в зависимости [первого запроса](/next/ru/quickstart), выравнивая версию через BOM.
 
 ```kotlin
 import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader

@@ -4,51 +4,92 @@ description: "Read PostgreSQL query measurements, their methodology and their li
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
-A benchmark answers a narrow question: how long a defined operation takes in a defined environment. This suite measures pooled PostgreSQL reads with field materialization. In the recorded run, Volan took longer than the listed alternatives; the table presents that difference directly.
+The 5 October 2026 run contains 40 PostgreSQL cases: reads, four concurrent readers, updates and insert/delete transactions. Volan has higher read latency in this run. Write intervals overlap broadly and do not support a reliable ranking.
 
-Use these results as a starting point for verification and optimization. They do not predict every application's performance: result sizes, networking, schemas, includes and concurrency change the workload.
+## Results
+
+|  | **Volan** | Hibernate ORM | Exposed | jOOQ |
+| --- | --- | --- | --- | --- |
+| Model definition | `.volan` schema | Entity classes | Kotlin tables / entities | Database-generated or dynamic tables |
+| Query style | Generated Kotlin DSL / Java callbacks | HQL / Criteria / entity operations | Kotlin DSL / DAO | SQL DSL |
+| Row mapping | Generated code | Managed entities | Result rows / DAO entities | Records / explicit mappers |
+| Relations | Explicit, batched `include` | Entity associations and fetch plans | DSL joins / DAO references | SQL joins and nested records |
+| Nested writes | Generated relation operations | Entity cascades | Application / DAO operations | SQL operations |
+| Current Volan scope | PostgreSQL, SQLite, H2, MySQL and MariaDB on main; Kotlin and Java | — | — | — |
+
+These tools offer different abstractions. See the primary references for [Hibernate](https://docs.hibernate.org/orm/7.4/introduction/), [Exposed](https://www.jetbrains.com/help/exposed/about.html) and [jOOQ](https://www.jooq.org/doc/latest/manual/). Volan includes a migration journal and `db pull` / `db push`; [Exposed also provides migration utilities](https://www.jetbrains.com/help/exposed/migrations.html).
+
+## Measured performance
+
+Forty PostgreSQL cases compare reads, four concurrent readers, range updates and insert/delete transactions. Every adapter uses the same table shape, four fields and read-committed transaction boundary. The harness checks values, affected counts and final database state before timing.
+
+![PostgreSQL read latency comparison](https://raw.githubusercontent.com/thirtyeighttwentysix/volan/v1.0.0/docs/benchmarks/read-latency.svg)
+
+{/*  BENCHMARKS:START  */}
+
+**Read, one thread**
 
 | Library | 1 row, µs/op | 100 rows, µs/op |
-|---|---:|---:|
-| Volan | 2432.5 ± 76.7 | 2640.4 ± 145.4 |
-| Hibernate | 1360.0 ± 171.6 | 1504.5 ± 163.3 |
-| Exposed | 1791.6 ± 130.0 | 1816.3 ± 84.9 |
-| jOOQ | 1233.7 ± 85.0 | 1458.8 ± 153.5 |
-| JDBC | 1157.4 ± 44.5 | 1311.5 ± 86.4 |
+| --- | --: | --: |
+| **Volan** | 2191.2 ± 80.3 | 2232.7 ± 35.0 |
+| Hibernate | 1165.0 ± 94.4 | 1281.7 ± 53.7 |
+| Exposed | 1580.1 ± 25.1 | 1726.9 ± 85.0 |
+| jOOQ | 1160.3 ± 40.3 | 1259.0 ± 56.6 |
+| JDBC | 1103.5 ± 23.0 | 1198.7 ± 31.7 |
 
-Means ± JMH 99.9% confidence interval, microseconds per operation; lower is better. Run dated 7 September 2026: Ryzen 5 5500, Windows 11, Corretto 25.0.3, PostgreSQL 17.10 in Docker/WSL2. 10,000 rows, four fields, 1 thread, HikariCP pools of 4.
+**Read, four threads sharing four connections**
 
-Each operation constructs the query, borrows a connection, opens a read-committed transaction, materializes all fields and commits. Correctness is checked before timing. Cases read 1 or 100 rows with WHERE id >= ?, ORDER BY id, LIMIT ?. Defaults: 2 JVM forks, 3 × 2 s warmup, 5 × 2 s measurement, 512 MiB heap.
+| Library | 1 row, µs/op | 100 rows, µs/op |
+| --- | --: | --: |
+| **Volan** | 2434.3 ± 57.1 | 2531.6 ± 63.9 |
+| Hibernate | 1287.2 ± 41.9 | 1443.1 ± 32.5 |
+| Exposed | 1817.2 ± 43.4 | 1990.4 ± 154.9 |
+| jOOQ | 1278.7 ± 19.9 | 1466.6 ± 67.9 |
+| JDBC | 1260.7 ± 31.8 | 1372.8 ± 14.4 |
 
-The suite does not measure writes, includes, nested writes, concurrent throughput, migrations, startup or allocations. Loopback networking is included. Results do not establish universal performance or application throughput; compare confidence intervals.
+**Update and commit**
 
-## Reproduce
+| Library | 1 row, µs/op | 100 rows, µs/op |
+| --- | --: | --: |
+| **Volan** | 5853.2 ± 4522.4 | 6054.1 ± 4544.5 |
+| Hibernate | 5791.4 ± 4681.1 | 6470.1 ± 4176.3 |
+| Exposed | 7705.6 ± 5878.3 | 5452.7 ± 4557.9 |
+| jOOQ | 5047.0 ± 4151.0 | 6973.1 ± 4248.9 |
+| JDBC | 5477.7 ± 4435.6 | 4020.6 ± 4156.2 |
 
-Java 17+, Docker; Python for reporting. Run from repository root:
+**Insert, delete and commit**
 
-```bash
-docker compose -p volan-bench -f benchmarks/compose.yaml up -d --wait
-export VOLAN_BENCH_URL='jdbc:postgresql://localhost:55432/volan_bench'
-./gradlew :benchmarks:jmh
-python benchmarks/report.py benchmarks/build/results/jmh.json
-docker compose -p volan-bench -f benchmarks/compose.yaml down
-```
+| Library | 1 row, µs/op | 100 rows, µs/op |
+| --- | --: | --: |
+| **Volan** | 8490.2 ± 4486.9 | 8455.8 ± 3985.3 |
+| Hibernate | 7411.6 ± 6522.3 | 7668.1 ± 5327.7 |
+| Exposed | 8679.7 ± 5122.4 | 10317.0 ± 11026.4 |
+| jOOQ | 8688.1 ± 20356.8 | 7645.5 ± 4835.7 |
+| JDBC | 7819.5 ± 3946.9 | 6710.7 ± 4798.8 |
 
-On PowerShell set `$env:VOLAN_BENCH_URL = 'jdbc:postgresql://localhost:55432/volan_bench'` and use `.\gradlew.bat`. The fixture creates its own database; do not point it at application data.
+{/*  BENCHMARKS:END  */}
 
-[Methodology](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/benchmarks/README.md), [raw results and machine metadata](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/benchmarks/results).
+**Lower is better.** Values are means ± JMH's 99.9% confidence interval, in microseconds per operation. Measured on 5 October 2026: Ryzen 5 5500, Windows 11, Corretto 25.0.3, PostgreSQL 17.10 in Docker/WSL2, 10,000 baseline rows and HikariCP pools of 4 connections. Each case uses 2 JVM forks, 3 × 2 s warmup and 5 × 2 s measurement, with a 512 MiB heap.
 
-## Read the table
+Volan has higher read latency in this run. **Write intervals are wide and overlap heavily**, so their means do not support a reliable ranking. Four-thread values are latency per caller, not aggregate throughput. Insert/delete includes both operations and one commit; it is not an insert-only score. Libraries use the documented bulk strategies, including Hibernate/Exposed JDBC batches and multi-row inserts for Volan/jOOQ/JDBC.
 
-Values are microseconds per operation. For example, `2432.5 µs/op` is about `2.43 ms` for that measured case, not the duration of every Volan query. The interval beside the mean shows measurement uncertainty; a number without its method suggests false precision.
+<details>
+  <summary>Concurrent read and write charts</summary>
 
-The columns compare one-row and hundred-row reads. They do not establish a linear per-row cost: each operation includes fixed connection, transaction and networking costs. The comparison is for the defined shared work, not every feature each ORM offers.
+  ![PostgreSQL concurrent read latency](https://raw.githubusercontent.com/thirtyeighttwentysix/volan/v1.0.0/docs/benchmarks/concurrent-read-latency.svg)
+  ![PostgreSQL update latency](https://raw.githubusercontent.com/thirtyeighttwentysix/volan/v1.0.0/docs/benchmarks/update-latency.svg)
+  ![PostgreSQL insert/delete transaction latency](https://raw.githubusercontent.com/thirtyeighttwentysix/volan/v1.0.0/docs/benchmarks/insert-delete-latency.svg)
+</details>
 
-## Measure your own workload
+Results include loopback network, pooling and transaction costs. They do not establish performance for relations, nested writes, generated IDs, migrations or another database deployment.
 
-Reading a user with several relations is outside this benchmark. Build a representative query, fix data volume, pool size and concurrency, check correctness and then measure. Observe physical statements and connection waits separately.
+[Methodology and reproduction](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/benchmarks/README.md) · [Raw results and machine metadata](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/benchmarks/results/) · [Benchmark source](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/benchmarks/src/main/kotlin/bench/ReadAdapter.kt)
 
-Do not judge from one initial run; JVM and database warmup affect results. Save machine parameters and raw results so later runs can be compared. A faster incorrect result is not a successful optimization.
+## Scope
+
+These are end-to-end operations with query construction, connection borrowing, JDBC, mapping and commit. The concurrent read case uses four workers sharing one pool of four connections. Write fixtures check affected rows and restored data before measurement. Relations, nested writes, migrations, startup and allocation are not measured.
+
+[README](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/README.md#orm-and-sql-library-comparison), [methodology](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/benchmarks/README.md), [raw JSON and metadata](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/benchmarks/results).

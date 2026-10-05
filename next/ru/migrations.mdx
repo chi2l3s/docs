@@ -4,7 +4,7 @@ description: "Обновляй структуру базы проверенны�
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
 Миграция связывает изменение модели с конкретным SQL, который команда может проверить, сохранить в Git и применить при deployment. Это особенно важно, когда в базе уже есть данные: добавление поля или изменение ключа должно учитывать старые строки, а не только новую схему.
@@ -48,7 +48,7 @@ DriverManager.getConnection(url).use { connection ->
 
 ## H2, MySQL, MariaDB
 
-Нужна alpha.3. DDL делает implicit commit. H2 получает exclusive mode: используй maintenance window, отдельное administrator-соединение и отсутствие активных транзакций приложения. MySQL/MariaDB получают named session lock для БД с ожиданием до 60 секунд. Locks координируют Volan writers, но не сторонний SQL и другие инструменты.
+Нужна Volan 1.0. DDL делает implicit commit. H2 получает exclusive mode: используй maintenance window, отдельное administrator-соединение и отсутствие активных транзакций приложения. MySQL/MariaDB получают named session lock для БД с ожиданием до 60 секунд. Locks координируют Volan writers, но не сторонний SQL и другие инструменты.
 
 Журнал фиксирует старт, подтверждает выполненные statements в `applied_steps`, затем задаёт `finished_at`. Ошибка оставляет committed steps и unfinished record. Следующий apply останавливается; частичный скрипт автоматически не повторяется. После crash счётчик — лишь нижняя граница: ещё один statement мог уже завершиться.
 
@@ -78,7 +78,7 @@ volan db push --schema schema.volan --url jdbc:h2:file:./data --resolve
 
 Зарезервируй `_volan_push` и `_volan_migrations`. Push проверяет default versioned journal; custom journal требует собственной координации unfinished states. Nontransactional scripts не должны менять session, transaction, schema/database или locks напрямую и через routines. Executable version comments MySQL/MariaDB запрещены.
 
-[Полные ограничения SQL и восстановление](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/docs/migrations.md).
+[Полные ограничения SQL и восстановление](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/migrations.md).
 
 ## Пример изменения с существующими данными
 
