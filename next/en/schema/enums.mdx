@@ -1,0 +1,53 @@
+---
+title: "Enums"
+description: "Restrict a field to named values and map them to stored strings."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+</Info>
+
+When a field has a finite set of states, an enum makes that set visible to the compiler. Code passes `PublicationStatus.PUBLISHED` instead of an arbitrary string with a possible typo. This works well for publication status, roles and processing states.
+
+## Declare the states
+
+Add these blocks to a schema with its `datasource` and `generator` configured:
+
+```prisma
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED @map("published")
+
+  @@map("publication_status")
+}
+
+model Publication {
+  id Int @id @default(autoincrement())
+  title String
+  status PublicationStatus @default(DRAFT)
+}
+```
+
+The client's `status` property has the generated type `PublicationStatus`. If insertion omits it, the table's `DRAFT` default applies. An enum must contain at least one value; its member names and stored strings must be distinct.
+
+## Map a stored value
+
+`PUBLISHED` is the code name; `published` is the stored string. The generated value exposes `databaseValue`, which is `"published"` here. In Java, read it through `getDatabaseValue()`.
+
+Generated `fromDatabaseValue(...)` maps a stored string back to its enum. An unknown stored value raises `VolanMappingException`. The client neither chooses the first enum member automatically nor converts a mapping failure into null.
+
+`@@map("publication_status")` describes the database enum name and does not rename the Kotlin class. Storage depends on the dialect: PostgreSQL uses a native enum, while SQLite stores text. The client enum should not be the only validation for data written by external systems.
+
+## Filters and write payloads
+
+After generation, pass enum members to `create`, `update` and conditions such as `eq`, `notEq`, `oneOf` and `notOneOf`. The client encodes stored strings using their mappings. Enum fields do not offer range operators such as `gt`.
+
+A nullable field uses `PublicationStatus?`; check absence with `isNull()` or `isNotNull()`. Provide the enum during creation when the field is required and has no default.
+
+## Changing an enum changes a data contract
+
+Renaming `PUBLISHED` in code while retaining `@map("published")` preserves the stored representation. Changing the mapping changes the data contract: migrate existing rows before reading them with an incompatible client.
+
+Plan deployment order when adding a state. Applications still using the old enum cannot read the new value. Make readers compatible first, then allow writes of the new state. Removing a used value requires migrating affected rows and reviewing the database's SQL plan.
+
+Enums make misspelled member names visible at compilation. Validating transitions, such as `DRAFT` to `PUBLISHED`, remains an application rule: the enum itself does not describe state transitions.

@@ -1,0 +1,81 @@
+---
+title: "Aggregation and grouping"
+description: "Compute statistics in the database and distinguish row filters from group filters."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+Statistics do not require loading every post into memory. The database can compute counts, total views and averages. `aggregate` returns one result for the selected set; `groupBy` returns a list of results for groups, such as each author.
+
+These fragments use an open `db`, existing tables and the [User/Post schema](/v0.1.0-alpha.2/en/schema), where `Post.views` is an integer. Aggregation does not return posts or load relations.
+
+## One result for selected rows
+
+```kotlin title="aggregate"
+val stats = db.post.aggregate {
+    where { views gt 0 }
+    count()
+    sum { views }
+    average { views }
+    minimum { views }
+    maximum { views }
+}
+println("Posts: ${stats.count}")
+println("Views: ${stats.sumOfViews}")
+println("Average: ${stats.averageOfViews}")
+```
+
+The condition first excludes posts without views. Each function is requested explicitly, and the result holds its answer. `count()` counts records rather than summing views.
+
+| Request | Property | Kotlin type |
+| --- | --- | --- |
+| `count()` | `count` | `Long` |
+| `sum { views }` | `sumOfViews` | `BigDecimal?` |
+| `average { views }` | `averageOfViews` | `Double?` |
+| `minimum { views }` | `minimumOfViews` | `Int?` |
+| `maximum { views }` | `maximumOfViews` | `Int?` |
+
+Numeric sums return `BigDecimal?`, averages return `Double?`, and extremes retain the scalar field's type as a nullable result. Numeric functions accept numeric fields; extremes accept supported ordered fields.
+
+## Empty sets and unrequested aggregates
+
+With no matches, a requested count is zero. Sum, average, minimum and maximum can be null: missing data differs from a known zero view count.
+
+If the query calls only `count()`, reading `sumOfViews` raises `VolanAggregateNotAskedException`. The property exists in the generated class, but this query did not compute it. Request everything you intend to read. If the interface should display zero for an absent sum, apply that conversion deliberately in the application.
+
+## One result per author
+
+```kotlin title="grouping"
+val groups = db.post.groupBy {
+    where { views gt 0 }
+    by { authorId }
+    count()
+    sum { views }
+    having { count gt 1L }
+    orderBy {
+        authorId.asc()
+    }
+    take = 10
+}
+groups.forEach { group ->
+    println("${group.authorId}: ${group.count} posts, ${group.sumOfViews} views")
+}
+```
+
+`where` selects input posts. `by { authorId }` groups them by author. `having` retains groups containing more than one matching post. Results then sort by `authorId` and return at most ten groups.
+
+This version's generated groupBy `orderBy` exposes model fields rather than aggregate properties such as `sumOfViews`. Order by keys declared in `by` for valid SQL. For a ranking by total views, express aggregate ordering in handwritten SQL rather than assuming an unavailable DSL method.
+
+These stages explain the difference between where and having. `views gt 0` tests an input record; `count gt 1L` tests a computed group. Moving one into the other changes the question and result.
+
+## Group keys and partial results
+
+List several fields in `by` to group by their combination. Read only declared group keys and requested aggregates. An ordinary column such as `title` is not unambiguous for a group of several posts; reading it as an unrequested field raises an error.
+
+With no matching groups, the result is an empty list. Check before accessing `groups[0]`. For a summary of all records, use `aggregate` rather than constructing an artificial single group.
+
+Java offers the same callbacks: `q.by(b -> b.authorId())`, `q.sum(s -> s.views())` and `q.having(h -> h.getCount().gt(1L))`. Read results through getters such as `getSumOfViews()`.
+
+For window functions or database-specific analytics beyond this API, use [raw SQL](/v0.1.0-alpha.2/en/querying/raw-sql) with explicit mapping and parameters.

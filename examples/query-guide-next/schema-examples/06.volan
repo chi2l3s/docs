@@ -1,0 +1,17 @@
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.schema.sample6"
+  javaFriendly = true
+}
+
+model Account {
+  id Int @id @default(autoincrement())
+  emailAddress String @unique @map("email_address")
+
+  @@map("accounts")
+}

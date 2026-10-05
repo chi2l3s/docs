@@ -52,3 +52,11 @@ For an application using published dependencies, select [alpha.2](/v0.1.0-alpha.
 Relations are loaded explicitly with `include`: reading a property does not trigger hidden SQL. Transactions use a client callback. For HTTP responses, choose fields and construct a DTO. Database work stays visible in the code, making it easier to reason about the queries each operation needs.
 
 JDBC remains blocking when called through futures or coroutines. Tenant isolation and soft delete require explicit application conditions. Volan is in alpha; check [Limitations](/next/en/limitations) and your [database provider](/next/en/databases) before choosing it for a project.
+
+## What generation gives you
+
+A model becomes a complete path through data access. An entity represents a read row. A repository chooses the operation. Its where scope exposes model fields and compatible comparisons. Create and update payloads accept write values, while the generated mapper reads JDBC rows into known types.
+
+For example, a post with `views Int` offers numeric comparisons, while its title offers substring matching. Rename a field and regenerate, and the compiler identifies old references. This helps when Kotlin and Java parts of an application share one model.
+
+You still decide which records a user may access and how much data to request. The client expresses queries; access rules, response DTOs and database operation remain explicit application concerns. Start with [reading](/next/en/querying/reading), then try [creating a record](/next/en/writing/create).

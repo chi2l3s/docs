@@ -13,7 +13,7 @@ Start with [First query](/next/en/quickstart) when learning the ORM. Use [Web fr
 
 | Example | Coverage | Requirements |
 |---|---|---|
-| [First query](/next/en/quickstart) | Alpha.2 Kotlin/Java, SQLite, create/read, closing | JDK 25, Gradle |
+| [First query](/next/en/quickstart) | Staged alpha.3 Kotlin/Java, SQLite, create/read, closing | JDK 25, Gradle |
 | [plugin-smoke/gradle](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/gradle) | Alpha.3 plugin, Kotlin/Java H2 CRUD, coroutines, metrics | Staged artifacts |
 | [plugin-smoke/maven](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/maven) | Alpha.3 generation and Java H2 CRUD | Maven 3.9+, staged artifacts |
 | [release-smoke](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/release-smoke) | Independent artifacts, SQLite/H2 and server consumers | Docker for server tests |
@@ -58,3 +58,17 @@ API examples share the User/Post schema. To run them after the quickstart, add P
 A consumer builds from external artifacts and checks generation together with the runtime. It catches publication problems internal module tests may miss: missing dependencies, incorrect plugin markers or unregistered generated sources.
 
 An H2 consumer does not prove every PostgreSQL/MySQL guarantee. Run the target provider's checks and test migrations on the previous structure with data. A complete web lifecycle is also a separate concern from a small CRUD scenario.
+
+## Run the detailed guide examples
+
+The [User/Post project](https://github.com/chi2l3s/docs/tree/main/examples/query-guide-next) includes its schema, test table setup and Kotlin/Java examples for [reading](/next/en/querying/reading), [filtering](/next/en/querying/filtering), [pagination](/next/en/querying/ordering-pagination), [aggregation](/next/en/querying/aggregation) and [writes](/next/en/writing/create).
+
+Run from the project directory:
+
+```bash
+./gradlew test "-PvolanRepository=file:///ABSOLUTE/PATH/TO/release-repository"
+```
+
+For PowerShell, replace `./gradlew` with `.\gradlew.bat`. JDK 25 is required. Each check opens its own SQLite memory database, performs the operation and verifies its result. Data disappears when the client closes. Schema guide fragments are also generated and compiled in separate packages.
+
+Stage libraries through the [build guide](/next/en/build), then replace `ABSOLUTE/PATH/TO/release-repository` with your file Maven repository path. These alpha.3 artifacts are not published in Central.

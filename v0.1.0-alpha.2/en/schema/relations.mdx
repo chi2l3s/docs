@@ -1,0 +1,89 @@
+---
+title: "Relations in the schema"
+description: "Model one-to-many, one-to-one and many-to-many relationships."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+A relation describes how records belong together. A post has an author; a user has a list of posts. Declare both ends in the schema, while the physical foreign key lives on the end that declares `fields`.
+
+## One-to-many
+
+This fragment replaces the `User` and `Post` models; keep the schema's `datasource` and `generator`:
+
+```prisma
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+  posts Post[]
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  title String
+  views Int @default(0)
+  authorId Int
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+```
+
+`Post.authorId` is an ordinary column. `Post.author` is a relation property, while `User.posts` is the reverse list. No `posts` column appears on `User`. `fields: [authorId]` declares the local key; `references: [id]` declares its target.
+
+The field types must match. Target fields must form a primary or unique key; otherwise one reference could identify several users. For a composite key, list every component in corresponding order.
+
+## One-to-one
+
+The difference is a unique foreign key. Here is a separate pair of models:
+
+```prisma
+model Account {
+  id Int @id @default(autoincrement())
+  profile Profile?
+}
+
+model Profile {
+  id Int @id @default(autoincrement())
+  accountId Int @unique
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+}
+```
+
+An account can have no profile, hence the reverse `Profile?`. Every profile must refer to an account. `@unique` on `accountId` prevents two profiles for one account.
+
+## Many-to-many
+
+When both ends are lists and neither owns a foreign key, Volan describes an implicit join table:
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  tags Tag[]
+}
+
+model Tag {
+  id Int @id @default(autoincrement())
+  name String @unique
+  articles Article[]
+}
+```
+
+A tag can belong to several articles, and an article can have several tags. If the association itself needs fields, such as attachment time or a member's role, declare a separate join model with two explicit relations and a suitable composite key.
+
+## Several relations to the same model
+
+When two models relate in several ways, assign each pair the same explicit `@relation("...")` name at both ends. Names also distinguish roles in a self relation, such as manager and reports. They let the analyzer pair the correct fields; they do not replace `fields` and `references` on the foreign-key owner.
+
+## What deletion does
+
+`Cascade` asks the database to delete dependent rows. In the first example, deleting a user also deletes their posts. Choose it only when that is the application's intended rule.
+
+`SetNull` preserves a dependent row and clears its foreign key. The key fields must be nullable. `Restrict` and `NoAction` prevent incompatible deletion; the database determines the precise checking behavior. `onUpdate` describes the corresponding action on changes to the referenced key. Set the intended actions explicitly rather than inferring them from a property name.
+
+## Declaring and loading a relation are separate steps
+
+After generation, ordinary post reads expose scalar `authorId`. Loading the `author` object requires `include`. Accessing an unloaded relation raises `VolanRelationNotLoadedException`, without hidden SQL. An empty loaded list means no children exist; an unloaded list means they were not requested.
+
+Continue with [loading relations](/v0.1.0-alpha.2/en/relations) or [nested writes](/v0.1.0-alpha.2/en/writing/nested-writes). Update both client and tables after schema changes before running queries.

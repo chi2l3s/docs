@@ -1,0 +1,97 @@
+---
+title: "Reading records"
+description: "Read one record or a list and handle missing data deliberately."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+</Info>
+
+A list screen, a user profile and an email availability check need different results. A list naturally accepts an empty collection; a profile needs a record or absence; an availability check needs a boolean. Choose the method by what its caller needs to do.
+
+These examples are application fragments with an open client named `db`. They use the [User/Post schema](/next/en/schema), with tables already created. See the [first query](/next/en/quickstart) for complete client setup.
+
+## `findMany`: a possibly empty list
+
+```kotlin title="reading-list"
+val users = db.user.findMany {
+    where { email endsWith "@example.org" }
+    orderBy { id.asc() }
+    take = 20
+}
+users.forEach { user -> println(user.email) }
+```
+
+The condition selects emails with the given suffix, `orderBy` defines order and `take` bounds the result. With no matches, `users` is an empty `List<User>`, not null. Iterate directly or display the interface's empty state.
+
+Without `where`, the method reads all rows. Without `take`, no automatic limit applies. Without `orderBy`, the database need not return a stable order. Set access conditions, page size and ordering explicitly for a list endpoint.
+
+## `findFirst`: first in the requested order
+
+```kotlin title="reading-first"
+val first = db.user.findFirst {
+    where { name.isNotNull() }
+    orderBy { id.asc() }
+}
+println(first?.email ?: "No matching user")
+```
+
+Several users can have a name. This query chooses the one with the smallest `id`. Without ordering, “first” does not specify which user will be selected.
+
+`findFirstOrThrow` follows the same search but raises `VolanNotFoundException` when no row exists. Use it when absence breaks an operation's precondition. For an expected empty result, the nullable method handles absence without an exception.
+
+## `findUnique`: the condition must identify the record
+
+<CodeGroup>
+```kotlin Kotlin title="reading-unique"
+val userId = 1
+val user = db.user.findUnique {
+    where { id eq userId }
+}
+println(user?.email ?: "User not found")
+```
+
+```java Java title="reading-unique-java"
+var userId = 1;
+var user = db.getUser().findUnique(q -> {
+    q.where(w -> w.getId().eq(userId));
+});
+System.out.println(user == null ? "User not found" : user.getEmail());
+```
+</CodeGroup>
+
+Replace the demonstration `userId` with an application identifier. `id` is a primary key, so this condition matches at most one row. An equality condition on `email @unique` works the same way.
+
+`findUnique` does not validate that its filter uses a unique key, and does not detect multiple matches. It reads the first row, just like `findFirst`. The predicate and database constraint supply uniqueness. Provide every component of a composite key. `findUniqueOrThrow` changes only the result on absence, not uniqueness rules.
+
+## `count` and `exists`: when records themselves are unnecessary
+
+```kotlin title="reading-summary"
+val total = db.user.count {
+    where { email endsWith "@example.org" }
+}
+val emailTaken = db.user.exists {
+    where { email eq "alice@example.org" }
+}
+println("Users: $total, email taken: $emailTaken")
+```
+
+`count` returns a `Long`, or `0L` for an empty set. `exists` answers `true` or `false`. Both work in the database rather than loading entity lists to count in memory.
+
+Checking `exists` before `create` can provide a helpful message, but it does not replace a unique constraint. Another request can insert the same email between the two statements. Handle the write conflict even when the initial check passed.
+
+## Result shapes
+
+| Method | Kotlin | When no row matches |
+| --- | --- | --- |
+| `findMany` | `List<User>` | Empty list |
+| `findFirst`, `findUnique` | `User?` | `null` |
+| `findFirstOrThrow`, `findUniqueOrThrow` | `User` | `VolanNotFoundException` |
+| `projectMany` | `List<UserProjection>` | Empty list |
+| `projectFirst` | `UserProjection?` | `null` |
+| `count` | `Long` | `0L` |
+| `exists` | `Boolean` | `false` |
+
+For a few columns, use a [projection](/next/en/querying/ordering-pagination). To read a user's posts, request [include](/next/en/relations): reading does not automatically load relations.
+
+To run the fragments with database setup, open the [User/Post example](/next/en/examples).

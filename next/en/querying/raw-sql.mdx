@@ -1,0 +1,84 @@
+---
+title: "Raw SQL"
+description: "Execute handwritten SQL with bound parameters and an explicit result mapper."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+</Info>
+
+The typed API suits ordinary operations. For database-specific functions, unusual joins or analytics, use `rawQuery`. Supply SQL and a result shape while the client manages its connection and binds values as parameters.
+
+These fragments use an open client `db` and an existing `User` table from the [schema](/next/en/schema). Their double-quoted SQL targets PostgreSQL and SQLite. Arbitrary SQL is not translated automatically between dialects.
+
+## Read a list of values
+
+<CodeGroup>
+```kotlin Kotlin title="raw-read"
+val emailToFind = "alice@example.org"
+val emails = db.rawQuery(
+    """SELECT "email" FROM "User" WHERE "email" = ?""",
+    listOf(emailToFind),
+) { row -> row.getString("email") }
+```
+
+```java Java title="raw-read-java"
+var emailToFind = "alice@example.org";
+var emails = db.rawQuery(
+    "SELECT \"email\" FROM \"User\" WHERE \"email\" = ?",
+    java.util.List.of(emailToFind),
+    row -> row.getString("email")
+);
+```
+</CodeGroup>
+
+The first argument is SQL, the second supplies values in placeholder order and the third maps one result row. This example returns a list of emails. With no matches, the list is empty and the mapper is not called.
+
+`rawQuery` returns `List<T>`, where the mapper defines `T`. It adds neither LIMIT nor relation loading. Bound large results in the SQL itself.
+
+## A parameter is a value, not SQL syntax
+
+Each `?` corresponds to one list value. An email such as `missing' OR 1=1 --` is a string parameter rather than a SQL condition. Do not build SQL by concatenating user input.
+
+Parameters cannot supply table names, column names, SQL functions or ordering directions. Map user-selectable sorting to fixed allowed SQL fragments. Never insert arbitrary HTTP input into those parts of a statement.
+
+Java's `List.of` rejects null. For nullable parameters, use a suitable collection such as `java.util.Arrays.asList(...)`. The API accepts nullable values; the `List.of` restriction belongs to the JDK collection.
+
+## Nullable columns and your own DTO
+
+```kotlin title="raw-nullable"
+data class UserLabel(val email: String, val name: String?)
+
+val labels = db.rawQuery(
+    """SELECT "email", "name" FROM "User" ORDER BY "id" LIMIT 20""",
+    emptyList(),
+) { row ->
+    UserLabel(row.getString("email"), row.getStringOrNull("name"))
+}
+```
+
+`getString` expects a non-NULL SQL value; `getStringOrNull` preserves a missing name. Typed accessors also cover numbers, booleans, UUIDs, bytes and temporal values. Read columns by their SQL names or SELECT aliases rather than assuming schema field names.
+
+The mapper runs once per row. Return data needed by the caller; do not return a `Row` object for deferred access to the JDBC result.
+
+## Change rows with `rawExecute`
+
+```kotlin title="raw-write"
+val affected = db.rawExecute(
+    """UPDATE "User" SET "name" = ? WHERE "email" = ?""",
+    listOf("Alice", "alice@example.org"),
+)
+println("Updated rows: $affected")
+```
+
+The command returns a `Long` affected-row count reported by JDBC. It can be zero when the email is absent. DDL counts depend on the driver and do not mean the number of created tables.
+
+Raw SQL bypasses generated write-payload rules. Runtime does not add `@updatedAt`, enforce business conditions or build response DTOs. Supply access conditions, timestamps and row-count checks yourself.
+
+## Connections and transactions
+
+On a JDBC-builder client, raw operations use its connection. Inside `db.transaction { tx -> ... }`, call `tx.rawQuery` or `tx.rawExecute`: they share the transaction with repository operations. Let an exception escape the callback to roll back the whole operation.
+
+A client built only from a custom `QueryExecutor`, without JDBC runtime, does not provide raw SQL. Such an executor describes a different execution path for typed operations.
+
+See [transactions](/next/en/transactions) for atomicity, savepoints and retries. For structural SQL changes, use a reviewed [migration](/next/en/migrations) rather than hiding them inside normal application requests.

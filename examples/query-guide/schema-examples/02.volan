@@ -1,0 +1,23 @@
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.schema.sample2"
+  javaFriendly = true
+}
+
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED @map("published")
+
+  @@map("publication_status")
+}
+
+model Publication {
+  id Int @id @default(autoincrement())
+  title String
+  status PublicationStatus @default(DRAFT)
+}

@@ -1,0 +1,78 @@
+---
+title: "Creating records"
+description: "Insert records, understand defaults and choose bulk creation deliberately."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+Creating a record means supplying values, letting the database enforce constraints and receiving the result. Defaults, nullable fields and related records each add a different decision. Examine them separately rather than treating every property as mandatory input.
+
+These application fragments use an open `db` and existing [User/Post tables](/v0.1.0-alpha.2/en/schema). Use a new test database or unique emails: inserting the same address twice conflicts with `@unique`.
+
+## Create a user and receive its key
+
+<CodeGroup>
+```kotlin Kotlin title="create-one"
+val created = db.user.create {
+    email = "alice@example.org"
+    name = "Alice"
+}
+println("Created user ${created.id}: ${created.email}")
+```
+
+```java Java title="create-one-java"
+var created = db.getUser().create(data -> {
+    data.setEmail("alice@example.org");
+    data.setName("Alice");
+});
+System.out.println("Created user " + created.getId() + ": " + created.getEmail());
+```
+</CodeGroup>
+
+`email` is required, `name` is nullable and the table's auto-increment supplies `id`. The result is a `User` entity exposing the assigned key. Its precise number depends on existing records and the database sequence.
+
+A property existing in the payload does not mean every field needs assignment. Supply required fields without defaults; the database fills omitted defaulted fields. If the real table differs from the schema, the expected default may be absent. Update structure before running the application.
+
+## Nullable does not mean an empty string
+
+When a name is unknown, `name String?` allows NULL. This differs from `""`: an empty string is still a value with different filtering behavior. Choose a consistent representation for missing data.
+
+Volan checks omitted required fields when building insertion. A unique-constraint violation causes the database to reject the command and runtime to report `VolanUniqueConstraintException`. An `exists` check can improve a message, but a concurrent request can still cause an insertion conflict.
+
+## Insert several rows with `createMany`
+
+```kotlin title="create-many"
+val inserted = db.user.createMany {
+    row { email = "one@example.org" }
+    row { email = "two@example.org"; name = "Two" }
+}
+println("Inserted rows: $inserted")
+```
+
+Each `row` describes one insertion. The method returns a `Long` inserted-row count, not `User` objects or generated keys. If keys are immediately needed, create records individually in a [transaction](/v0.1.0-alpha.2/en/transactions), or use tested handwritten SQL for your database.
+
+This version preserves defaults for omitted columns, groups compatible row shapes and splits work according to parameter limits. All batches share one transaction: a failure in one must not leave earlier batches inserted. It does not promise one SQL statement for any number of rows.
+
+`createMany.row` does not support nested relation writes. Supply known foreign keys as scalar values or use a [nested create](/v0.1.0-alpha.2/en/writing/nested-writes) for the related operation.
+
+## When to use `upsert`
+
+```kotlin title="upsert"
+val user = db.user.upsert {
+    where { email eq "subscriber@example.org" }
+    create { email = "subscriber@example.org"; name = "Subscriber" }
+    update { name = "Subscriber" }
+}
+```
+
+If a record exists, the update payload applies; otherwise the create payload applies. Repeat email in create because a lookup condition does not automatically become insertion data.
+
+This upsert uses lookup followed by create-or-update rather than an atomic server upsert. Two concurrent requests can both miss the record and conflict on insertion. Keep the unique constraint and conflict handling; the method does not eliminate races.
+
+## Creation and side effects
+
+Emails and HTTP calls do not roll back with SQL. For a longer operation, group database work in a transaction and schedule external actions after successful completion. Reliable delivery can use an application-designed outbox record in that transaction; the client does not supply an automatic outbox API.
+
+Continue with [updates](/v0.1.0-alpha.2/en/writing/update), [deletion](/v0.1.0-alpha.2/en/writing/delete) and [nested writes](/v0.1.0-alpha.2/en/writing/nested-writes).

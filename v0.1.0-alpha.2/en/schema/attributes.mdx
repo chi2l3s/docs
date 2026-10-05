@@ -1,0 +1,68 @@
+---
+title: "Schema attributes"
+description: "Understand keys, defaults, timestamps, mapping and model attributes."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+An attribute refines a field or model: its key, insertion default, SQL name or table relationship. A single `@` belongs to a field; `@@` belongs to the whole model. These declarations affect the client and database description, so review both after a change.
+
+## Where attributes belong
+
+Keep field attributes on the same line as the field's name and type. Write model attributes on their own line inside the block:
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  title String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@map("articles")
+}
+```
+
+SQL names differ from property names, and the creation timestamp has an index. Generation updates Kotlin code; the database acquires its index and defaults only after applying structural changes.
+
+## Keys and constraints
+
+| Attribute | Purpose | Consideration |
+| --- | --- | --- |
+| `@id` | Single-field primary key | Required scalar value |
+| `@@id([a, b])` | Composite primary key | One row requires every component |
+| `@unique` | Single-column uniqueness | The database defines comparison rules |
+| `@@unique([a, b])` | Combination uniqueness | Does not replace the model's primary key |
+| `@@index([a, b])` | Column index | Does not enforce uniqueness |
+
+See [models](/v0.1.0-alpha.2/en/schema/models) for key examples. `findUnique` uses first-row reading and does not validate the uniqueness of its predicate. The database constraint and correct filter remain necessary.
+
+## `@default(...)`
+
+A default applies on insertion when the application omits a value. Supported expressions include compatible literals, an enum value, `autoincrement()`, `now()` and `uuid()`.
+
+Use `autoincrement()` for a suitable integer key. `now()` supplies the current time for a compatible temporal field; `uuid()` supplies a `Uuid` or `String`. Concrete SQL expressions and support depend on the dialect; consult [database behavior](/v0.1.0-alpha.2/en/databases).
+
+A default does not override supplied values or perform validation. Writing `views = 15` bypasses a default of `0`. Explicit null follows the database's nullability rules rather than automatically restoring the default.
+
+## `@updatedAt`
+
+Apply this attribute to a required `DateTime`. Volan supplies a timestamp on creation and update through the typed API. Runtime manages this field on update even when the payload attempts to supply another value.
+
+This is not a database trigger. Handwritten SQL through `rawExecute`, external scripts and other applications do not gain this behavior automatically. If every writer must maintain the same timestamp, design a database rule and check its interaction with the client.
+
+## Mapping and native types
+
+`@map("column")` changes a field's SQL name; `@@map("table")` changes a model's SQL name. Code retains schema names. On an enum, a value's `@map` changes its stored string, while `@@map` describes the enum's database name.
+
+Specify native storage through `@db`, such as PostgreSQL's `@db.VarChar(320)`. This refines storage without changing Kotlin `String` into another class. In alpha.2, native @db types are available for PostgreSQL. Check annotations before moving between providers.
+
+## Relations and exclusion from the client
+
+`@relation(fields: [...], references: [...], onDelete: ..., onUpdate: ...)` declares a foreign key and actions on related records. These are table rules rather than hidden reads on property access. See [relation definitions](/v0.1.0-alpha.2/en/schema/relations) for shapes and referential actions.
+
+`@ignore` excludes a field from the generated client; `@@ignore` excludes a model. An excluded required column without a real database default can make insertion impossible because the client supplies no value for it. Ignore is not a substitute for a safe response DTO.
+
+`@@fulltext` does not add a typed search API and is not a portable switch for full-text search. Check dialect capabilities and explicit SQL for your database.
