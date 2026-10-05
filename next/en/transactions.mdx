@@ -54,7 +54,7 @@ A nested `transaction` creates a savepoint and uses the outer transaction's isol
 
 ## Configure a bounded retry
 
-This fragment requires an open `db` and the `User` table from [First query](/next/en/quickstart). It creates a user with the chosen email. Make sure that email is unused before running it. Retry handles a transient transaction failure; running the whole example again with the same email produces a unique conflict.
+This fragment requires an open `db` and the `User` table from the [User/Post schema](/next/en/schema). It creates a user with the chosen email. Make sure that email is unused before running it. Retry handles a transient transaction failure; running the whole example again with the same email produces a unique conflict.
 
 ```kotlin
 import io.github.thirtyeighttwentysix.volan.runtime.Isolation

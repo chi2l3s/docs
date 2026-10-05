@@ -25,7 +25,7 @@ Pull prints with `--stdout` or creates `--schema introspected.volan`. Existing f
 
 ## Library
 
-SQLite setup: add `volan-migrate` to the dependencies of [First query](/next/en/quickstart), aligned by the BOM.
+[First query](/next/en/quickstart) uses H2. For the SQLite example below, set the datasource provider to `sqlite`, replace the H2 dialect and driver with `volan-dialect-sqlite` and `org.xerial:sqlite-jdbc:3.53.4.0`, and use SQLite migration SQL. Keep `volan-migrate` and the 1.0.0 BOM. [Database setup](/next/en/databases) lists the dependencies.
 
 ```kotlin
 import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader

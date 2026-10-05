@@ -9,7 +9,7 @@ Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 
 `schema.volan` answers a few concrete questions: which records your application stores, which fields are required, what makes a record unique and how models relate to each other. Volan generates its read and write API from that description.
 
-In the schema below, a user can have many posts and every post has one required author. [Queries](/next/en/queries), [Relations](/next/en/relations) and [Transactions](/next/en/transactions) use this model. When extending the first quickstart, add `Post`, regenerate the client and update the database structure.
+In the schema below, a user can have many posts and every post has one required author. [Queries](/next/en/queries), [Relations](/next/en/relations) and [Transactions](/next/en/transactions) use this model. This schema replaces the quickstart's datasource and models: it uses SQLite and adds `email` and `posts` to `User`. Configure [SQLite dependencies](/next/en/databases), regenerate the client and apply reviewed migrations before running these queries.
 
 ```prisma
 datasource db {
