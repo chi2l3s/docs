@@ -700,5 +700,13 @@
   },
   "background": {
     "decoration": "windows"
+  },
+  "fonts": {
+    "family": "Geist"
+  },
+  "styling": {
+    "codeblocks": {
+      "theme": "catppuccin-latte"
+    }
   }
 }
