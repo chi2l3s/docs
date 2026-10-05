@@ -26,7 +26,7 @@ These tools offer different abstractions. See the primary references for [Hibern
 
 Forty PostgreSQL cases compare reads, four concurrent readers, range updates and insert/delete transactions. Every adapter uses the same table shape, four fields and read-committed transaction boundary. The harness checks values, affected counts and final database state before timing.
 
-![PostgreSQL read latency comparison](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/benchmarks/read-latency.svg)
+![PostgreSQL read latency comparison](https://raw.githubusercontent.com/thirtyeighttwentysix/volan/v1.0.0/docs/benchmarks/read-latency.svg)
 
 {/*  BENCHMARKS:START  */}
 
@@ -79,9 +79,9 @@ Volan has higher read latency in this run. **Write intervals are wide and overla
 <details>
   <summary>Concurrent read and write charts</summary>
 
-  ![PostgreSQL concurrent read latency](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/benchmarks/concurrent-read-latency.svg)
-  ![PostgreSQL update latency](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/benchmarks/update-latency.svg)
-  ![PostgreSQL insert/delete transaction latency](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/benchmarks/insert-delete-latency.svg)
+  ![PostgreSQL concurrent read latency](https://raw.githubusercontent.com/thirtyeighttwentysix/volan/v1.0.0/docs/benchmarks/concurrent-read-latency.svg)
+  ![PostgreSQL update latency](https://raw.githubusercontent.com/thirtyeighttwentysix/volan/v1.0.0/docs/benchmarks/update-latency.svg)
+  ![PostgreSQL insert/delete transaction latency](https://raw.githubusercontent.com/thirtyeighttwentysix/volan/v1.0.0/docs/benchmarks/insert-delete-latency.svg)
 </details>
 
 Results include loopback network, pooling and transaction costs. They do not establish performance for relations, nested writes, generated IDs, migrations or another database deployment.

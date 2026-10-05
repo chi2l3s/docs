@@ -4,7 +4,7 @@ description: "Опиши модели, ключи и связи, из котор
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
 `schema.volan` отвечает на несколько конкретных вопросов: какие записи есть в приложении, какие поля обязательны, что делает запись уникальной и как модели связаны друг с другом. Из этого описания Volan создаёт API запросов и записи.
@@ -70,11 +70,11 @@ model Post {
 
 ## Генерация
 
-`volan init` создаёт схему, а не проект сборки. `volan validate` проверяет синтаксис и семантику, `volan generate` записывает Kotlin в `build/generated/volan` по умолчанию. Команды preview требуют совпадающий runtime alpha.3. Для alpha.2 используй [прямую генерацию](/next/ru/quickstart).
+`volan init` создаёт схему, а не проект сборки. `volan validate` проверяет синтаксис и семантику, `volan generate` записывает Kotlin в `build/generated/volan` по умолчанию. Используй runtime той же версии 1.0.0. [Плагины сборки](/next/ru/build) генерируют клиент при компиляции.
 
 Генерация не читает credentials и не подключается к БД. `env("DATABASE_URL")` разрешается, когда подключение нужно операции с базой. `//` и документация `///` сохраняются при форматировании; block comments запрещены. Атрибут поля пишется на строке этого поля.
 
-[Полная грамматика и коды диагностики](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/docs/schema-language.md).
+[Полная грамматика и коды диагностики](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/schema-language.md).
 
 ## Почему у связи два поля
 
