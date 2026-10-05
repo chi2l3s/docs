@@ -25,7 +25,7 @@ Pull печатает схему с `--stdout` либо создаёт `--schema
 
 ## Библиотека
 
-Для SQLite добавь `volan-migrate` в зависимости [первого запроса](/next/ru/quickstart), выравнивая версию через BOM.
+[Первый запрос](/next/ru/quickstart) использует H2. Для SQLite-примера ниже задай datasource provider `sqlite`, замени диалект и драйвер H2 на `volan-dialect-sqlite` и `org.xerial:sqlite-jdbc:3.53.4.0`, а SQL миграций адаптируй к SQLite. Сохрани `volan-migrate` и BOM 1.0.0. Зависимости перечислены в [СУБД](/next/ru/databases).
 
 ```kotlin
 import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
