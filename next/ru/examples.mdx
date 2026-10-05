@@ -4,71 +4,31 @@ description: "Выбери пример для первого запуска, и
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
-Пример полезен, когда понятно, какую часть он проверяет. Первый запуск показывает полный путь от схемы до строки в SQLite. Примеры интеграции показывают lifecycle клиента и перенос JDBC. Независимые примеры приложений проверяют, что опубликованные или подготовленные artifacts можно использовать вне исходного проекта Volan.
+Четыре независимых проекта используют плагин и библиотеки 1.0.0 из Central. Они применяют сохранённые миграции перед работой клиента. Нужен JDK 17+; для H2 отдельный сервер базы не требуется.
 
-Начни с [Первого запроса](/next/ru/quickstart), если знакомишься с ORM. Для существующего приложения выбери раздел [Фреймворки](/next/ru/frameworks). Проверки плагинов сборки ниже нужны, когда пробуешь alpha.3 из исходников.
+| Проект | Проверки |
+| --- | --- |
+| [Kotlin](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/kotlin-basic) | Транзакция, запись, чтение и откат |
+| [Java](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/java-basic) | Java callbacks, клиент на Kotlin, откат |
+| [Spring Boot](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/spring-boot) | Bean клиента, constructor injection, реальный context и закрытие |
+| [Ktor](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/ktor) | Запросы через корутины, POST/GET, ответы 400/404 и закрытие |
 
-| Пример | Проверки | Требования |
-|---|---|---|
-| [Первый запрос](/next/ru/quickstart) | Staged alpha.3 Kotlin/Java, SQLite, создание и чтение записи, закрытие | JDK 25, Gradle |
-| [plugin-smoke/gradle](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/gradle) | Alpha.3 plugin, Kotlin/Java H2 CRUD, корутины, метрики | Staged artifacts |
-| [plugin-smoke/maven](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/maven) | Alpha.3 generation и Java H2 CRUD | Maven 3.9+, staged artifacts |
-| [release-smoke](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/release-smoke) | Независимые artifacts, SQLite/H2 и серверные consumers | Docker для серверных тестов |
-
-Схема H2 plugin consumer:
-
-```prisma
-datasource db {
-  provider = "h2"
-  url = env("UNSET_PLUGIN_SMOKE_URL")
-}
-generator client {
-  provider = "volan-kotlin"
-  package = "example.generated"
-  javaFriendly = true
-}
-model User {
-  id Int @id @default(autoincrement())
-  name String
-}
-```
-
-Тесты Kotlin/Java явно создают User до записи и закрывают клиент. [Сборка](/next/ru/build) содержит полную конфигурацию Gradle/Maven.
-
-После подготовки alpha.3 из корня репозитория:
+Из checkout тега `v1.0.0` выполни:
 
 ```bash
-python scripts/verify-plugins.py --version 0.1.0-alpha.3 --repository build/release-repository
-./gradlew -p release-smoke test "-PvolanVersion=0.1.0-alpha.2" --tests smoke.PublishedSqliteTest
+./gradlew -p examples/kotlin-basic test run
+./gradlew -p examples/java-basic test run
+./gradlew -p examples/spring-boot test run
+./gradlew -p examples/ktor test
 ```
 
-Verifier копирует consumers перед изменением схем, проверяет обычную сборку, configuration cache, удаление source/bytecode модели и восстановление из Gradle build cache. Если Maven отсутствует в PATH, передай `--maven /path/to/mvn`. SQLite release test не требует Docker; отдельный тест не означает проверку всей серверной suite.
+В PowerShell используй `.\gradlew.bat`. `./gradlew -p examples/ktor run` запускает сервер на `127.0.0.1:8080`; Ctrl+C завершает его. Консольные примеры выводят `Saved and read: Ada`.
 
-## Что проверить в своём проекте
+## Проверка
 
-Сначала воспроизведи маленький сценарий без изменений: генерация, компиляция, создание таблицы, запись и чтение. Затем меняй по одной части — provider, модель или integration lifecycle. Когда всё меняется одновременно, причина ошибки становится менее очевидной.
+Релизный workflow собирает проекты сначала с signed staging, затем с реальными загрузками из Central. `scripts/verify-examples.py --version 1.0.0` выполняет те же проверки Central. `scripts/verify-plugins.py --version 1.0.0` дополнительно проверяет Gradle/Maven, кеши и удаление исходников старых моделей. Скрипты работают с временными копиями.
 
-API-примеры используют одну схему User/Post. Чтобы выполнить их после quickstart, добавь модель Post, обнови сгенерированный клиент и примени соответствующий DDL. Одной генерации недостаточно, потому что она не меняет SQLite-таблицы.
-
-## Что проверяет внешнее приложение
-
-Пример приложения собирается из внешних artifacts и показывает, что кодогенерация и runtime действительно работают вместе. Он также обнаруживает ошибки публикации, которые тесты внутренних модулей могут не увидеть: отсутствующий dependency, неверные plugin markers или незарегистрированные generated sources.
-
-H2 consumer не является доказательством всех гарантий PostgreSQL/MySQL. Для целевого provider запускай соответствующие проверки и проверяй миграции на предыдущей структуре с данными. Полный web lifecycle тоже проверяется отдельно от маленького CRUD-сценария.
-
-## Запустить примеры подробных руководств
-
-[Проект User/Post](https://github.com/chi2l3s/docs/tree/main/examples/query-guide-next) содержит схему, создание тестовых таблиц и Kotlin/Java-примеры [чтения](/next/ru/querying/reading), [фильтров](/next/ru/querying/filtering), [пагинации](/next/ru/querying/ordering-pagination), [агрегатов](/next/ru/querying/aggregation) и [записи](/next/ru/writing/create).
-
-В каталоге проекта запусти:
-
-```bash
-./gradlew test "-PvolanRepository=file:///ABSOLUTE/PATH/TO/release-repository"
-```
-
-Для PowerShell используй `.\gradlew.bat` вместо `./gradlew`. Нужен JDK 25. Каждая проверка создаёт свою SQLite-базу в памяти, выполняет операцию и проверяет результат. Временные данные исчезают при закрытии клиента. Схемы из раздела схемы также генерируются и компилируются в отдельных packages.
-
-Подготовь библиотеки по [руководству сборки](/next/ru/build) и замени `ABSOLUTE/PATH/TO/release-repository` абсолютным путём своего файлового Maven-репозитория. Эти артефакты alpha.3 не опубликованы в Central.
+[Первый запрос](/next/ru/quickstart) разбирает файлы. Подробные фрагменты запросов используют схему User/Post: создай её и соответствующие таблицы перед запуском. Пример H2 не доказывает все гарантии другого провайдера.

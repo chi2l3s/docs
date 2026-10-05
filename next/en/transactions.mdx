@@ -4,7 +4,7 @@ description: "Keep related writes together and understand commit and rollback bo
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 When creating a user and their first post is one application operation, both writes should succeed together. Without a transaction, the user can be saved while the post fails. `transaction` keeps related operations on one connection and rolls back unfinished changes.
@@ -54,7 +54,7 @@ A nested `transaction` creates a savepoint and uses the outer transaction's isol
 
 ## Configure a bounded retry
 
-This fragment requires an open `db` and the `User` table from [First query](/next/en/quickstart). It creates a user with the chosen email. Make sure that email is unused before running it. Retry handles a transient transaction failure; running the whole example again with the same email produces a unique conflict.
+This fragment requires an open `db` and the `User` table from the [User/Post schema](/next/en/schema). It creates a user with the chosen email. Make sure that email is unused before running it. Retry handles a transient transaction failure; running the whole example again with the same email produces a unique conflict.
 
 ```kotlin
 import io.github.thirtyeighttwentysix.volan.runtime.Isolation

@@ -4,41 +4,23 @@ description: "Align generator, client, runtime and plugin versions before runnin
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
-Generated code calls the runtime API. That makes the generator version as important as the dependency version: a newer generator may emit calls an older runtime does not provide. Update them together and regenerate when the version changes.
+Keep the build plugin, generator and runtime at **1.0.0**, then regenerate the client. A newer generator can call methods missing from an older runtime.
 
-Library availability was checked against Maven Central on October 5, 2026. The latest published library version is `0.1.0-alpha.2`; the CLI preview and alpha.3 sources are separate distributions.
+| Version | Libraries | CLI |
+| --- | --- | --- |
+| 1.0.0 | Central: five database providers, build plugins, optional coroutines and metrics | GitHub tag `v1.0.0` |
+| 0.1.0-alpha.2 | Central: PostgreSQL and SQLite | No CLI archives |
+| 0.1.0-alpha.1 | Central: PostgreSQL | No CLI archives |
 
-| Version | Distribution | Scope |
-|---|---|---|
-| 0.1.0-alpha.1 | Central, GitHub library release | PostgreSQL |
-| 0.1.0-alpha.2 | Latest Central library release | PostgreSQL and SQLite |
-| cli-v0.1.0-alpha.3-preview.1 | GitHub CLI release | Separate executable preview |
-| 0.1.0-alpha.3-SNAPSHOT | Main source default | Development libraries/plugins |
-| 0.1.0-alpha.3 local candidate | Staged Maven repository | Local verification, not Central |
+The BOM aligns library modules. Set plugin versions explicitly. Updating the global CLI does not update `build.gradle.kts` or `pom.xml`. Installing dependencies does not update the CLI. The earlier preview `cli-v0.1.0-alpha.3-preview.1` remains available separately.
 
-[Central metadata](https://repo.maven.apache.org/maven2/io/github/thirtyeighttwentysix/volan-runtime/maven-metadata.xml), [alpha.2 notes](https://github.com/thirtyeighttwentysix/volan/releases/tag/v0.1.0-alpha.2), [CLI release](https://github.com/thirtyeighttwentysix/volan/releases/tag/cli-v0.1.0-alpha.3-preview.1).
+## Upgrade
 
-The CLI preview includes generation targeting alpha.3. Do not pair that output with alpha.2 runtime. Alpha.2 direct generation is shown in [First query](/next/en/quickstart); alpha.3 generation/plugins need [staging](/next/en/build).
+Commit schema and migration changes, update dependencies and plugins together, regenerate, compile and test on the target database. Review DDL separately. Recompile consumers of `DropConstraint.copy`: its data-class signature changed since alpha.2. Custom alpha generation tasks can be replaced with the [build plugins](/next/en/build).
 
-A CLI installation/update does not update application dependencies. Library alpha.1/alpha.2 releases do not include CLI install archives. No alpha.3 library release is published at this verification point.
+[Central metadata](https://repo.maven.apache.org/maven2/io/github/thirtyeighttwentysix/volan-runtime/maven-metadata.xml), [1.0.0](https://github.com/thirtyeighttwentysix/volan/releases/tag/v1.0.0).
 
-Before upgrading, read release notes, regenerate, compile Kotlin and Java consumers, test on the target database and review migration SQL. Alpha versions can change API.
-
-## Recognize a mismatch
-
-If generated files refer to a missing method or class, compare codegen and runtime versions first. Deleting that line from generated code only hides the problem until the next generation. Likewise, an alpha.3 plugin does not become alpha.2-compatible merely because Gradle downloaded its JAR.
-
-The BOM selects Volan application library versions. It does not update the system CLI, select a plugin version or replace existing generated output. Those are separate configuration pieces to check.
-
-## Upgrade an application
-
-Keep schema and migration changes in version control, update the matching libraries and generator, regenerate and compile. Check Kotlin and Java uses when the project has both. Test operations on the target provider and verify the database transition from the previous release separately.
-
-Staged alpha.3 lets you evaluate new capabilities before publication. Its repository URI must be available to every required build stage. Treat it as a local candidate rather than a Central release, and do not mix it with alpha.2.
-
-## Documentation baseline
-
-This development snapshot is based on [`d9c8906`](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4). Stage artifacts from that commit to reproduce its examples.
+This section targets the immutable `v1.0.0` source tag. Alpha documentation remains in the version selector. Local unsigned staging verifies artifacts; it does not publish them to Central.

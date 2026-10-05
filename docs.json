@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "almond",
   "name": "Volan",
   "colors": {
     "primary": "#315D78",
@@ -504,83 +504,6 @@
                 ]
               }
             ]
-          },
-          {
-            "version": "0.1.0-alpha.3-SNAPSHOT",
-            "tag": "Pre-release archive",
-            "groups": [
-              {
-                "group": "Start",
-                "pages": [
-                  "next/en/introduction",
-                  "next/en/installation",
-                  "next/en/quickstart",
-                  "next/en/build",
-                  "next/en/frameworks"
-                ]
-              },
-              {
-                "group": "Schema",
-                "pages": [
-                  "next/en/schema",
-                  "next/en/schema/models",
-                  "next/en/schema/fields",
-                  "next/en/schema/attributes",
-                  "next/en/schema/enums",
-                  "next/en/schema/relations"
-                ]
-              },
-              {
-                "group": "Reading data",
-                "pages": [
-                  "next/en/queries",
-                  "next/en/querying/reading",
-                  "next/en/querying/filtering",
-                  "next/en/querying/ordering-pagination",
-                  "next/en/relations",
-                  "next/en/querying/aggregation",
-                  "next/en/querying/raw-sql"
-                ]
-              },
-              {
-                "group": "Writing data",
-                "pages": [
-                  "next/en/writing/create",
-                  "next/en/writing/update",
-                  "next/en/writing/delete",
-                  "next/en/writing/nested-writes",
-                  "next/en/transactions"
-                ]
-              },
-              {
-                "group": "Execution",
-                "pages": [
-                  "next/en/async",
-                  "next/en/observability"
-                ]
-              },
-              {
-                "group": "Database",
-                "pages": [
-                  "next/en/databases",
-                  "next/en/sync",
-                  "next/en/migrations",
-                  "next/en/production"
-                ]
-              },
-              {
-                "group": "Reference",
-                "pages": [
-                  "next/en/cli",
-                  "next/en/limitations",
-                  "next/en/errors",
-                  "next/en/examples",
-                  "next/en/versions",
-                  "next/en/benchmarks",
-                  "next/en/faq"
-                ]
-              }
-            ]
           }
         ]
       },
@@ -1079,83 +1002,6 @@
                 ]
               }
             ]
-          },
-          {
-            "version": "0.1.0-alpha.3-SNAPSHOT",
-            "tag": "Предрелизный архив",
-            "groups": [
-              {
-                "group": "Начало",
-                "pages": [
-                  "next/ru/introduction",
-                  "next/ru/installation",
-                  "next/ru/quickstart",
-                  "next/ru/build",
-                  "next/ru/frameworks"
-                ]
-              },
-              {
-                "group": "Схема",
-                "pages": [
-                  "next/ru/schema",
-                  "next/ru/schema/models",
-                  "next/ru/schema/fields",
-                  "next/ru/schema/attributes",
-                  "next/ru/schema/enums",
-                  "next/ru/schema/relations"
-                ]
-              },
-              {
-                "group": "Чтение данных",
-                "pages": [
-                  "next/ru/queries",
-                  "next/ru/querying/reading",
-                  "next/ru/querying/filtering",
-                  "next/ru/querying/ordering-pagination",
-                  "next/ru/relations",
-                  "next/ru/querying/aggregation",
-                  "next/ru/querying/raw-sql"
-                ]
-              },
-              {
-                "group": "Запись данных",
-                "pages": [
-                  "next/ru/writing/create",
-                  "next/ru/writing/update",
-                  "next/ru/writing/delete",
-                  "next/ru/writing/nested-writes",
-                  "next/ru/transactions"
-                ]
-              },
-              {
-                "group": "Исполнение",
-                "pages": [
-                  "next/ru/async",
-                  "next/ru/observability"
-                ]
-              },
-              {
-                "group": "База данных",
-                "pages": [
-                  "next/ru/databases",
-                  "next/ru/sync",
-                  "next/ru/migrations",
-                  "next/ru/production"
-                ]
-              },
-              {
-                "group": "Справочник",
-                "pages": [
-                  "next/ru/cli",
-                  "next/ru/limitations",
-                  "next/ru/errors",
-                  "next/ru/examples",
-                  "next/ru/versions",
-                  "next/ru/benchmarks",
-                  "next/ru/faq"
-                ]
-              }
-            ]
           }
         ]
       }
@@ -1172,7 +1018,8 @@
   "contextual": {
     "options": [
       "copy",
-      "view"
+      "view",
+      "chatgpt"
     ]
   },
   "footer": {
@@ -1188,232 +1035,232 @@
     {
       "source": "/index",
       "destination": "/v1.0.0/en/introduction",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/quickstart",
       "destination": "/v1.0.0/en/quickstart",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/async",
       "destination": "/v1.0.0/en/async",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/benchmarks",
       "destination": "/v1.0.0/en/benchmarks",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/build",
       "destination": "/v1.0.0/en/build",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/cli",
       "destination": "/v1.0.0/en/cli",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/databases",
       "destination": "/v1.0.0/en/databases",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/errors",
       "destination": "/v1.0.0/en/errors",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/examples",
       "destination": "/v1.0.0/en/examples",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/faq",
       "destination": "/v1.0.0/en/faq",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/frameworks",
       "destination": "/v1.0.0/en/frameworks",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/installation",
       "destination": "/v1.0.0/en/installation",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/introduction",
       "destination": "/v1.0.0/en/introduction",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/limitations",
       "destination": "/v1.0.0/en/limitations",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/migrations",
       "destination": "/v1.0.0/en/migrations",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/observability",
       "destination": "/v1.0.0/en/observability",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/production",
       "destination": "/v1.0.0/en/production",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/queries",
       "destination": "/v1.0.0/en/queries",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/quickstart",
       "destination": "/v1.0.0/en/quickstart",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/relations",
       "destination": "/v1.0.0/en/relations",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/schema",
       "destination": "/v1.0.0/en/schema",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/sync",
       "destination": "/v1.0.0/en/sync",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/transactions",
       "destination": "/v1.0.0/en/transactions",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/en/versions",
       "destination": "/v1.0.0/en/versions",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/async",
       "destination": "/v1.0.0/ru/async",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/benchmarks",
       "destination": "/v1.0.0/ru/benchmarks",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/build",
       "destination": "/v1.0.0/ru/build",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/cli",
       "destination": "/v1.0.0/ru/cli",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/databases",
       "destination": "/v1.0.0/ru/databases",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/errors",
       "destination": "/v1.0.0/ru/errors",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/examples",
       "destination": "/v1.0.0/ru/examples",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/faq",
       "destination": "/v1.0.0/ru/faq",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/frameworks",
       "destination": "/v1.0.0/ru/frameworks",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/installation",
       "destination": "/v1.0.0/ru/installation",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/introduction",
       "destination": "/v1.0.0/ru/introduction",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/limitations",
       "destination": "/v1.0.0/ru/limitations",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/migrations",
       "destination": "/v1.0.0/ru/migrations",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/observability",
       "destination": "/v1.0.0/ru/observability",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/production",
       "destination": "/v1.0.0/ru/production",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/queries",
       "destination": "/v1.0.0/ru/queries",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/quickstart",
       "destination": "/v1.0.0/ru/quickstart",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/relations",
       "destination": "/v1.0.0/ru/relations",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/schema",
       "destination": "/v1.0.0/ru/schema",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/sync",
       "destination": "/v1.0.0/ru/sync",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/transactions",
       "destination": "/v1.0.0/ru/transactions",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/versions",
       "destination": "/v1.0.0/ru/versions",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/ru/build/gradle",
@@ -2544,6 +2391,366 @@
       "source": "/en/schema/scalar-values",
       "destination": "/v1.0.0/en/schema/scalar-values",
       "permanent": true
+    },
+    {
+      "source": "/next/en/async",
+      "destination": "/v1.0.0/en/async",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/benchmarks",
+      "destination": "/v1.0.0/en/benchmarks",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/build",
+      "destination": "/v1.0.0/en/build",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/cli",
+      "destination": "/v1.0.0/en/cli",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/databases",
+      "destination": "/v1.0.0/en/databases",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/errors",
+      "destination": "/v1.0.0/en/errors",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/examples",
+      "destination": "/v1.0.0/en/examples",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/faq",
+      "destination": "/v1.0.0/en/faq",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/frameworks",
+      "destination": "/v1.0.0/en/frameworks",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/installation",
+      "destination": "/v1.0.0/en/installation",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/introduction",
+      "destination": "/v1.0.0/en/introduction",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/limitations",
+      "destination": "/v1.0.0/en/limitations",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/migrations",
+      "destination": "/v1.0.0/en/migrations",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/observability",
+      "destination": "/v1.0.0/en/observability",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/production",
+      "destination": "/v1.0.0/en/production",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/queries",
+      "destination": "/v1.0.0/en/queries",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/quickstart",
+      "destination": "/v1.0.0/en/quickstart",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/relations",
+      "destination": "/v1.0.0/en/relations",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/schema",
+      "destination": "/v1.0.0/en/schema",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/sync",
+      "destination": "/v1.0.0/en/sync",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/transactions",
+      "destination": "/v1.0.0/en/transactions",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/versions",
+      "destination": "/v1.0.0/en/versions",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/async",
+      "destination": "/v1.0.0/ru/async",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/benchmarks",
+      "destination": "/v1.0.0/ru/benchmarks",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/build",
+      "destination": "/v1.0.0/ru/build",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/cli",
+      "destination": "/v1.0.0/ru/cli",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/databases",
+      "destination": "/v1.0.0/ru/databases",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/errors",
+      "destination": "/v1.0.0/ru/errors",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/examples",
+      "destination": "/v1.0.0/ru/examples",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/faq",
+      "destination": "/v1.0.0/ru/faq",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/frameworks",
+      "destination": "/v1.0.0/ru/frameworks",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/installation",
+      "destination": "/v1.0.0/ru/installation",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/introduction",
+      "destination": "/v1.0.0/ru/introduction",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/limitations",
+      "destination": "/v1.0.0/ru/limitations",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/migrations",
+      "destination": "/v1.0.0/ru/migrations",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/observability",
+      "destination": "/v1.0.0/ru/observability",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/production",
+      "destination": "/v1.0.0/ru/production",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/queries",
+      "destination": "/v1.0.0/ru/queries",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/quickstart",
+      "destination": "/v1.0.0/ru/quickstart",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/relations",
+      "destination": "/v1.0.0/ru/relations",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/schema",
+      "destination": "/v1.0.0/ru/schema",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/sync",
+      "destination": "/v1.0.0/ru/sync",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/transactions",
+      "destination": "/v1.0.0/ru/transactions",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/versions",
+      "destination": "/v1.0.0/ru/versions",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/querying/aggregation",
+      "destination": "/v1.0.0/ru/querying/aggregation",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/querying/filtering",
+      "destination": "/v1.0.0/ru/querying/filtering",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/querying/ordering-pagination",
+      "destination": "/v1.0.0/ru/querying/ordering-pagination",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/querying/raw-sql",
+      "destination": "/v1.0.0/ru/querying/raw-sql",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/querying/reading",
+      "destination": "/v1.0.0/ru/querying/reading",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/schema/attributes",
+      "destination": "/v1.0.0/ru/schema/attributes",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/schema/enums",
+      "destination": "/v1.0.0/ru/schema/enums",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/schema/fields",
+      "destination": "/v1.0.0/ru/schema/fields",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/schema/models",
+      "destination": "/v1.0.0/ru/schema/models",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/schema/relations",
+      "destination": "/v1.0.0/ru/schema/relations",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/writing/create",
+      "destination": "/v1.0.0/ru/writing/create",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/writing/delete",
+      "destination": "/v1.0.0/ru/writing/delete",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/writing/nested-writes",
+      "destination": "/v1.0.0/ru/writing/nested-writes",
+      "permanent": false
+    },
+    {
+      "source": "/next/ru/writing/update",
+      "destination": "/v1.0.0/ru/writing/update",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/querying/aggregation",
+      "destination": "/v1.0.0/en/querying/aggregation",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/querying/filtering",
+      "destination": "/v1.0.0/en/querying/filtering",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/querying/ordering-pagination",
+      "destination": "/v1.0.0/en/querying/ordering-pagination",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/querying/raw-sql",
+      "destination": "/v1.0.0/en/querying/raw-sql",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/querying/reading",
+      "destination": "/v1.0.0/en/querying/reading",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/schema/attributes",
+      "destination": "/v1.0.0/en/schema/attributes",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/schema/enums",
+      "destination": "/v1.0.0/en/schema/enums",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/schema/fields",
+      "destination": "/v1.0.0/en/schema/fields",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/schema/models",
+      "destination": "/v1.0.0/en/schema/models",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/schema/relations",
+      "destination": "/v1.0.0/en/schema/relations",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/writing/create",
+      "destination": "/v1.0.0/en/writing/create",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/writing/delete",
+      "destination": "/v1.0.0/en/writing/delete",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/writing/nested-writes",
+      "destination": "/v1.0.0/en/writing/nested-writes",
+      "permanent": false
+    },
+    {
+      "source": "/next/en/writing/update",
+      "destination": "/v1.0.0/en/writing/update",
+      "permanent": false
     }
   ],
   "seo": {
@@ -2559,5 +2766,21 @@
   "favicon": {
     "light": "/logo/favicon-light.svg",
     "dark": "/logo/favicon-dark.svg"
+  },
+  "background": {
+    "decoration": "windows"
+  },
+  "fonts": {
+    "family": "Geist"
+  },
+  "styling": {
+    "codeblocks": {
+      "theme": "catppuccin-latte"
+    }
+  },
+  "integrations": {
+    "telemetry": {
+      "enabled": true
+    }
   }
 }

@@ -4,16 +4,16 @@ description: "Run JDBC on suitable workers and understand what cancellation can 
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 A query can wait for the network, a free connection or SQL execution. JDBC occupies a thread while it waits. In a server, run that work on workers with bounded concurrency so database waits do not consume every thread handling other events.
 
-Java futures are available in alpha.2. Volan coroutine wrappers and active JDBC cancellation require alpha.3. Both APIs change how work is scheduled; JDBC itself remains blocking.
+Java futures are available in alpha.2. Volan coroutine wrappers and active JDBC cancellation require Volan 1.0. Both APIs change how work is scheduled; JDBC itself remains blocking.
 
 ## Kotlin
 
-Add `io.github.thirtyeighttwentysix:volan-coroutines` aligned with runtime via the alpha.3 BOM from the [staged repository](/next/en/build).
+Add `io.github.thirtyeighttwentysix:volan-coroutines` aligned with runtime via the 1.0.0 BOM from Maven Central; see [Build](/next/en/build).
 
 ```kotlin
 import io.github.thirtyeighttwentysix.volan.coroutines.CoroutineAccess
@@ -50,7 +50,7 @@ Repositories, transactions, rawQuery and rawExecute have `*Async` equivalents re
 
 ## Cancellation
 
-Alpha.3 cancellation skips queued callbacks and requests `Statement.cancel()` for active JDBC work. Later statements are refused and an uncommitted transaction rolls back. Coroutine completion waits for worker, statement and connection cleanup. Future cancellation becomes visible immediately and does not wait for cleanup. Alpha.2 only skips queued Java work.
+Volan 1.0 cancellation skips queued callbacks and requests `Statement.cancel()` for active JDBC work. Later statements are refused and an uncommitted transaction rolls back. Coroutine completion waits for worker, statement and connection cleanup. Future cancellation becomes visible immediately and does not wait for cleanup. Alpha.2 only skips queued Java work.
 
 Cancellation is not a hard deadline. Drivers, pool checkout or commit may take time. It cannot undo committed writes or a commit already started. Configure connection, network and server timeouts separately. `mayInterruptIfRunning` does not control JDBC cancellation. JDBC remains blocking; this is not R2DBC.
 

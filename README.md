@@ -2,7 +2,7 @@
 
 Russian and English documentation: [volan.mintlify.app](https://volan.mintlify.app).
 
-The default version is **1.0.0**, with separate alpha.1, alpha.2 and development archives. Content, examples, assets and navigation live in this repository. Use the Mintlify dashboard for SEO and deployment settings.
+The default version is **1.0.0**, with separate alpha.1 and alpha.2 archives. The legacy `next/` URLs redirect to the stable release. Content, examples, assets and navigation live in this repository. Use the Mintlify dashboard for SEO and deployment settings.
 
 ## Preview and validate
 

@@ -4,7 +4,7 @@ description: "Create and update records, filter rows and control how much a quer
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 Start with the model repository: `db.user` in Kotlin or `db.getUser()` in Java. A repository takes an operation description, builds SQL and returns records, projections or a row count. Ordinary operations do not require assembling column names as strings.
@@ -128,7 +128,7 @@ Use `exists` to check for a match and `count` to count rows. Select a projection
 
 ## Parameterized SQL
 
-Use `rawQuery` for reads and `rawExecute` for changes when a repository cannot express an operation. These application fragments require an open `db` and the `User` table from [First query](/next/en/quickstart). If the email has no matching user, the result is an empty list.
+Use `rawQuery` for reads and `rawExecute` for changes when a repository cannot express an operation. These application fragments require an open `db` and the `User` table from the [User/Post schema](/next/en/schema). If the email has no matching user, the result is an empty list.
 
 ```kotlin
 val emailToFind = "alice@example.org"

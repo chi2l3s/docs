@@ -4,71 +4,31 @@ description: "Choose an example for your first run, framework integration or cli
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
-An example is useful when its purpose is clear. The first run covers the complete path from a schema to a SQLite row. Framework snippets cover client lifecycle and JDBC scheduling. Independent consumers verify that published or staged artifacts work outside Volan's own source project.
+Four independent projects use the 1.0.0 plugin and libraries from Central. They apply committed migrations before using the client. JDK 17+ is required; H2 needs no separate database server.
 
-Start with [First query](/next/en/quickstart) when learning the ORM. Use [Web frameworks](/next/en/frameworks) for an existing service. The build-plugin consumers below are for trying alpha.3 from source.
+| Project | Checks |
+| --- | --- |
+| [Kotlin](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/kotlin-basic) | Transaction, create/read and rollback |
+| [Java](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/java-basic) | Java callbacks, Kotlin-generated client, rollback |
+| [Spring Boot](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/spring-boot) | Client bean, constructor injection, real context and shutdown |
+| [Ktor](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/ktor) | Coroutine queries, POST/GET, 400/404 responses and shutdown |
 
-| Example | Coverage | Requirements |
-|---|---|---|
-| [First query](/next/en/quickstart) | Staged alpha.3 Kotlin/Java, SQLite, create/read, closing | JDK 25, Gradle |
-| [plugin-smoke/gradle](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/gradle) | Alpha.3 plugin, Kotlin/Java H2 CRUD, coroutines, metrics | Staged artifacts |
-| [plugin-smoke/maven](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/maven) | Alpha.3 generation and Java H2 CRUD | Maven 3.9+, staged artifacts |
-| [release-smoke](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/release-smoke) | Independent artifacts, SQLite/H2 and server consumers | Docker for server tests |
-
-The H2 plugin consumer schema is:
-
-```prisma
-datasource db {
-  provider = "h2"
-  url = env("UNSET_PLUGIN_SMOKE_URL")
-}
-generator client {
-  provider = "volan-kotlin"
-  package = "example.generated"
-  javaFriendly = true
-}
-model User {
-  id Int @id @default(autoincrement())
-  name String
-}
-```
-
-Its Kotlin/Java tests create the User table explicitly before writing, then close the client. [Build](/next/en/build) contains complete Gradle/Maven configuration.
-
-From the source repository after staging alpha.3:
+From a checkout of `v1.0.0`, run:
 
 ```bash
-python scripts/verify-plugins.py --version 0.1.0-alpha.3 --repository build/release-repository
-./gradlew -p release-smoke test "-PvolanVersion=0.1.0-alpha.2" --tests smoke.PublishedSqliteTest
+./gradlew -p examples/kotlin-basic test run
+./gradlew -p examples/java-basic test run
+./gradlew -p examples/spring-boot test run
+./gradlew -p examples/ktor test
 ```
 
-The verifier copies consumers before modifying schemas, checks ordinary builds, configuration cache, deleted-model source/bytecode removal and Gradle build-cache restoration. Use `--maven /path/to/mvn` if Maven is not on PATH. The SQLite release test needs no Docker; do not interpret a focused test as the complete server suite.
+On PowerShell use `.\gradlew.bat`. `./gradlew -p examples/ktor run` starts the example server on `127.0.0.1:8080`; stop it with Ctrl+C. Console examples print `Saved and read: Ada`.
 
-## Verify your project in steps
+## Verification
 
-First reproduce the small scenario unchanged: generation, compilation, table creation, a write and a read. Then change one part at a time, such as provider, model or integration lifecycle. Changing everything at once makes failures harder to locate.
+The release workflow builds these projects first against signed staging and then actual Central downloads. `scripts/verify-examples.py --version 1.0.0` performs the same Central checks. `scripts/verify-plugins.py --version 1.0.0` additionally verifies independent Gradle/Maven consumers, caches and deleted-model cleanup. These scripts use disposable copies.
 
-API examples share the User/Post schema. To run them after the quickstart, add Post, regenerate the client and apply the matching DDL. Generation alone is insufficient because it does not alter SQLite tables.
-
-## What a consumer demonstrates
-
-A consumer builds from external artifacts and checks generation together with the runtime. It catches publication problems internal module tests may miss: missing dependencies, incorrect plugin markers or unregistered generated sources.
-
-An H2 consumer does not prove every PostgreSQL/MySQL guarantee. Run the target provider's checks and test migrations on the previous structure with data. A complete web lifecycle is also a separate concern from a small CRUD scenario.
-
-## Run the detailed guide examples
-
-The [User/Post project](https://github.com/chi2l3s/docs/tree/main/examples/query-guide-next) includes its schema, test table setup and Kotlin/Java examples for [reading](/next/en/querying/reading), [filtering](/next/en/querying/filtering), [pagination](/next/en/querying/ordering-pagination), [aggregation](/next/en/querying/aggregation) and [writes](/next/en/writing/create).
-
-Run from the project directory:
-
-```bash
-./gradlew test "-PvolanRepository=file:///ABSOLUTE/PATH/TO/release-repository"
-```
-
-For PowerShell, replace `./gradlew` with `.\gradlew.bat`. JDK 25 is required. Each check opens its own SQLite memory database, performs the operation and verifies its result. Data disappears when the client closes. Schema guide fragments are also generated and compiled in separate packages.
-
-Stage libraries through the [build guide](/next/en/build), then replace `ABSOLUTE/PATH/TO/release-repository` with your file Maven repository path. These alpha.3 artifacts are not published in Central.
+[First query](/next/en/quickstart) explains the files. Detailed query fragments use the User/Post schema: create that schema and matching tables before running them. A focused H2 example does not prove every guarantee of another provider.

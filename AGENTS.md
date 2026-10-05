@@ -6,7 +6,7 @@ This repository publishes Russian and English documentation at https://volan.min
 - Keep the same topics and navigation order in `ru/` and `en/`. Write complete translations.
 - Explain each operation's purpose, inputs, result and limits. Use natural prose and concrete application scenarios. Avoid marketing claims and unexplained lists of API names.
 - Keep reader-facing content about the ORM. Omit task history, milestone bookkeeping and the process used to prepare the documentation.
-- Stable 1.0.0 is published on Maven Central. Keep alpha.1, alpha.2 and the alpha.3 development snapshot as archives; do not transfer stable API claims into those snapshots.
+- Stable 1.0.0 is published on Maven Central. Keep alpha.1 and alpha.2 as archives; do not transfer stable API claims into those snapshots. Legacy next URLs alias stable 1.0.0.
 - Align generator and runtime versions. Check actual API signatures in source or generated code and execute runnable examples.
 - Keep `examples/first-query` identical to the code blocks in both quickstarts. Verify both entry points with its wrapper.
 - Generation does not create tables. Runnable examples must create or migrate their tables and close owned resources.
@@ -17,7 +17,7 @@ This repository publishes Russian and English documentation at https://volan.min
 ## Versioned documentation
 
 - Snapshot published releases under `v<version>/<language>/`. Keep their examples and APIs scoped to their tagged sources. Change old releases only to correct documentation errors.
-- Keep development content under `next/<language>/` and pin its source baseline in the build guide. Never label staged artifacts as published.
+- If adding new development documentation, give it a distinct version and source baseline. Existing `next/<language>/` URLs redirect to stable 1.0.0. Never label staged artifacts as published.
 - Navigation is language, then version, then topic groups. Default to the latest published release. Preserve both selectors when adding a release.
 - Archive the previous version when publishing a new release: add a new directory and version entry; do not overwrite a release snapshot. Add redirects for old unversioned URLs deliberately.
 - Quickstarts must match their corresponding examples: first-query for alpha.2, first-query-alpha1 for alpha.1 and first-query-next for development. Use the matching generator and runtime.

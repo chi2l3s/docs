@@ -4,7 +4,7 @@ description: "Fit the client into Spring Boot or Ktor lifecycle and query from y
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 In a web application, the client outlives a single HTTP request. Create it at startup, inject it into services and close it after active work finishes during shutdown. That avoids creating a connection pool for every endpoint.
@@ -41,7 +41,7 @@ If Boot already owns a DataSource, use `.dataSource(dataSource).url(jdbcUrl)` to
 
 ## Ktor
 
-This alpha.3 integration dispatches JDBC with ordinary kotlinx-coroutines. For active cancellation use the Volan coroutine adapter described below. It assumes Ktor and kotlinx-coroutines are already configured. Set DATABASE_URL to a migrated file database, such as `jdbc:sqlite:./data.db`, and invoke `volanModule()` from the application's module:
+This Volan 1.0 integration dispatches JDBC with ordinary kotlinx-coroutines. For active cancellation use the Volan coroutine adapter described below. It assumes Ktor and kotlinx-coroutines are already configured. Set DATABASE_URL to a migrated file database, such as `jdbc:sqlite:./data.db`, and invoke `volanModule()` from the application's module:
 
 ```kotlin
 package org.example
@@ -72,7 +72,7 @@ fun Application.volanModule() {
 
 GET `/users/count` returns the row count as text. Create the client once when the module starts, not in each route. Align worker concurrency with pool size; SQLite's built-in pool has one connection. The lifecycle hook follows [Ktor events](https://ktor.io/docs/server-events.html). Drain application jobs before closing the client.
 
-For alpha.3 use `db.suspendQuery(access) { user.count() }` and its [cancellation semantics](/next/en/async) instead of plain withContext.
+For Volan 1.0 use `db.suspendQuery(access) { user.count() }` and its [cancellation semantics](/next/en/async) instead of plain withContext.
 
 ## HTTP data
 

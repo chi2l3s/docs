@@ -4,26 +4,15 @@ description: "Свяжи генерацию клиента с компиляци
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
-Сгенерированный клиент — такая же часть сборки, как классы приложения. Когда меняется `schema.volan`, сборка должна обновить клиент до компиляции кода, который его использует. Тогда ошибка в имени поля обнаружится при компиляции, а не после запуска сервиса.
-
-Все конфигурации этого раздела используют артефакты alpha.3, подготовленные из исходников. Codegen, runtime и плагины должны совпадать. Для зависимостей только из Central используй документацию опубликованной alpha.2.
-
-## Подготовка alpha.3
-
-Клонируй [репозиторий](https://github.com/thirtyeighttwentysix/volan) и выполни из корня:
-```bash
-git checkout d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4
-./gradlew publishAllPublicationsToReleaseTestRepository "-Pversion=0.1.0-alpha.3" -PvolanUnsignedLocalPublication --no-configuration-cache
-```
-
-Команда создаёт `build/release-repository`, не публикуя artifacts в Central. Генератор, плагины и runtime должны использовать этот репозиторий и одну версию. Локальная `0.1.0-alpha.3` обозначает кандидат, а не опубликованный релиз. Версия main по умолчанию — `0.1.0-alpha.3-SNAPSHOT`.
+Плагин проверяет схему и генерирует клиент до компиляции. Версии плагина и runtime должны совпадать. Для генерации подключение к базе не требуется.
 
 ## Gradle
 
-Это файлы проверяемого [Gradle-примера](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/gradle). Нужны Java 17+, Kotlin/JVM main sources; проверяется Gradle 9.8.0. `settings.gradle.kts`:
+Это файлы проверяемого [Gradle-примера](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/plugin-smoke/gradle). Нужны Java 17+, Kotlin/JVM main sources; проверяется Gradle 9.8.0. `settings.gradle.kts`:
+
 ```kotlin
 pluginManagement {
     repositories {
@@ -33,7 +22,7 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        id("io.github.thirtyeighttwentysix.volan") version providers.gradleProperty("volanVersion").getOrElse("0.1.0-alpha.3")
+        id("io.github.thirtyeighttwentysix.volan") version providers.gradleProperty("volanVersion").getOrElse("1.0.0")
     }
 }
 
@@ -48,13 +37,14 @@ rootProject.name = "volan-gradle-consumer"
 ```
 
 `build.gradle.kts`:
+
 ```kotlin
 plugins {
     kotlin("jvm") version "2.4.20"
     id("io.github.thirtyeighttwentysix.volan")
 }
 
-val volanVersion = providers.gradleProperty("volanVersion").getOrElse("0.1.0-alpha.3")
+val volanVersion = providers.gradleProperty("volanVersion").getOrElse("1.0.0")
 dependencies {
     implementation("io.github.thirtyeighttwentysix:volan-dialect-h2:$volanVersion")
     runtimeOnly("com.h2database:h2:2.5.252")
@@ -69,20 +59,21 @@ tasks.withType<JavaCompile>().configureEach { options.release.set(17) }
 tasks.test { useJUnitPlatform() }
 ```
 
-Используй схему H2 со страницы [Примеры](/next/ru/examples). Выполни `./gradlew -p plugin-smoke/gradle test "-PvolanRepository=file:///absolute/path/build/release-repository"`. Для Windows URI имеет вид `file:///D:/Projects/Volan/build/release-repository`.
+Используй схему H2 со страницы [Примеры](/next/ru/examples). Из корня репозитория выполни `./gradlew -p plugin-smoke/gradle test -PvolanVersion=1.0.0`.
 
 Плагин добавляет совпадающий runtime, регистрирует Kotlin-файлы и связывает `volanGenerate` с компиляцией. Диалект и JDBC-драйвер добавь отдельно. Пути меняются через `volan { schemaFile.set(layout.projectDirectory.file("db/schema.volan")); outputDirectory.set(layout.buildDirectory.dir("generated/client")) }`.
 
 ## Maven
 
-Нужны Maven 3.9+ и Java 17+. Полный POM [Maven-примера](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/maven):
+Нужны Maven 3.9+ и Java 17+. Полный POM [Maven-примера](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/plugin-smoke/maven):
+
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>example</groupId><artifactId>volan-maven-consumer</artifactId><version>1.0</version>
   <properties>
-    <volan.version>0.1.0-alpha.3</volan.version>
+    <volan.version>1.0.0</volan.version>
     <kotlin.version>2.4.20</kotlin.version>
     <kotlin.compiler.jdkRelease>17</kotlin.compiler.jdkRelease>
     <kotlin.compiler.daemon>false</kotlin.compiler.daemon>
@@ -121,7 +112,7 @@ tasks.test { useJUnitPlatform() }
 </project>
 ```
 
-Запуск: `mvn -f plugin-smoke/maven/pom.xml test -DvolanRepository=file:///absolute/path/build/release-repository`.
+Запуск: `mvn -f plugin-smoke/maven/pom.xml test -Dvolan.version=1.0.0`.
 
 Цель `generate` выполняется в `generate-sources`. Даже Java-приложению нужен Kotlin-компилятор для клиента. BOM выравнивает библиотеки, но не версии плагинов. Incremental Kotlin compilation удаляет bytecode удалённых моделей; без неё после удаления модели выполни `mvn clean test`.
 

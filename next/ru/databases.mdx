@@ -4,16 +4,16 @@ description: "Сравни хранение типов, запросы и пов
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; библиотеки нужно подготовить из исходников.
+Volan 1.0.0. Библиотеки и плагины сборки доступны в Maven Central.
 </Info>
 
 Одинаковая модель в клиенте не означает одинаковое хранение во всех базах. СУБД отличаются типами, precision времени, поддержкой массивов, правилами distinct и поведением DDL. Эти различия важны и при проектировании схемы, и при переносе приложения между providers.
 
-Alpha.2 поддерживает PostgreSQL и SQLite. H2, MySQL и MariaDB требуют [artifacts alpha.3 из исходников](/next/ru/build). Таблица ниже показывает реализованные возможности с этой границей версий.
+Версия 1.0.0 поддерживает PostgreSQL, SQLite, H2, MySQL и MariaDB. Подключение библиотек из Central описано в [Сборке](/next/ru/build).
 
 | Возможность | PostgreSQL | SQLite | H2 | MySQL/MariaDB |
 |---|---|---|---|---|
-| Библиотеки | alpha.2 | alpha.2 | alpha.3 из исходников | alpha.3 из исходников |
+| Библиотеки | Central 1.0.0 | Central 1.0.0 | Central 1.0.0 | Central 1.0.0 |
 | CRUD, связи и агрегаты | Да | Да | Да | Да, InnoDB |
 | Transactions/savepoints | Да | Да | Да | Да |
 | Arrays | Да | Нет | Да | Нет |
@@ -48,7 +48,7 @@ MySQL/MariaDB используют InnoDB, utf8mb4_bin, UTC и строгие se
 
 Readers сохраняют только представимые структуры и отказывают для неподдерживаемых определений. Views, triggers, custom collations, generated columns, неподдерживаемые индексы и cross-schema/database relations могут блокировать pull/plan/push. Сохраняй исходную схему: в ней остаются enum, generator, aliases и updatedAt.
 
-[Полные ограничения хранения и каталогов](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/docs/dialects.md). [Восстановление DDL](/next/ru/migrations).
+[Полные ограничения хранения и каталогов](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/dialects.md). [Восстановление DDL](/next/ru/migrations).
 
 ## Provider и URL должны совпадать
 
