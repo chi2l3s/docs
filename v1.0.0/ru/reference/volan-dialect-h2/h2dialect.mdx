@@ -1,0 +1,79 @@
+---
+title: "H2Dialect"
+description: "H2 SQL/DDL, delta-table returning и memory pooling."
+---
+
+Контракты типов и членов volan-dialect-h2 для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `H2Dialect`
+
+```kotlin
+public object H2Dialect : DdlRenderer(
+    DialectCapabilities(
+        returningClause = true,
+        insertOnConflict = false,
+        caseInsensitiveLike = false,
+        distinctOn = true,
+        nullsOrdering = true,
+        tupleComparison = true,
+        arrayColumns = true,
+        maximumParameters = 32_767,
+    ),
+)
+
+    override val id: String get()
+
+    override val currentTimestamp: String get()
+
+    override val generatedUuid: String get()
+
+    override fun render(insert: SqlInsert): SqlStatement
+
+    override fun render(update: SqlUpdate): SqlStatement
+
+    override fun render(delete: SqlDelete): SqlStatement
+
+    override fun typeName(type: SqlType): String
+
+    override fun render(type: ColumnType): String
+
+    override fun render(default: ColumnDefault): String
+
+    override fun autoIncrementType(type: ColumnType): String
+
+    override fun createIndex(table: String, index: IndexDefinition): String
+
+    override fun alterColumn(alter: DdlStatement.AlterColumn): List<SqlStatement>
+
+    override fun jdbcValue(value: Any?): Any?
+
+    override fun sqlState(exception: SQLException): String?
+
+    override fun poolSize(jdbcUrl: String, requested: Int): Int
+
+    override fun connectionMaxLifetime(jdbcUrl: String): Long?
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-h2/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/h2/H2Dialect.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-dialect-h2).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/dialect/h2/H2Dialect : io/github/thirtyeighttwentysix/volan/dialect/DdlRenderer {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/dialect/h2/H2Dialect;
+	public fun connectionMaxLifetime (Ljava/lang/String;)Ljava/lang/Long;
+	public fun getId ()Ljava/lang/String;
+	public fun jdbcValue (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun poolSize (Ljava/lang/String;I)I
+	public fun render (Lio/github/thirtyeighttwentysix/volan/dialect/SqlDelete;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public fun render (Lio/github/thirtyeighttwentysix/volan/dialect/SqlInsert;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public fun render (Lio/github/thirtyeighttwentysix/volan/dialect/SqlUpdate;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public fun sqlState (Ljava/sql/SQLException;)Ljava/lang/String;
+}
+```
+
+</Accordion>

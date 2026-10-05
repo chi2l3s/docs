@@ -1,0 +1,16 @@
+---
+title: "Null and omitted fields"
+description: "Omitting an assignment differs from assigning null."
+---
+
+Omitting an assignment differs from assigning null.
+
+```kotlin
+db.user.update {
+    where { id eq userId }
+    data { name = null }
+}
+val unnamed = db.user.findMany { where { name.isNull() } }
+```
+
+In create, fill every required field without a default. An omitted defaulted field uses its database default; a nullable field without a default becomes NULL. In update, omission preserves the value, assigning null clears it. Use isNull/isNotNull rather than eq null. Preserve omission versus null in PATCH requests. Unselected projection fields and unloaded relations throw rather than return null.

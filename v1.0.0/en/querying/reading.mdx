@@ -1,0 +1,51 @@
+---
+title: "Reading records"
+description: "Choose a list, one row or an existence check. Examples use User/Post."
+---
+
+Choose a list, one row or an existence check. Examples use User/Post.
+
+```kotlin
+val users = db.user.findMany {
+    where { email endsWith "@example.org" }
+    orderBy { id.asc() }
+    take = 20
+}
+users.forEach { user -> println(user.email) }
+```
+
+```kotlin
+val first = db.user.findFirst {
+    where { name.isNotNull() }
+    orderBy { id.asc() }
+}
+println(first?.email ?: "No matching user")
+```
+
+```kotlin
+val userId = 1
+val user = db.user.findUnique {
+    where { id eq userId }
+}
+println(user?.email ?: "User not found")
+```
+
+```java
+var userId = 1;
+var user = db.getUser().findUnique(q -> {
+    q.where(w -> w.getId().eq(userId));
+});
+System.out.println(user == null ? "User not found" : user.getEmail());
+```
+
+```kotlin
+val total = db.user.count {
+    where { email endsWith "@example.org" }
+}
+val emailTaken = db.user.exists {
+    where { email eq "alice@example.org" }
+}
+println("Users: $total, email taken: $emailTaken")
+```
+
+findMany returns a List, empty when nothing matches. findFirst/findUnique return a row or null; OrThrow throws VolanNotFoundException. count returns Long; exists Boolean. findUnique reads the first row and does not validate predicate uniqueness: use a full key. Ordering is unspecified without orderBy.

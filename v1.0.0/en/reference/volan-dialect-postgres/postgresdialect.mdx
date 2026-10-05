@@ -1,0 +1,60 @@
+---
+title: "PostgresDialect"
+description: "PostgreSQL runtime SQL, DDL, binding and ServiceLoader provider."
+---
+
+Type/member contracts of volan-dialect-postgres for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `PostgresDialect`
+
+```kotlin
+public object PostgresDialect : DdlRenderer(
+    DialectCapabilities(
+        returningClause = true,
+        insertOnConflict = true,
+        caseInsensitiveLike = true,
+        distinctOn = true,
+        nullsOrdering = true,
+        tupleComparison = true,
+        arrayColumns = true,
+        // The wire protocol counts parameters in a 16-bit field. Volan chunks well below this, but the
+        // planner needs the real ceiling to know where a batch has to be split.
+        maximumParameters = 65_535,
+    ),
+)
+
+    override val id: String get()
+
+    override val hasEnumTypes: Boolean get()
+
+    override val generatedUuid: String get()
+
+    override val textParameterType: Int get()
+
+    override fun jdbcValue(value: Any?): Any?
+
+    override fun typeName(type: SqlType): String
+
+    override fun createIndex(table: String, index: IndexDefinition): String
+
+    override fun autoIncrementType(type: ColumnType): String?
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-postgres/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/postgres/PostgresDialect.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-dialect-postgres).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/dialect/postgres/PostgresDialect : io/github/thirtyeighttwentysix/volan/dialect/DdlRenderer {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/dialect/postgres/PostgresDialect;
+	public fun getId ()Ljava/lang/String;
+	public fun getTextParameterType ()I
+	public fun jdbcValue (Ljava/lang/Object;)Ljava/lang/Object;
+}
+```
+
+</Accordion>

@@ -1,0 +1,19 @@
+---
+title: "PostgreSQL type catalog"
+description: "Use @db.Type only with PostgreSQL. SQL types do not replace the scalar field JVM type."
+---
+
+Use @db.Type only with PostgreSQL. SQL types do not replace the scalar field JVM type.
+
+```prisma
+model Reading {
+  id Int @id
+  label String @db.VarChar(120)
+  value Decimal @db.Decimal(12, 4)
+  at DateTime @db.Timestamptz(6)
+}
+```
+
+Migration/introspection normalization catalog: BigInt, Bit, Boolean, ByteA, Char, Citext, Date, Decimal, DoublePrecision, Inet, Integer, Json, JsonB, Money, Oid, Real, SmallInt, Text, Time, Timestamp, Timestamptz, Timetz, Uuid, VarBit, VarChar, Xml. Names compare case-insensitively. Canonical defaults without @db: String→Text, Int→Integer, Long→BigInt, Float→Real, Double→DoublePrecision, Boolean→Boolean, Date→Date, Json→JsonB, Bytes→ByteA, Uuid→Uuid, Decimal→Decimal(65,30), DateTime→Timestamp(3), Time→Time(3).
+
+In 1.0.0, analysis checks attribute namespace/shape and provider capabilities, but does not guarantee every scalar/native combination or SQL argument range. This catalog describes normalization, not exhaustive SQL validation. Review DDL and driver reads; PostgreSQL rejects invalid types/sizes. Extensions such as citext must exist in the database.

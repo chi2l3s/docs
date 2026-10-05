@@ -1,0 +1,45 @@
+---
+title: "Models and keys"
+description: "A model describes a table. Every managed model needs a primary key."
+---
+
+A model describes a table. Every managed model needs a primary key.
+
+```prisma
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+}
+```
+
+```prisma
+model Membership {
+  organizationId Int
+  userId Int
+  role String
+
+  @@id([organizationId, userId])
+}
+```
+
+```prisma
+model Account {
+  id Int @id @default(autoincrement())
+  emailAddress String @unique @map("email_address")
+
+  @@map("accounts")
+}
+```
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  authorId Int
+  publishedAt DateTime
+
+  @@index([authorId, publishedAt])
+}
+```
+
+`@id` defines a single-column key; `@@id([a,b])` defines an ordered composite key. Keys must be required scalar fields. `@unique` and `@@unique` define constraints, not findByEmail methods. A repository uses the model name with a lowercase initial. Use mapping for database names; no automatic pluralization or snake_case. A composite cursor needs every PK field.

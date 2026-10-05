@@ -1,0 +1,27 @@
+---
+title: "Транзакции"
+description: "Блок выполняется на одном потоке и одном соединении. Успех — commit, исключение — rollback."
+---
+
+Блок выполняется на одном потоке и одном соединении. Успех — commit, исключение — rollback.
+
+```kotlin
+val user = db.transaction { tx ->
+    val created = tx.user.create { email = "transaction@example.org" }
+    tx.post.create { title = "Welcome"; authorId = created.id }
+    created
+}
+```
+
+```java
+var user = db.transaction(tx -> {
+    var created = tx.getUser().create(d -> d.setEmail("transaction@example.org"));
+    tx.getPost().create(d -> {
+        d.setTitle("Welcome");
+        d.setAuthorId(created.getId());
+    });
+    return created;
+});
+```
+
+Используй синхронные методы внутри блока. Он не может suspend или передать thread-bound context другому worker. Если поймать исключение и вернуть успех, внешний блок может commit; дай ошибке выйти, когда нужен откат. Raw SQL использует то же соединение. Клиент поверх bare QueryExecutor не имеет transaction ownership.

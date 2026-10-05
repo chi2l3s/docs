@@ -1,0 +1,15 @@
+---
+title: "External DataSource"
+description: "Pass an existing pool and either its URL for discovery or an explicit dialect."
+---
+
+Pass an existing pool and either its URL for discovery or an explicit dialect.
+
+```kotlin
+val db = VolanClient.builder()
+    .dataSource(dataSource)
+    .url("jdbc:postgresql://localhost:5432/app")
+    .build()
+```
+
+The application owns DataSource size, timeouts and closing. The URL selects the dialect rather than creating another pool. Supply connections outside unrelated active transactions. Volan manages its own transactions; Spring @Transactional alone does not enlist Volan queries. An external private-memory DataSource must retain a single shared connection.

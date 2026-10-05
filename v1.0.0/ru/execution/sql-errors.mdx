@@ -1,0 +1,20 @@
+---
+title: "Классификация JDBC-ошибок"
+description: "Runtime классифицирует SQLException после нормализации SQLState диалектом."
+---
+
+Runtime классифицирует SQLException после нормализации SQLState диалектом.
+
+| SQLState / JDBC | Result |
+| --- | --- |
+| 23505 | VolanUniqueConstraintException |
+| 23503 | VolanForeignKeyException |
+| 23502, 23514 | VolanConstraintException |
+| 23000 | unique if message contains the case-sensitive substring uplicate; otherwise constraint |
+| 40001, 40P01, 40P02 | VolanTransactionException, retryable=true |
+| other 40… | VolanTransactionException, retryable=false |
+| 57014, SQLTimeoutException | VolanTimeoutException |
+| 53300, 08…, SQLTransientConnectionException | VolanConnectionException |
+| other SQLException | VolanQueryException |
+
+Вложенный cause сохраняет SQLException; SQLState и errorCode читай из него. `constraint` может быть null. Диалект переводит vendor codes SQLite/MySQL/MariaDB в общий SQLState. Не все JDBC-ошибки повторяемы. Ошибки binding/rendering диалекта могут быть VolanDialectException. [Обработка ошибок](/v1.0.0/ru/errors).

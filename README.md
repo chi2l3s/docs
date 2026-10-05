@@ -1,55 +1,38 @@
-# Mintlify Starter Kit
+# Volan documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+Russian and English documentation: [volan.mintlify.app](https://volan.mintlify.app).
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+The default version is **1.0.0**, with separate alpha.1 and alpha.2 archives. The legacy `next/` URLs redirect to the stable release. Content, examples, assets and navigation live in this repository. Use the Mintlify dashboard for SEO and deployment settings.
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+## Preview and validate
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
-
-## AI-assisted writing
-
-Set up your AI coding tool to work with Mintlify:
-
-```bash
-npx skills add https://mintlify.com/docs
+```shell
+npx mint dev
+npx mint validate
+npx mint broken-links
+python tools/verify-stable.py --source /path/to/volan
 ```
 
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
+The source checkout must contain the commit pinned in `tools/stable-coverage.json`. The verifier checks all public types and members against the release ABI, bilingual page/code parity, navigation, redirects and quickstart/project consistency. It does not measure runtime test coverage. Mintlify's Windows link scanner can report false positives when filesystem paths contain backslashes; normalize path separators in the scanner when investigating those reports.
 
-See the [AI tools guides](/ai-tools) for tool-specific setup.
+## Execute stable examples
 
-## Development
+Use JDK 25 and the included Gradle wrappers. On Windows replace `./gradlew` with `.\gradlew.bat`.
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
-npm i -g mint
-```
-
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
-mint dev
+```shell
+cd examples/first-query-1.0.0
+./gradlew test runKotlinExample runJavaExample
 ```
 
-View your local preview at `http://localhost:3000`.
+Both programs print `Alice: alice@example.org` and `Users: 1`.
 
-## Publishing changes
+```shell
+cd examples/query-guide-1.0.0
+./gradlew test
+```
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+The guide project checks CRUD, filtering, projections, aggregates, relations, bulk/nested writes, raw mapping, transactions, futures, coroutines, metrics and migration history. Its schema fragments are generated and compiled as part of the build. SQLite databases are isolated; the H2 case uses its own memory database. These checks do not execute PostgreSQL, MySQL or MariaDB server scenarios.
 
-## Need help?
+## Publish
 
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+Changes merged into `main` deploy through the connected Mintlify GitHub integration. Add each new release under `v<version>/<language>/`; preserve archive URLs and version selectors. Follow [AGENTS.md](AGENTS.md) when editing.

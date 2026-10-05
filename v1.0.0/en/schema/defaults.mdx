@@ -1,0 +1,18 @@
+---
+title: "Defaults"
+description: "A default applies to an omitted field. Explicit values take precedence."
+---
+
+A default applies to an omitted field. Explicit values take precedence.
+
+```prisma
+model Event {
+  id Int @id @default(autoincrement())
+  title String @default("Untitled")
+  published Boolean @default(false)
+  createdAt DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+}
+```
+
+autoincrement() requires Int/Long and a supported PK shape; now() requires a temporal field; uuid() requires Uuid/String; enum defaults name an existing value; list defaults are only []. dbgenerated("SQL") supplies database SQL. The actual table must contain its default. Defaults do not enforce business ranges. MySQL/MariaDB reject database-generated UUID primary keys.

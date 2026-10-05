@@ -1,0 +1,86 @@
+---
+title: "Transactions"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions и hooks."
+---
+
+Контракты типов и членов volan-runtime для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `Isolation`, `RetryPolicy`, `Companion`
+
+```kotlin
+public enum class Isolation(internal val jdbcLevel: Int)
+
+public data class RetryPolicy @JvmOverloads constructor(
+    public val attempts: Int,
+    public val initialDelay: Long = DEFAULT_DELAY_MILLIS,
+    public val multiplier: Double = DEFAULT_MULTIPLIER,
+)
+
+    public companion object
+
+        public val NONE: RetryPolicy
+
+        public val DEFAULT: RetryPolicy
+
+/** Reads may see rows other transactions have written but not committed. */
+    READ_UNCOMMITTED(Connection.TRANSACTION_READ_UNCOMMITTED),
+
+    /** Reads see only committed rows, but two reads in one transaction may disagree. */
+    READ_COMMITTED(Connection.TRANSACTION_READ_COMMITTED),
+
+    /** Rows already read do not change under the transaction's feet. */
+    REPEATABLE_READ(Connection.TRANSACTION_REPEATABLE_READ),
+
+    /** The result is as if transactions ran one after another. */
+    SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE),
+
+    /** Whatever the database is configured to do. */
+    DEFAULT(-1),
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/Transactions.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-runtime).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/Isolation : java/lang/Enum {
+	public static final field DEFAULT Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;
+	public static final field READ_COMMITTED Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;
+	public static final field READ_UNCOMMITTED Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;
+	public static final field REPEATABLE_READ Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;
+	public static final field SERIALIZABLE Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/RetryPolicy {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/runtime/RetryPolicy$Companion;
+	public static final field DEFAULT Lio/github/thirtyeighttwentysix/volan/runtime/RetryPolicy;
+	public static final field NONE Lio/github/thirtyeighttwentysix/volan/runtime/RetryPolicy;
+	public fun <init> (I)V
+	public fun <init> (IJ)V
+	public fun <init> (IJD)V
+	public synthetic fun <init> (IJDILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()J
+	public final fun component3 ()D
+	public final fun copy (IJD)Lio/github/thirtyeighttwentysix/volan/runtime/RetryPolicy;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/RetryPolicy;IJDILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/RetryPolicy;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttempts ()I
+	public final fun getInitialDelay ()J
+	public final fun getMultiplier ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/RetryPolicy$Companion {
+}
+```
+
+</Accordion>

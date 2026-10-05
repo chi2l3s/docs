@@ -1,0 +1,19 @@
+---
+title: "Асинхронная транзакция"
+description: "Передай всю транзакцию одному worker. Внутри используй обычные методы."
+---
+
+Передай всю транзакцию одному worker. Внутри используй обычные методы.
+
+```java
+var user = db.transactionAsync(tx -> {
+    var created = tx.getUser().create(d -> d.setEmail("async-tx@example.org"));
+    tx.getPost().create(d -> {
+        d.setTitle("Async transaction");
+        d.setAuthorId(created.getId());
+    });
+    return created;
+}).join();
+```
+
+Async-вызов из активной connected transaction возвращает failed future; thread-bound transaction не следует за другим потоком. Callback должен вернуть конечное значение, а не another future. Ошибка callback откатывает транзакцию. Overloads поддерживают Isolation и RetryPolicy.

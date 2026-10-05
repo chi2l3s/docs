@@ -1,0 +1,30 @@
+---
+title: "Versioned-миграции"
+description: "Создай SQL-файл, просмотри и закоммить его, затем примени Migrator."
+---
+
+Создай SQL-файл, просмотри и закоммить его, затем примени Migrator.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.migrate.MigrationDirectory
+import io.github.thirtyeighttwentysix.volan.migrate.Migrator
+import java.nio.file.Path
+import java.time.Instant
+
+val directory = MigrationDirectory(Path.of("migrations"))
+val plan = sync.plan(connection, nextSchema)
+if (!plan.isEmpty) {
+    println(plan.warnings)
+    directory.write(Instant.now(), "add_posts", plan.toSql(dialect))
+}
+// After SQL review, on a dedicated auto-commit connection:
+val applied = Migrator(directory).apply(connection)
+```
+
+```text
+migrations/
+  20261006000000_initial/
+    migration.sql
+```
+
+Каждый файл имеет id, description, SQL и SHA-256 checksum; CRLF нормализуется в LF. Duplicate name не перезаписывается. Connection должна начинаться в auto-commit; не используй чужую active transaction. PostgreSQL/SQLite commit-ят файл и journal вместе. H2/MySQL/MariaDB commit-ят DDL по statements; смотри recovery.

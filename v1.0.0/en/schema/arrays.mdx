@@ -1,0 +1,16 @@
+---
+title: "Scalar arrays"
+description: "PostgreSQL and H2 support scalar arrays. Relation lists are a different field kind."
+---
+
+PostgreSQL and H2 support scalar arrays. Relation lists are a different field kind.
+
+```prisma
+model Preferences {
+  id Int @id
+  tags String[] @default([])
+  scores Int[]
+}
+```
+
+SQLite, MySQL and MariaDB reject scalar arrays before generation. Optional/nested lists are invalid; database null elements cannot fit generated non-null element types. Typed array/list filter operators are unavailable. Read/write the whole list or use raw SQL.

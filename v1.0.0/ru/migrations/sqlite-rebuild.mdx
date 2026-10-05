@@ -1,0 +1,10 @@
+---
+title: "SQLite: перестройка таблицы"
+description: "Изменение колонок и constraints без потери surviving-данных."
+---
+
+Column/constraint changes пересоздают таблицу в transaction: replacement → copy surviving columns → drop old → rename → recreate indexes. Index-only changes обходятся без rebuild.
+
+Added columns получают default или NULL. Required без default провалится на populated table. Сохраняются surviving values и AUTOINCREMENT high-water mark. FK временно выключаются до transaction, чтобы drop parent не вызвал Cascade; перед commit выполняется FK-check. Исходный FK-setting восстанавливается даже при ошибке.
+
+Нужна dedicated auto-commit connection. Нарушение FK/unique/NOT NULL откатывает данные, DDL и journal. Unsupported triggers/views/constraints не удаляются молча: introspection отказывается планировать такую структуру. Для rename используй явный SQL.

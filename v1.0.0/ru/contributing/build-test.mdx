@@ -1,0 +1,18 @@
+---
+title: "Сборка и проверка проекта"
+description: "Для исходников нужен JDK 17+. PostgreSQL/MySQL/MariaDB integration suites требуют Docker."
+---
+
+Для исходников нужен JDK 17+. PostgreSQL/MySQL/MariaDB integration suites требуют Docker.
+
+```bash
+git clone https://github.com/thirtyeighttwentysix/volan.git
+cd volan
+git checkout v1.0.0
+./gradlew build
+./gradlew apiCheck
+./gradlew :codegen-verify:test :java-compat-tests:check
+./gradlew :volan-cli:installDist
+```
+
+Embedded SQLite/H2 checks запускаются без Docker. Без Docker server suites могут skip-иться; build success не доказывает их выполнение. Public API dumps проверяют бинарный контракт. Общие правила contribution и release находятся в [CONTRIBUTING](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/CONTRIBUTING.md) и [publishing](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/publishing.md).

@@ -1,0 +1,16 @@
+---
+title: "volan-core"
+description: "JSON and the base exception."
+---
+
+JSON and the base exception.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-core:1.0.0")
+```
+
+## Contracts
+- [Json](/v1.0.0/en/reference/volan-core/json): `Json`, `Companion`
+- [VolanException](/v1.0.0/en/reference/volan-core/volanexception): `VolanException`
+
+Data classes also provide value equality, copy and componentN; enums expose values/valueOf. ? marks nullable types. Kotlin @JvmOverloads signatures have Java overloads; @JvmStatic/@JvmField provide static access. Signatures alone do not imply serialization or data migration.

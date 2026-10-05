@@ -1,0 +1,209 @@
+---
+title: "Diagnostic"
+description: "SourceFile, lexer, parser, AST, formatter and diagnostics."
+---
+
+Type/member contracts of volan-schema for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `Diagnostic`, `DiagnosticCode`, `Severity`, `SyntaxCode`
+
+```kotlin
+public enum class Severity
+
+    public val label: String
+
+public interface DiagnosticCode
+
+    public val id: String
+
+public enum class SyntaxCode(override val id: String) : DiagnosticCode
+
+    override fun toString(): String
+
+public data class Diagnostic(
+    public val severity: Severity,
+    public val code: DiagnosticCode,
+    public val message: String,
+    public val span: SourceSpan,
+    public val label: String? = null,
+    public val help: String? = null,
+)
+
+    public val isError: Boolean
+
+    override fun toString(): String
+
+/** The schema cannot be used. Generation and migration refuse to run. */
+    ERROR,
+
+    /** The schema is usable, but something in it is suspicious or will stop working. */
+    WARNING,
+
+/** A string literal was opened but never closed before the end of the line. */
+    UNTERMINATED_STRING("E0001"),
+
+    /** A backslash inside a string literal was followed by a character that is not a valid escape. */
+    INVALID_ESCAPE_SEQUENCE("E0002"),
+
+    /** A character appeared that has no meaning anywhere in the schema language. */
+    UNEXPECTED_CHARACTER("E0003"),
+
+    /** A C-style block comment was used; the schema language only has line comments. */
+    BLOCK_COMMENT_NOT_SUPPORTED("E0004"),
+
+    /** A numeric literal is not well formed, for example `1.2.3`. */
+    MALFORMED_NUMBER("E0005"),
+
+    /** A top-level construct was expected but something else was found. */
+    EXPECTED_DECLARATION("E0100"),
+
+    /** A declaration, field or attribute name was expected. */
+    EXPECTED_NAME("E0101"),
+
+    /** A block was expected to open with `{`. */
+    EXPECTED_OPENING_BRACE("E0102"),
+
+    /** A block was opened but never closed. */
+    UNCLOSED_BLOCK("E0103"),
+
+    /** A field was declared without a type. */
+    EXPECTED_FIELD_TYPE("E0104"),
+
+    /** A configuration property was written without `=`. */
+    EXPECTED_EQUALS("E0105"),
+
+    /** A value was expected and something that cannot start one was found. */
+    EXPECTED_EXPRESSION("E0106"),
+
+    /** An attribute argument list was opened but never closed. */
+    UNCLOSED_ARGUMENT_LIST("E0107"),
+
+    /** A list was opened with `[` but never closed. */
+    UNCLOSED_LIST("E0108"),
+
+    /** A list type was marked optional, as in `Post[]?`. */
+    OPTIONAL_LIST_TYPE("E0109"),
+
+    /** A type was given more than one list marker, as in `Post[][]`. */
+    NESTED_LIST_TYPE("E0110"),
+
+    /** A type was given more than one optional marker, as in `String??`. */
+    REPEATED_OPTIONAL_MARKER("E0111"),
+
+    /** A field attribute was written with `@@`, or a block attribute with `@`. */
+    WRONG_ATTRIBUTE_FORM("E0112"),
+
+    /** An attribute name was expected after `@` or `@@`. */
+    EXPECTED_ATTRIBUTE_NAME("E0113"),
+
+    /** A member name was expected after `.` in a namespaced attribute such as `@db.VarChar`. */
+    EXPECTED_ATTRIBUTE_MEMBER("E0114"),
+
+    /** A named argument was written without a value. */
+    EXPECTED_ARGUMENT_VALUE("E0115"),
+
+    /** A token appeared at the top level where only declarations are allowed. */
+    UNEXPECTED_TOP_LEVEL_TOKEN("E0116"),
+
+    /** A model was declared without any fields. */
+    EMPTY_MODEL("E0117"),
+
+    /** An enum was declared without any values. */
+    EMPTY_ENUM("E0118"),
+
+    /** A configuration property was written without a value. */
+    EXPECTED_CONFIGURATION_VALUE("E0119"),
+
+    /** A block attribute was used inside a `datasource` or `generator` block, which does not allow them. */
+    ATTRIBUTE_NOT_ALLOWED_HERE("E0120"),
+
+    /** A token appeared inside a block where it has no meaning. */
+    UNEXPECTED_TOKEN_IN_BLOCK("E0121"),
+
+    /** A comment was written at a position where it cannot be attached to anything. */
+    DANGLING_DOC_COMMENT("W0001"),
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-schema/src/main/kotlin/io/github/thirtyeighttwentysix/volan/schema/Diagnostic.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-schema).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/schema/Diagnostic {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/schema/Severity;Lio/github/thirtyeighttwentysix/volan/schema/DiagnosticCode;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/schema/Severity;Lio/github/thirtyeighttwentysix/volan/schema/DiagnosticCode;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/schema/Severity;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/schema/DiagnosticCode;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/schema/Severity;Lio/github/thirtyeighttwentysix/volan/schema/DiagnosticCode;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/schema/Diagnostic;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/schema/Diagnostic;Lio/github/thirtyeighttwentysix/volan/schema/Severity;Lio/github/thirtyeighttwentysix/volan/schema/DiagnosticCode;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/schema/Diagnostic;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()Lio/github/thirtyeighttwentysix/volan/schema/DiagnosticCode;
+	public final fun getHelp ()Ljava/lang/String;
+	public final fun getLabel ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getSeverity ()Lio/github/thirtyeighttwentysix/volan/schema/Severity;
+	public final fun getSpan ()Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;
+	public fun hashCode ()I
+	public final fun isError ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/schema/DiagnosticCode {
+	public abstract fun getId ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/schema/Severity : java/lang/Enum {
+	public static final field ERROR Lio/github/thirtyeighttwentysix/volan/schema/Severity;
+	public static final field WARNING Lio/github/thirtyeighttwentysix/volan/schema/Severity;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getLabel ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/schema/Severity;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/schema/Severity;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/schema/SyntaxCode : java/lang/Enum, io/github/thirtyeighttwentysix/volan/schema/DiagnosticCode {
+	public static final field ATTRIBUTE_NOT_ALLOWED_HERE Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field BLOCK_COMMENT_NOT_SUPPORTED Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field DANGLING_DOC_COMMENT Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EMPTY_ENUM Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EMPTY_MODEL Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_ARGUMENT_VALUE Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_ATTRIBUTE_MEMBER Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_ATTRIBUTE_NAME Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_CONFIGURATION_VALUE Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_DECLARATION Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_EQUALS Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_EXPRESSION Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_FIELD_TYPE Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_NAME Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field EXPECTED_OPENING_BRACE Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field INVALID_ESCAPE_SEQUENCE Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field MALFORMED_NUMBER Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field NESTED_LIST_TYPE Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field OPTIONAL_LIST_TYPE Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field REPEATED_OPTIONAL_MARKER Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field UNCLOSED_ARGUMENT_LIST Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field UNCLOSED_BLOCK Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field UNCLOSED_LIST Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field UNEXPECTED_CHARACTER Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field UNEXPECTED_TOKEN_IN_BLOCK Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field UNEXPECTED_TOP_LEVEL_TOKEN Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field UNTERMINATED_STRING Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static final field WRONG_ATTRIBUTE_FORM Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public fun getId ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/schema/SyntaxCode;
+}
+```
+
+</Accordion>

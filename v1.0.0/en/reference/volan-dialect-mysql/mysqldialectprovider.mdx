@@ -1,0 +1,46 @@
+---
+title: "MySqlDialectProvider"
+description: "MySQL/MariaDB SQL, DDL, locks and provider discovery."
+---
+
+Type/member contracts of volan-dialect-mysql for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `MariaDbDialectProvider`, `MySqlDialectProvider`
+
+```kotlin
+public class MySqlDialectProvider : DialectProvider
+
+    override fun supports(jdbcUrl: String): Boolean
+
+    override fun dialect(): Dialect
+
+public class MariaDbDialectProvider : DialectProvider
+
+    override fun supports(jdbcUrl: String): Boolean
+
+    override fun dialect(): Dialect
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-mysql/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/mysql/MySqlDialectProvider.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-dialect-mysql).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/dialect/mysql/MariaDbDialectProvider : io/github/thirtyeighttwentysix/volan/dialect/DialectProvider {
+	public fun <init> ()V
+	public fun dialect ()Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;
+	public fun supports (Ljava/lang/String;)Z
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/mysql/MySqlDialectProvider : io/github/thirtyeighttwentysix/volan/dialect/DialectProvider {
+	public fun <init> ()V
+	public fun dialect ()Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;
+	public fun supports (Ljava/lang/String;)Z
+}
+```
+
+</Accordion>

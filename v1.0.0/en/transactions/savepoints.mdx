@@ -1,0 +1,22 @@
+---
+title: "Savepoints"
+description: "Nested transaction creates a savepoint. Its failure rolls back that nested part."
+---
+
+Nested transaction creates a savepoint. Its failure rolls back that nested part.
+
+```kotlin
+db.transaction { tx ->
+    tx.user.create { email = "outer@example.org" }
+    runCatching {
+        tx.transaction { inner ->
+            inner.user.create { email = "inner@example.org" }
+            error("Undo inner work")
+        }
+    }
+    check(tx.user.exists { where { email eq "outer@example.org" } })
+    check(!tx.user.exists { where { email eq "inner@example.org" } })
+}
+```
+
+Releasing a savepoint does not commit the outer transaction. Nested isolation/retry does not create an independent connection: the outer transaction governs settings. An uncaught nested failure also rolls back the outer block.

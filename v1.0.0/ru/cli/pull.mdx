@@ -1,0 +1,20 @@
+---
+title: "DB pull"
+description: "Экспортирует каталог БД в схему. credentials не попадают в результат."
+---
+
+Экспортирует каталог БД в схему. credentials не попадают в результат.
+
+```bash
+volan db pull --url jdbc:h2:file:./data --stdout
+volan db pull --url jdbc:h2:file:./data --schema pulled.volan
+```
+
+| Флаг | Default / поведение |
+| --- | --- |
+| --schema | schema.volan; output file |
+| --url | DATABASE_URL |
+| --stdout | вместо записи файла |
+| --force | разрешить overwrite |
+
+Подключение: DATABASE_USER и DATABASE_PASSWORD. Push выбирает --url → schema literal/env URL → DATABASE_URL. Pull: --url → DATABASE_URL. Нужен JDBC URL. --resolve/--dry-run несовместимы. [Recovery](/v1.0.0/ru/migrations/recovery).

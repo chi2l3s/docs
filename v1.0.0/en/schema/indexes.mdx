@@ -1,0 +1,19 @@
+---
+title: "Indexes and constraints"
+description: "Indexes support suitable SQL queries. Uniqueness is a separate constraint."
+---
+
+Indexes support suitable SQL queries. Uniqueness is a separate constraint.
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  slug String @unique
+  title String
+  published Boolean @default(false)
+  @@index([published, id])
+  @@fulltext([title])
+}
+```
+
+This fragment targets PostgreSQL or MySQL/MariaDB: H2 and SQLite reject @@fulltext. Composite index fields are ordered. @@unique([a,b]) constrains the combination. See [attributes](/v1.0.0/en/schema/attributes) for names and arguments. Full-text indexes can be created; typed full-text search is unavailable in 1.0.0. Use provider-specific SQL.

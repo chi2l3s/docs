@@ -1,0 +1,30 @@
+---
+title: "Spring Boot"
+description: "Source of a working Volan 1.0.0 application."
+---
+
+Source of a working Volan 1.0.0 application.
+
+```java
+package example;
+
+import example.generated.User;
+import example.generated.VolanClient;
+
+public final class UserService {
+    private final VolanClient database;
+
+    public UserService(VolanClient database) {
+        this.database = database;
+    }
+
+    public User create(String name) {
+        return database.transaction(tx -> {
+            var user = tx.getUser().create(data -> data.setName(name));
+            return tx.getUser().findFirstOrThrow(query -> query.where(where -> where.getId().eq(user.getId())));
+        });
+    }
+}
+```
+
+[Complete project](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/examples/spring-boot): schema, migration.sql, dependencies and smoke tests. Create a client bean with destroyMethod=close; pass the application-owned DataSource and dialect. Use Volan.transaction: Spring @Transactional integration is unavailable. Do not serialize unloaded relations.

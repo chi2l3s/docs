@@ -1,0 +1,32 @@
+---
+title: "Trees and nullable relations"
+description: "This example replaces User/Post. Generate a Folder client and create its tables."
+---
+
+This example replaces User/Post. Generate a Folder client and create its tables.
+
+```prisma
+model Folder {
+  id Int @id
+  parentId Int?
+  parent Folder? @relation("FolderTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Folder[] @relation("FolderTree")
+}
+```
+
+```kotlin
+db.folder.create { id = 1 }
+db.folder.create { id = 2; parent.connect { id eq 1 } }
+val root = db.folder.findUniqueOrThrow {
+    where { id eq 1 }
+    include { children { include { children() } } }
+}
+check(root.children.single().id == 2)
+db.folder.update {
+    where { id eq 2 }
+    data { parent.disconnect() }
+}
+check(db.folder.findUniqueOrThrow { where { id eq 2 } }.parentId == null)
+```
+
+The shared FolderTree name pairs both self-relation ends. parentId and parent are nullable, so disconnect writes NULL and SetNull preserves children when a parent is deleted. children is a list, never NULL. Disconnecting does not delete a folder. Choose reading depth explicitly. ORM does not enforce an acyclic tree: check before reparenting. [Executable example](https://github.com/chi2l3s/docs/blob/main/examples/query-guide-1.0.0/src/test/kotlin/org/example/RelationGuideExamplesTest.kt).

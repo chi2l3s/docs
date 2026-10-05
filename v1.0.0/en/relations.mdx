@@ -1,0 +1,33 @@
+---
+title: "Loading relations"
+description: "include explicitly requests relations. An ordinary entity read returns scalar fields."
+---
+
+include explicitly requests relations. An ordinary entity read returns scalar fields.
+
+```kotlin
+val authors = db.user.findMany {
+    orderBy { id.asc() }
+    take = 20
+    include {
+        posts {
+            where { views gt 0 }
+            orderBy { id.asc() }
+            take = 5
+        }
+    }
+}
+authors.forEach { println(it.posts.map { post -> post.title }) }
+```
+
+```java
+var authors = db.getUser().findMany(q -> {
+    q.setTake(20);
+    q.include(i -> i.posts(p -> {
+        p.where(w -> w.getViews().gt(0));
+        p.setTake(5);
+    }));
+});
+```
+
+Relations are loaded in parent-key batches. Base chunk size is 500, also constrained by dialect parameter limits. Large pages therefore need multiple statements per level. Nested take/skip applies per parent; this is not a promise of SQL top-N per parent. An empty include result does not discard a parent. Unrequested getters throw VolanRelationNotLoadedException. [Nested includes](/v1.0.0/en/querying/deep-include).

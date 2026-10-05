@@ -1,0 +1,22 @@
+---
+title: "Savepoints"
+description: "Вложенная transaction создаёт savepoint. Её ошибка откатывает вложенную часть."
+---
+
+Вложенная transaction создаёт savepoint. Её ошибка откатывает вложенную часть.
+
+```kotlin
+db.transaction { tx ->
+    tx.user.create { email = "outer@example.org" }
+    runCatching {
+        tx.transaction { inner ->
+            inner.user.create { email = "inner@example.org" }
+            error("Undo inner work")
+        }
+    }
+    check(tx.user.exists { where { email eq "outer@example.org" } })
+    check(!tx.user.exists { where { email eq "inner@example.org" } })
+}
+```
+
+Release savepoint не сохраняет внешнюю транзакцию. Вложенная isolation/retry не открывает независимое соединение: настройки применяются внешней transaction. Если вложенную ошибку не поймать, она также откатывает внешнюю часть.

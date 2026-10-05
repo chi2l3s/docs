@@ -1,0 +1,33 @@
+---
+title: "Схема User/Post"
+description: "Это общая схема примеров чтения и записи. Добавь её в проект и пересобери клиент."
+---
+
+Это общая схема примеров чтения и записи. Добавь её в проект и пересобери клиент.
+
+```prisma
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.generated"
+  javaFriendly = true
+}
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+  posts Post[]
+}
+model Post {
+  id Int @id @default(autoincrement())
+  title String
+  views Int @default(0)
+  authorId Int
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+```
+
+Код использует `org.example.generated.VolanClient` и открытый `db`. Таблицы должны существовать. [Готовый проект](https://github.com/chi2l3s/docs/tree/main/examples/query-guide-1.0.0) содержит DDL, данные и проверки; каждый тест начинает с отдельной SQLite-базы.

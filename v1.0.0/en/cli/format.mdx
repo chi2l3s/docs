@@ -1,0 +1,20 @@
+---
+title: "Format"
+description: "Formats syntactically valid schemas. Semantic errors do not prevent formatting."
+---
+
+Formats syntactically valid schemas. Semantic errors do not prevent formatting.
+
+```bash
+volan format --schema schema.volan
+volan format --check --schema schema.volan
+volan format --stdout --schema schema.volan
+```
+
+| Flag | Default / behavior |
+| --- | --- |
+| --schema | schema.volan |
+| --check | nonzero on differences; no writes |
+| --stdout | prints without writing |
+
+--check and --stdout cannot combine. Comments and blank lines are retained.

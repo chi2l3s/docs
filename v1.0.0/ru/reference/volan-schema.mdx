@@ -1,0 +1,21 @@
+---
+title: "volan-schema"
+description: "SourceFile, lexer, parser, AST, formatter и диагностика."
+---
+
+SourceFile, lexer, parser, AST, formatter и диагностика.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-schema:1.0.0")
+```
+
+## Контракты
+- [Diagnostic](/v1.0.0/ru/reference/volan-schema/diagnostic): `Diagnostic`, `DiagnosticCode`, `Severity`, `SyntaxCode`
+- [DiagnosticRenderer](/v1.0.0/ru/reference/volan-schema/diagnosticrenderer): `DiagnosticRenderer`
+- [SchemaFormatter](/v1.0.0/ru/reference/volan-schema/schemaformatter): `SchemaFormatter`
+- [SchemaParser](/v1.0.0/ru/reference/volan-schema/schemaparser): `ParseResult`, `SchemaParser`, `VolanSchemaException`
+- [SourceFile](/v1.0.0/ru/reference/volan-schema/sourcefile): `SourceFile`, `SourcePosition`, `SourceSpan`
+- [Suggestions](/v1.0.0/ru/reference/volan-schema/suggestions): `Suggestions`
+- [Ast](/v1.0.0/ru/reference/volan-schema/ast): `Argument`, `ArrayLiteral`, `AstNode`, `Attribute`, `AttributeName`, `BlockAttributeDeclaration`, `BooleanLiteral`, `CommentLine`, `ConfigEntry`, `ConstantReference`, `DatasourceDeclaration`, `Declaration`, `Documented`, `EnumDeclaration`, `EnumMember`, `EnumValueDeclaration`, `Expression`, `FieldDeclaration`, `FunctionCall`, `GeneratorDeclaration`, `Identifier`, `ModelDeclaration`, `ModelMember`, `NumberLiteral`, `SchemaDocument`, `StringLiteral`, `TypeArity`, `TypeReference`
+
+Data-классы также имеют value equality, copy и componentN; enum — values/valueOf. Nullable обозначается `?`. Сигнатуры Kotlin с @JvmOverloads имеют Java-overloads; @JvmStatic/@JvmField дают static-доступ. Сериализация или миграция данных из самой сигнатуры не следует.

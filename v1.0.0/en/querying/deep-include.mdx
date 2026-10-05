@@ -1,0 +1,19 @@
+---
+title: "Multiple relation levels"
+description: "Request each include level explicitly. Depth increases work and result size."
+---
+
+Request each include level explicitly. Depth increases work and result size.
+
+```kotlin
+val posts = db.post.findMany {
+    take = 10
+    include {
+        author {
+            include { posts { take = 3 } }
+        }
+    }
+}
+```
+
+Each level is loaded in batches. For a consistent multi-statement snapshot, use a transaction with suitable isolation. Entity scalars are a row snapshot; later database changes do not refresh existing objects.

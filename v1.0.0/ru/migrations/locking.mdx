@@ -1,0 +1,13 @@
+---
+title: "Блокировки миграций"
+description: "Как координируются migration writers."
+---
+
+| БД | Механизм |
+| --- | --- |
+| PostgreSQL | advisory lock внутри database schema |
+| SQLite | BEGIN IMMEDIATE до introspection/history; busy timeout драйвера |
+| H2 | exclusive mode до history; новые connections отклоняются, существующие ждут |
+| MySQL/MariaDB | named session lock, timeout 60 секунд, переживает DDL commits |
+
+Locks координируют Volan writers. Application SQL и другие migration tools нужно согласовать отдельно. Для H2 нужна administrator connection вне caller-owned exclusive mode; выполняй DDL в maintenance window без активных app transactions. На MySQL/MariaDB connection должна выбирать database и оставаться открытой до конца.

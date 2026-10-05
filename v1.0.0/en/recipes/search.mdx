@@ -1,0 +1,21 @@
+---
+title: "Search results"
+description: "Combine conditions and return a serializable DTO."
+---
+
+Combine conditions and return a serializable DTO.
+
+```kotlin
+data class SearchHit(val id: Int, val title: String)
+val hits = db.post.projectMany {
+    where {
+        title.ignoringCase() contains searchText
+        views gte 100
+    }
+    select { id; title }
+    orderBy { id.asc() }
+    take = 20
+}.map { SearchHit(it.id, it.title) }
+```
+
+searchText is user input; runtime escapes wildcard characters. This is substring search rather than full-text ranking.

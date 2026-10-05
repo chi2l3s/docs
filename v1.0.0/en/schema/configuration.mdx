@@ -1,0 +1,30 @@
+---
+title: "Datasource and generator"
+description: "Datasource chooses database rules. Generator chooses the package and client API."
+---
+
+Datasource chooses database rules. Generator chooses the package and client API.
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.generated"
+  output = "build/generated/volan"
+  javaFriendly = true
+}
+```
+
+| Property | Contract |
+| --- | --- |
+| `datasource.provider` | `postgresql`, `sqlite`, `h2`, `mysql`, `mariadb` |
+| `datasource.url` | JDBC URL or `env("NAME")` |
+| `generator.provider` | `volan-kotlin` for client generation |
+| `generator.package` | Kotlin/Java package |
+| `generator.output` | defaults to `build/generated/volan`; build plugins override it |
+| `generator.javaFriendly` | defaults to `false`; adds Java callbacks/builders |
+
+Exactly one datasource is required. Generation does not read URL environment variables or connect. The builder receives its URL separately; it never automatically reads DATABASE_URL. Literal URLs are accepted with warning E0234.

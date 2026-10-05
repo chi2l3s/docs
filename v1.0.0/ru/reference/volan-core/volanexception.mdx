@@ -1,0 +1,33 @@
+---
+title: "VolanException"
+description: "JSON и базовый тип исключения."
+---
+
+Контракты типов и членов volan-core для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `VolanException`
+
+```kotlin
+public abstract class VolanException : RuntimeException
+
+    protected constructor(message: String) : super(message)
+
+    protected constructor(message: String, cause: @Nullable Throwable?) : super(message, cause)
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-core/src/main/kotlin/io/github/thirtyeighttwentysix/volan/VolanException.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-core).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public abstract class io/github/thirtyeighttwentysix/volan/VolanException : java/lang/RuntimeException {
+	protected fun <init> (Ljava/lang/String;)V
+	protected fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+```
+
+</Accordion>

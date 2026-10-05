@@ -1,0 +1,16 @@
+---
+title: "Имена таблиц и колонок"
+description: "Mapping меняет имя в БД и сохраняет удобное имя в коде."
+---
+
+Mapping меняет имя в БД и сохраняет удобное имя в коде.
+
+```prisma
+model Customer {
+  id Int @id @map("customer_id")
+  email String @unique @map("email_address")
+  @@map("customers")
+}
+```
+
+Идентификаторы цитирует диалект. Raw SQL использует реальные имена БД. Mapping enum и его значений описан отдельно. Rename в автоматическом плане выглядит как drop/add: для сохранения данных напиши явный ALTER TABLE RENAME. Избегай полей `count` и Kotlin keywords в 1.0.0; используй другое имя с `@map`.

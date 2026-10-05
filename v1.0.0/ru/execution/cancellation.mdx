@@ -1,0 +1,26 @@
+---
+title: "Отмена и таймауты"
+description: "Отмена запрашивает Statement.cancel. Скорость остановки зависит от драйвера."
+---
+
+Отмена запрашивает Statement.cancel. Скорость остановки зависит от драйвера.
+
+```java
+var pending = db.getUser().findManyAsync();
+pending.cancel(false);
+```
+
+```kotlin
+withTimeout(2_000) {
+    db.suspendQuery { user.count() }
+}
+```
+
+Queued work не запускает callback после отмены. Следующие statements отказываются выполняться. Transaction отменённая до commit откатывается. Уже сохранённую autocommit-запись или начавшийся commit отмена не гарантирует отменить.
+
+| Интерфейс | Когда завершает отмену |
+| --- | --- |
+| Coroutine | после cleanup statement/connection worker |
+| CompletableFuture | сразу; cleanup продолжается на worker |
+
+`mayInterruptIfRunning` не управляет JDBC-cancel; thread interrupt не требуется. withTimeout — запрос отмены, а не жёсткий deadline драйвера. ConnectionTimeout builder ограничивает checkout, а не весь SQL-запрос. Настрой network/server timeouts средствами драйвера.

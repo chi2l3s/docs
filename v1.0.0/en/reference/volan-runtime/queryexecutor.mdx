@@ -1,0 +1,66 @@
+---
+title: "QueryExecutor"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `QueryExecutor`
+
+```kotlin
+public interface QueryExecutor
+
+    public fun <T : @Nullable Any?> findMany(spec: QuerySpec, mapper: RowMapper<T>): List<T>
+
+    public fun <T : @Nullable Any?> findFirst(spec: QuerySpec, mapper: RowMapper<T>): @Nullable T?
+
+    public fun count(spec: QuerySpec): Long
+
+    public fun exists(spec: QuerySpec): Boolean
+
+    public fun aggregate(spec: AggregateSpec): Map<String, @Nullable Any?>
+
+    public fun <K : @Nullable Any?> groupBy(spec: GroupSpec, mapper: RowMapper<K>): List<GroupRow<K>>
+
+    public fun <T : @Nullable Any?> create(spec: CreateSpec, mapper: RowMapper<T>): T
+
+    public fun createMany(specs: List<CreateSpec>): Long
+
+    public fun <T : @Nullable Any?> update(spec: UpdateSpec, mapper: RowMapper<T>): T
+
+    public fun updateMany(spec: UpdateSpec): Long
+
+    public fun <T : @Nullable Any?> upsert(spec: UpsertSpec, mapper: RowMapper<T>): T
+
+    public fun <T : @Nullable Any?> delete(spec: DeleteSpec, mapper: RowMapper<T>): T
+
+    public fun deleteMany(spec: DeleteSpec): Long
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/QueryExecutor.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public abstract interface class io/github/thirtyeighttwentysix/volan/runtime/QueryExecutor {
+	public abstract fun aggregate (Lio/github/thirtyeighttwentysix/volan/runtime/AggregateSpec;)Ljava/util/Map;
+	public abstract fun count (Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;)J
+	public abstract fun create (Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;Lio/github/thirtyeighttwentysix/volan/runtime/RowMapper;)Ljava/lang/Object;
+	public abstract fun createMany (Ljava/util/List;)J
+	public abstract fun delete (Lio/github/thirtyeighttwentysix/volan/runtime/DeleteSpec;Lio/github/thirtyeighttwentysix/volan/runtime/RowMapper;)Ljava/lang/Object;
+	public abstract fun deleteMany (Lio/github/thirtyeighttwentysix/volan/runtime/DeleteSpec;)J
+	public abstract fun exists (Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;)Z
+	public abstract fun findFirst (Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;Lio/github/thirtyeighttwentysix/volan/runtime/RowMapper;)Ljava/lang/Object;
+	public abstract fun findMany (Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;Lio/github/thirtyeighttwentysix/volan/runtime/RowMapper;)Ljava/util/List;
+	public abstract fun groupBy (Lio/github/thirtyeighttwentysix/volan/runtime/GroupSpec;Lio/github/thirtyeighttwentysix/volan/runtime/RowMapper;)Ljava/util/List;
+	public abstract fun update (Lio/github/thirtyeighttwentysix/volan/runtime/UpdateSpec;Lio/github/thirtyeighttwentysix/volan/runtime/RowMapper;)Ljava/lang/Object;
+	public abstract fun updateMany (Lio/github/thirtyeighttwentysix/volan/runtime/UpdateSpec;)J
+	public abstract fun upsert (Lio/github/thirtyeighttwentysix/volan/runtime/UpsertSpec;Lio/github/thirtyeighttwentysix/volan/runtime/RowMapper;)Ljava/lang/Object;
+}
+```
+
+</Accordion>

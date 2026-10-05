@@ -1,0 +1,46 @@
+---
+title: "Main"
+description: "JVM entry point CLI. Команды и флаги — в CLI-справочнике."
+---
+
+Контракты типов и членов volan-cli для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `MainKt`
+
+```kotlin
+public fun main(args: Array<String>)
+
+    override fun run(): Unit
+
+    override fun run(): Unit
+
+    protected val schemaPath: String by option("--schema", help = "Schema file.").default("schema.volan")
+
+    protected fun dialect(connection: java.sql.Connection): DdlRenderer
+
+    protected fun sync(connection: java.sql.Connection): DatabaseSync
+
+    protected fun schema(): Schema
+
+    protected fun connect(schema: Schema? = null): java.sql.Connection
+
+    override fun run()
+
+    override fun run()
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-cli/src/main/kotlin/io/github/thirtyeighttwentysix/volan/cli/Main.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-cli).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/cli/MainKt {
+	public static final fun main ([Ljava/lang/String;)V
+}
+```
+
+</Accordion>

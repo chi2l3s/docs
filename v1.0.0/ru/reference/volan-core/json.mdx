@@ -1,0 +1,50 @@
+---
+title: "Json"
+description: "JSON и базовый тип исключения."
+---
+
+Контракты типов и членов volan-core для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `Json`, `Companion`
+
+```kotlin
+public class Json private constructor(public val raw: String)
+
+    override fun equals(other: @Nullable Any?): Boolean
+
+    override fun hashCode(): Int
+
+    override fun toString(): String
+
+    public companion object
+
+        public val NULL: Json
+
+        public fun of(raw: String): Json
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-core/src/main/kotlin/io/github/thirtyeighttwentysix/volan/Json.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-core).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/Json {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/Json$Companion;
+	public static final field NULL Lio/github/thirtyeighttwentysix/volan/Json;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRaw ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static final fun of (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/Json;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/Json$Companion {
+	public final fun of (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/Json;
+}
+```
+
+</Accordion>

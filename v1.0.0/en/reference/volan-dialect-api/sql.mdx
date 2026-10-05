@@ -1,0 +1,616 @@
+---
+title: "Sql"
+description: "SQL/DDL model, parameters, capabilities and JDBC dialect."
+---
+
+Type/member contracts of volan-dialect-api for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `SqlAggregate`, `SqlAssignment`, `SqlComparison`, `SqlCondition`, `And`, `Between`, `Compare`, `CompareTuple`, `Exists`, `InList`, `IsNull`, `Not`, `Or`, `TextMatch`, `SqlDelete`, `SqlExpression`, `Call`, `Column`, `Keyword`, `Parameter`, `SqlInsert`, `SqlNulls`, `SqlOrder`, `SqlSelect`, `SqlSelectItem`, `Aggregate`, `Column`, `CountAll`, `SqlStatement`, `SqlTextMatch`, `SqlUpdate`
+
+```kotlin
+public data class SqlStatement(public val sql: String, public val parameters: List<@Nullable Any?>)
+
+    override fun toString(): String
+
+public sealed interface SqlExpression
+
+    public data class Column(public val table: @Nullable String?, public val name: String) : SqlExpression
+
+    public data class Parameter(public val value: @Nullable Any?) : SqlExpression
+
+    public data class Keyword(public val text: String) : SqlExpression
+
+    public data class Call(public val name: String, public val arguments: List<SqlExpression>) : SqlExpression
+
+public enum class SqlComparison(public val symbol: String)
+
+public enum class SqlTextMatch
+
+public sealed interface SqlCondition
+
+    public data class Compare @JvmOverloads constructor(
+        public val left: SqlExpression,
+        public val operator: SqlComparison,
+        public val right: SqlExpression,
+        public val caseInsensitive: Boolean = false,
+    ) : SqlCondition
+
+    public data class TextMatch @JvmOverloads constructor(
+        public val column: SqlExpression,
+        public val match: SqlTextMatch,
+        public val value: String,
+        public val caseInsensitive: Boolean = false,
+    ) : SqlCondition
+
+    public data class Between(
+        public val column: SqlExpression,
+        public val lower: SqlExpression,
+        public val upper: SqlExpression,
+    ) : SqlCondition
+
+    public data class InList @JvmOverloads constructor(
+        public val column: SqlExpression,
+        public val values: List<SqlExpression>,
+        public val negated: Boolean = false,
+    ) : SqlCondition
+
+    public data class IsNull @JvmOverloads constructor(public val column: SqlExpression, public val negated: Boolean = false) : SqlCondition
+
+    public data class And(public val conditions: List<SqlCondition>) : SqlCondition
+
+    public data class Or(public val conditions: List<SqlCondition>) : SqlCondition
+
+    public data class Not(public val condition: SqlCondition) : SqlCondition
+
+    public data class Exists @JvmOverloads constructor(public val subquery: SqlSelect, public val negated: Boolean = false) : SqlCondition
+
+    public data class CompareTuple(
+        public val columns: List<SqlExpression>,
+        public val operator: SqlComparison,
+        public val values: List<SqlExpression>,
+    ) : SqlCondition
+
+public enum class SqlNulls
+
+public data class SqlOrder @JvmOverloads constructor(
+    public val expression: SqlExpression,
+    public val descending: Boolean,
+    public val nulls: SqlNulls = SqlNulls.DEFAULT,
+)
+
+public sealed interface SqlSelectItem
+
+    public data class Column(public val expression: SqlExpression, public val alias: @Nullable String?) : SqlSelectItem
+
+    public data class CountAll(public val alias: String) : SqlSelectItem
+
+    public data class Aggregate(
+        public val function: SqlAggregate,
+        public val expression: SqlExpression,
+        public val alias: String,
+    ) : SqlSelectItem
+
+public enum class SqlAggregate(public val function: String)
+
+public data class SqlSelect @JvmOverloads constructor(
+    public val table: String,
+    public val alias: @Nullable String? = null,
+    public val items: List<SqlSelectItem> = emptyList(),
+    public val condition: @Nullable SqlCondition? = null,
+    public val groupBy: List<SqlExpression> = emptyList(),
+    public val having: @Nullable SqlCondition? = null,
+    public val orderBy: List<SqlOrder> = emptyList(),
+    public val limit: @Nullable Int? = null,
+    public val offset: @Nullable Int? = null,
+    public val distinctOn: List<SqlExpression> = emptyList(),
+)
+
+public data class SqlInsert @JvmOverloads constructor(
+    public val table: String,
+    public val columns: List<String>,
+    public val rows: List<List<SqlExpression>>,
+    public val returning: List<String> = emptyList(),
+)
+
+public data class SqlUpdate @JvmOverloads constructor(
+    public val table: String,
+    public val assignments: List<SqlAssignment>,
+    public val condition: @Nullable SqlCondition?,
+    public val returning: List<String> = emptyList(),
+)
+
+public data class SqlAssignment(public val column: String, public val value: SqlExpression)
+
+public data class SqlDelete @JvmOverloads constructor(
+    public val table: String,
+    public val condition: @Nullable SqlCondition?,
+    public val returning: List<String> = emptyList(),
+)
+
+/** `=` */
+    EQUAL("="),
+
+    /** `<>` */
+    NOT_EQUAL("<>"),
+
+    /** `<` */
+    LESS_THAN("<"),
+
+    /** `<=` */
+    LESS_THAN_OR_EQUAL("<="),
+
+    /** `>` */
+    GREATER_THAN(">"),
+
+    /** `>=` */
+    GREATER_THAN_OR_EQUAL(">="),
+
+/** The value appears anywhere. */
+    CONTAINS,
+
+    /** The value appears at the start. */
+    STARTS_WITH,
+
+    /** The value appears at the end. */
+    ENDS_WITH,
+
+/** Leave it to the database. */
+    DEFAULT,
+
+    /** Before every value. */
+    FIRST,
+
+    /** After every value. */
+    LAST,
+
+/** Number of non-null values. */
+    COUNT("COUNT"),
+
+    /** Sum. */
+    SUM("SUM"),
+
+    /** Mean. */
+    AVERAGE("AVG"),
+
+    /** Smallest value. */
+    MINIMUM("MIN"),
+
+    /** Largest value. */
+    MAXIMUM("MAX"),
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-api/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/Sql.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-dialect-api).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlAggregate : java/lang/Enum {
+	public static final field AVERAGE Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+	public static final field COUNT Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+	public static final field MAXIMUM Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+	public static final field MINIMUM Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+	public static final field SUM Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getFunction ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlAssignment {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlAssignment;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlAssignment;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlAssignment;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getValue ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlComparison : java/lang/Enum {
+	public static final field EQUAL Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public static final field GREATER_THAN Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public static final field GREATER_THAN_OR_EQUAL Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public static final field LESS_THAN Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public static final field LESS_THAN_OR_EQUAL Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public static final field NOT_EQUAL Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getSymbol ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$And : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$And;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$And;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$And;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditions ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Between : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Between;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Between;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Between;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun getLower ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun getUpper ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Compare : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Z)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component4 ()Z
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Z)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Compare;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Compare;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Compare;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCaseInsensitive ()Z
+	public final fun getLeft ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun getOperator ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public final fun getRight ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$CompareTuple : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$CompareTuple;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$CompareTuple;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$CompareTuple;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getOperator ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlComparison;
+	public final fun getValues ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Exists : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;Z)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;
+	public final fun component2 ()Z
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;Z)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Exists;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Exists;Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Exists;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNegated ()Z
+	public final fun getSubquery ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$InList : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/util/List;)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/util/List;Z)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Z
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/util/List;Z)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$InList;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$InList;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/util/List;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$InList;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun getNegated ()Z
+	public final fun getValues ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$IsNull : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Z)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component2 ()Z
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Z)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$IsNull;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$IsNull;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$IsNull;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun getNegated ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Not : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Not;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Not;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Not;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCondition ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Or : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Or;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Or;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$Or;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConditions ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlCondition$TextMatch : io/github/thirtyeighttwentysix/volan/dialect/SqlCondition {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;Ljava/lang/String;)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Z
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;Ljava/lang/String;Z)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$TextMatch;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$TextMatch;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;Ljava/lang/String;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition$TextMatch;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCaseInsensitive ()Z
+	public final fun getColumn ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun getMatch ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlDelete {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlDelete;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlDelete;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlDelete;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCondition ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun getReturning ()Ljava/util/List;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/dialect/SqlExpression {
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Call : io/github/thirtyeighttwentysix/volan/dialect/SqlExpression {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Call;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Call;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Call;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArguments ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Column : io/github/thirtyeighttwentysix/volan/dialect/SqlExpression {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Column;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Column;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Column;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Keyword : io/github/thirtyeighttwentysix/volan/dialect/SqlExpression {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Keyword;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Keyword;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Keyword;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Parameter : io/github/thirtyeighttwentysix/volan/dialect/SqlExpression {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Parameter;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Parameter;Ljava/lang/Object;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression$Parameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlInsert {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlInsert;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlInsert;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlInsert;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getReturning ()Ljava/util/List;
+	public final fun getRows ()Ljava/util/List;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlNulls : java/lang/Enum {
+	public static final field DEFAULT Lio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;
+	public static final field FIRST Lio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;
+	public static final field LAST Lio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlOrder {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Z)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ZLio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ZLio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component2 ()Z
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ZLio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlOrder;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlOrder;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;ZLio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlOrder;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescending ()Z
+	public final fun getExpression ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun getNulls ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlNulls;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlSelect {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Ljava/lang/Integer;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun component7 ()Ljava/util/List;
+	public final fun component8 ()Ljava/lang/Integer;
+	public final fun component9 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlias ()Ljava/lang/String;
+	public final fun getCondition ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun getDistinctOn ()Ljava/util/List;
+	public final fun getGroupBy ()Ljava/util/List;
+	public final fun getHaving ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun getItems ()Ljava/util/List;
+	public final fun getLimit ()Ljava/lang/Integer;
+	public final fun getOffset ()Ljava/lang/Integer;
+	public final fun getOrderBy ()Ljava/util/List;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem {
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$Aggregate : io/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/lang/String;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$Aggregate;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$Aggregate;Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$Aggregate;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlias ()Ljava/lang/String;
+	public final fun getExpression ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun getFunction ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlAggregate;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$Column : io/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/lang/String;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$Column;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$Column;Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$Column;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlias ()Ljava/lang/String;
+	public final fun getExpression ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlExpression;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$CountAll : io/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$CountAll;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$CountAll;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelectItem$CountAll;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlias ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlStatement {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getParameters ()Ljava/util/List;
+	public final fun getSql ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch : java/lang/Enum {
+	public static final field CONTAINS Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;
+	public static final field ENDS_WITH Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;
+	public static final field STARTS_WITH Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/dialect/SqlTextMatch;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlUpdate {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlUpdate;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/SqlUpdate;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlUpdate;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAssignments ()Ljava/util/List;
+	public final fun getCondition ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlCondition;
+	public final fun getReturning ()Ljava/util/List;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+```
+
+</Accordion>

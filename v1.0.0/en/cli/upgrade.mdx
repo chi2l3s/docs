@@ -1,0 +1,17 @@
+---
+title: "Upgrading and removing the CLI"
+description: "Repeat installation in the same directory. The previous version remains until the new one verifies."
+---
+
+Repeat installation in the same directory. The previous version remains until the new one verifies.
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.ps1))) -Tag v1.0.0 -InstallDir "$env:LOCALAPPDATA\Programs\Volan"
+```
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.sh |
+  VOLAN_TAG=v1.0.0 VOLAN_INSTALL_DIR="$HOME/.local/share/volan" bash
+```
+
+Windows parameters: -Tag, -InstallDir; environment: VOLAN_TAG, VOLAN_INSTALL_DIR. Concurrent installation into one directory is refused; unrelated directories are preserved. To uninstall, remove the dedicated install directory and its bin entry from user PATH. On Linux/macOS also remove env.sh/env.fish and the # Volan CLI block plus its following line from shell startup files. Restart the terminal.

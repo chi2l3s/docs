@@ -1,0 +1,15 @@
+---
+title: "Pull и push"
+description: "Pull читает структуру. Push приводит БД к целевой схеме. Сначала просмотри SQL."
+---
+
+Pull читает структуру. Push приводит БД к целевой схеме. Сначала просмотри SQL.
+
+```bash
+volan db pull --url jdbc:sqlite:./data.db --stdout
+volan db pull --url jdbc:sqlite:./data.db --schema introspected.volan
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db --dry-run
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db
+```
+
+Pull отказывается перезаписать файл без --force. Экспорт использует env("DATABASE_URL"), без credentials. Push не создаёт migration files и не меняет versioned journal. Warning-bearing changes требуют --accept-data-loss после review. PostgreSQL/SQLite применяют план транзакционно и проверяют финальную структуру; H2/MySQL/MariaDB сохраняют прогресс и требуют repair после сбоя. Повтор успешного push — no-op.

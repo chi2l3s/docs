@@ -1,0 +1,85 @@
+---
+title: "DdlRenderer"
+description: "SQL/DDL model, parameters, capabilities and JDBC dialect."
+---
+
+Type/member contracts of volan-dialect-api for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `DdlRenderer`
+
+```kotlin
+public abstract class DdlRenderer(capabilities: DialectCapabilities) : SqlRenderer(capabilities)
+
+    public open fun render(ddl: DdlStatement): List<SqlStatement>
+
+    protected abstract fun typeName(type: SqlType): String
+
+    protected open val hasEnumTypes: Boolean get()
+
+    protected open fun autoIncrementType(type: ColumnType): @Nullable String?
+
+    protected open val currentTimestamp: String get()
+
+    protected open val generatedUuid: @Nullable String? get()
+
+    protected open fun createTable(create: DdlStatement.CreateTable): String
+
+    protected fun createConstrainedTable(create: DdlStatement.CreateConstrainedTable): String
+
+    protected open fun column(column: ColumnDefinition): String
+
+    protected open fun render(type: ColumnType): String
+
+    protected open fun render(default: ColumnDefault): String
+
+    protected open fun alterColumn(alter: DdlStatement.AlterColumn): List<SqlStatement>
+
+    protected open fun createIndex(table: String, index: IndexDefinition): String
+
+    protected open fun foreignKey(key: ForeignKeyDefinition): String
+
+    protected open fun createEnum(create: DdlStatement.CreateEnum): List<SqlStatement>
+
+    protected open fun dropEnum(drop: DdlStatement.DropEnum): List<SqlStatement>
+
+    protected open fun addEnumValue(add: DdlStatement.AddEnumValue): List<SqlStatement>
+
+    protected fun literal(value: String): String
+
+    protected fun columns(names: List<String>): String
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-api/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/DdlRenderer.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-dialect-api).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public abstract class io/github/thirtyeighttwentysix/volan/dialect/DdlRenderer : io/github/thirtyeighttwentysix/volan/dialect/SqlRenderer {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/DialectCapabilities;)V
+	protected fun addEnumValue (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddEnumValue;)Ljava/util/List;
+	protected fun alterColumn (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AlterColumn;)Ljava/util/List;
+	protected fun autoIncrementType (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;)Ljava/lang/String;
+	protected fun column (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;)Ljava/lang/String;
+	protected final fun columns (Ljava/util/List;)Ljava/lang/String;
+	protected final fun createConstrainedTable (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;)Ljava/lang/String;
+	protected fun createEnum (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateEnum;)Ljava/util/List;
+	protected fun createIndex (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;)Ljava/lang/String;
+	protected fun createTable (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;)Ljava/lang/String;
+	protected fun dropEnum (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropEnum;)Ljava/util/List;
+	protected fun foreignKey (Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;)Ljava/lang/String;
+	protected fun getCurrentTimestamp ()Ljava/lang/String;
+	protected fun getGeneratedUuid ()Ljava/lang/String;
+	protected fun getHasEnumTypes ()Z
+	protected final fun literal (Ljava/lang/String;)Ljava/lang/String;
+	protected fun render (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;)Ljava/lang/String;
+	protected fun render (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;)Ljava/lang/String;
+	public fun render (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement;)Ljava/util/List;
+	protected abstract fun typeName (Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;)Ljava/lang/String;
+}
+```
+
+</Accordion>

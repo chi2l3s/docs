@@ -1,0 +1,20 @@
+---
+title: "JDBC error classification"
+description: "Runtime classifies SQLException after dialect SQLState normalization."
+---
+
+Runtime classifies SQLException after dialect SQLState normalization.
+
+| SQLState / JDBC | Result |
+| --- | --- |
+| 23505 | VolanUniqueConstraintException |
+| 23503 | VolanForeignKeyException |
+| 23502, 23514 | VolanConstraintException |
+| 23000 | unique if message contains the case-sensitive substring uplicate; otherwise constraint |
+| 40001, 40P01, 40P02 | VolanTransactionException, retryable=true |
+| other 40… | VolanTransactionException, retryable=false |
+| 57014, SQLTimeoutException | VolanTimeoutException |
+| 53300, 08…, SQLTransientConnectionException | VolanConnectionException |
+| other SQLException | VolanQueryException |
+
+The cause retains SQLException; read SQLState and errorCode from it. constraint can be null. Dialects translate SQLite/MySQL/MariaDB vendor codes to common SQLState. Not every JDBC failure is retryable. Binding/rendering failures can be VolanDialectException. [Handling errors](/v1.0.0/en/errors).

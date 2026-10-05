@@ -1,0 +1,30 @@
+---
+title: "Versioned migrations"
+description: "Create a SQL file, review and commit it, then apply it through Migrator."
+---
+
+Create a SQL file, review and commit it, then apply it through Migrator.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.migrate.MigrationDirectory
+import io.github.thirtyeighttwentysix.volan.migrate.Migrator
+import java.nio.file.Path
+import java.time.Instant
+
+val directory = MigrationDirectory(Path.of("migrations"))
+val plan = sync.plan(connection, nextSchema)
+if (!plan.isEmpty) {
+    println(plan.warnings)
+    directory.write(Instant.now(), "add_posts", plan.toSql(dialect))
+}
+// After SQL review, on a dedicated auto-commit connection:
+val applied = Migrator(directory).apply(connection)
+```
+
+```text
+migrations/
+  20261006000000_initial/
+    migration.sql
+```
+
+Each file has id, description, SQL and SHA-256 checksum; CRLF normalizes to LF. Duplicate names are not overwritten. Begin with an auto-commit connection rather than someone else’s transaction. PostgreSQL/SQLite commit each file with its journal entry. H2/MySQL/MariaDB commit DDL statements individually; see recovery.

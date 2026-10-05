@@ -1,0 +1,125 @@
+---
+title: "Metadata"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions и hooks."
+---
+
+Контракты типов и членов volan-runtime для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `ColumnMetadata`, `RelationMetadata`, `TableMetadata`
+
+```kotlin
+public data class ColumnMetadata(
+    public val field: String,
+    public val column: String,
+    public val isNullable: Boolean,
+    public val isGenerated: Boolean,
+    public val isUpdatedAt: Boolean,
+)
+
+public data class RelationMetadata @JvmOverloads constructor(
+    public val field: String,
+    public val target: String,
+    public val isList: Boolean,
+    public val ownsForeignKey: Boolean,
+    public val foreignKeyColumns: List<String>,
+    public val referencedColumns: List<String>,
+    public val joinTable: @Nullable String? = null,
+    public val joinLocalColumns: List<String> = emptyList(),
+    public val joinTargetColumns: List<String> = emptyList(),
+)
+
+public data class TableMetadata(
+    public val model: String,
+    public val table: String,
+    public val columns: List<ColumnMetadata>,
+    public val primaryKey: List<String>,
+    public val relations: List<RelationMetadata>,
+)
+
+    public fun column(field: String): @Nullable ColumnMetadata?
+
+    public fun relation(field: String): @Nullable RelationMetadata?
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/Metadata.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-runtime).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/ColumnMetadata {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZZZ)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ZZZ)Lio/github/thirtyeighttwentysix/volan/runtime/ColumnMetadata;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/ColumnMetadata;Ljava/lang/String;Ljava/lang/String;ZZZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/ColumnMetadata;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getField ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isGenerated ()Z
+	public final fun isNullable ()Z
+	public final fun isUpdatedAt ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/RelationMetadata {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/List;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Ljava/util/List;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/util/List;
+	public final fun component9 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationMetadata;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/RelationMetadata;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationMetadata;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getField ()Ljava/lang/String;
+	public final fun getForeignKeyColumns ()Ljava/util/List;
+	public final fun getJoinLocalColumns ()Ljava/util/List;
+	public final fun getJoinTable ()Ljava/lang/String;
+	public final fun getJoinTargetColumns ()Ljava/util/List;
+	public final fun getOwnsForeignKey ()Z
+	public final fun getReferencedColumns ()Ljava/util/List;
+	public final fun getTarget ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isList ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/TableMetadata {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public final fun column (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/ColumnMetadata;
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/TableMetadata;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/TableMetadata;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/TableMetadata;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getModel ()Ljava/lang/String;
+	public final fun getPrimaryKey ()Ljava/util/List;
+	public final fun getRelations ()Ljava/util/List;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun relation (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationMetadata;
+	public fun toString ()Ljava/lang/String;
+}
+```
+
+</Accordion>

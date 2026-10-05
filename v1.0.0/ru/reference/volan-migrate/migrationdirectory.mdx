@@ -1,0 +1,65 @@
+---
+title: "MigrationDirectory"
+description: "Readers, structural schema, plans, scripts, sync и migration journal."
+---
+
+Контракты типов и членов volan-migrate для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `MigrationDirectory`, `MigrationFile`, `Companion`
+
+```kotlin
+public data class MigrationFile(public val id: String, public val sql: String)
+
+    public val name: String get()
+
+    public val checksum: String by lazy
+
+    public companion object
+
+        public fun checksumOf(sql: String): String
+
+public class MigrationDirectory(private val root: Path)
+
+    public fun read(): List<MigrationFile>
+
+    public fun write(at: Instant, name: String, sql: String): MigrationFile
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-migrate/src/main/kotlin/io/github/thirtyeighttwentysix/volan/migrate/MigrationDirectory.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-migrate).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/migrate/MigrationDirectory {
+	public fun <init> (Ljava/nio/file/Path;)V
+	public final fun read ()Ljava/util/List;
+	public final fun write (Ljava/time/Instant;Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/migrate/MigrationFile;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/migrate/MigrationFile {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/migrate/MigrationFile$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public static final fun checksumOf (Ljava/lang/String;)Ljava/lang/String;
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/migrate/MigrationFile;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/migrate/MigrationFile;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/migrate/MigrationFile;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChecksum ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getSql ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/migrate/MigrationFile$Companion {
+	public final fun checksumOf (Ljava/lang/String;)Ljava/lang/String;
+}
+```
+
+</Accordion>

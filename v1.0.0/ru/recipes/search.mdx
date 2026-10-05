@@ -1,0 +1,21 @@
+---
+title: "Поиск и страница результата"
+description: "Скомбинируй условия и верни DTO, который можно сериализовать."
+---
+
+Скомбинируй условия и верни DTO, который можно сериализовать.
+
+```kotlin
+data class SearchHit(val id: Int, val title: String)
+val hits = db.post.projectMany {
+    where {
+        title.ignoringCase() contains searchText
+        views gte 100
+    }
+    select { id; title }
+    orderBy { id.asc() }
+    take = 20
+}.map { SearchHit(it.id, it.title) }
+```
+
+searchText — ввод пользователя; wildcard-символы экранируются runtime. Это substring-search, не full-text ranking.

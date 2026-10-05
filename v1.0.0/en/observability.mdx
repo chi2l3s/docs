@@ -1,0 +1,22 @@
+---
+title: "SQL interceptors"
+description: "An interceptor wraps each physical statement. Register a thread-safe implementation before build."
+---
+
+An interceptor wraps each physical statement. Register a thread-safe implementation before build.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.QueryContext
+import io.github.thirtyeighttwentysix.volan.runtime.QueryInterceptor
+import java.util.function.Supplier
+
+val hook = object : QueryInterceptor {
+    override fun <T> intercept(query: QueryContext, next: Supplier<T>): T {
+        println("${query.dialect}: ${query.operation}")
+        return next.get()
+    }
+}
+val db = VolanClient.builder().url(url).interceptor(hook).build()
+```
+
+The first registered interceptor is outermost. Call next.get exactly once on the same thread; repeated execution or dispatch is refused. Hooks include checkout, binding, execution, mapping and cleanup. Generated/raw/relation/nested statements are covered. Transaction control, pool validation, dialect initialization and direct migrator JDBC are excluded. QueryContext contains sql, QUERY/EXECUTE operation and dialect, with no parameters. SQL may still contain handwritten literals.

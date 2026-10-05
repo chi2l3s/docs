@@ -1,0 +1,16 @@
+---
+title: "Upsert"
+description: "Upsert chooses create or update using a predicate."
+---
+
+Upsert chooses create or update using a predicate.
+
+```kotlin
+val subscriber = db.user.upsert {
+    where { email eq "subscriber@example.org" }
+    create { email = "subscriber@example.org"; name = "Subscriber" }
+    update { name = "Subscriber" }
+}
+```
+
+This is lookup followed by a write, not an atomic server ON CONFLICT/MERGE. Use a full unique key and handle unique races. create/update payloads must be flat; nested relations are refused. where values are not copied into create: fill required fields explicitly.

@@ -1,0 +1,22 @@
+---
+title: "History and baselines"
+description: "status compares files with the journal. markApplied records a reviewed baseline without running SQL."
+---
+
+status compares files with the journal. markApplied records a reviewed baseline without running SQL.
+
+```kotlin
+val migrator = Migrator(directory)
+val status = migrator.status(connection)
+println(status.applied)
+println(status.pending)
+println(status.edited)
+println(status.missing)
+println(status.unfinished)
+check(!status.hasDrifted)
+// Only if the database already has this reviewed migration's final structure:
+val baseline = directory.read().first()
+migrator.markApplied(connection, baseline)
+```
+
+Apply refuses edited/missing/unfinished history. isUpToDate means no pending/history drift, not no structural drift. Default journal: _volan_migrations. MigrationJournal accepts a custom name; pass it to the reader too. A custom journal lacks automatic push interlocks with the default journal; coordinate it yourself. Do not edit applied SQL.

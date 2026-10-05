@@ -1,0 +1,13 @@
+---
+title: "Generation and files"
+description: "Generated code is a build output. Edit the schema, then regenerate."
+---
+
+Generated code is a build output. Edit the schema, then regenerate.
+
+```bash
+volan validate --schema schema.volan
+volan generate --schema schema.volan --output build/generated/volan
+```
+
+`generate` needs no database. CLI output is relative to the working directory; Gradle/Maven choose their own output, overriding the schema. `.volan-generated-files` records owned files: removed models and old packages are cleaned. Unrelated files stay; collisions, escaping paths and symlinks inside output are refused. Do not edit the manifest.

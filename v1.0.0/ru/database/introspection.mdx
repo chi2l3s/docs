@@ -1,0 +1,17 @@
+---
+title: "Границы introspection"
+description: "Какие структуры pull сохраняет и какие отклоняет."
+---
+
+Pull должен представить структуру без потерь. Если это невозможно, операция завершается ошибкой.
+
+| Провайдер | Неподдерживаемые формы |
+| --- | --- |
+| PostgreSQL | arbitrary expression/partial/include/ordered indexes; custom FK names; standalone unique indexes вместо constraints; неподдерживаемые типы и enum transitions |
+| SQLite | views, triggers, virtual tables, CHECK, generated columns, custom collations, STRICT/WITHOUT ROWID, partial/expression/descending indexes, temporary/attached objects |
+| H2 | custom precision/size, bounded/nested arrays, special identities, generated/invisible columns, domains, CHECK, views/triggers/sequences/synonyms/linked/temp tables, cross-schema FK, custom index methods/order, compatibility modes |
+| MySQL/MariaDB | views/triggers, non-InnoDB, custom collation/size/precision, unsigned/generated/invisible columns, extra CHECK, cross-database FK, expression/prefix/descending/invisible indexes |
+
+Комментарии, generators, исходные aliases, client-side updatedAt и строковые enum не восстанавливаются из БД. Implicit many-to-many таблицы экспортируются как explicit models; keyless — @@ignore. Invalid/colliding имена получают детерминированные aliases с mapping. Unique indexes могут читаться для сравнения, но не всегда экспортироваться как unique constraints. Журналы Volan исключаются; custom journal нужно передать reader.
+
+Для unsupported-объектов используй reviewed SQL и сохрани оригинальную schema.volan. [API readers](/v1.0.0/ru/reference/volan-migrate).

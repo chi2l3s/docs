@@ -1,0 +1,16 @@
+---
+title: "Native types"
+description: "db attributes refine PostgreSQL SQL types. Other dialects reject them."
+---
+
+db attributes refine PostgreSQL SQL types. Other dialects reject them.
+
+```prisma
+model Product {
+  id Int @id
+  title String @db.VarChar(200)
+  amount Decimal @db.Decimal(12, 2)
+}
+```
+
+Check the SQL type and arguments in the [PostgreSQL catalog](/v1.0.0/en/schema/postgresql-types). Analysis does not validate every scalar/native pair or SQL type size. Native types do not change property Kotlin types. Pull preserves supported declarations and refuses unrepresentable structure.

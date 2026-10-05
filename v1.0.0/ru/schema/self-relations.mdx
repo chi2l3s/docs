@@ -1,0 +1,32 @@
+---
+title: "Дерево и nullable-связь"
+description: "Этот пример заменяет модели User/Post. Сгенерируй клиент для Folder и создай таблицы."
+---
+
+Этот пример заменяет модели User/Post. Сгенерируй клиент для Folder и создай таблицы.
+
+```prisma
+model Folder {
+  id Int @id
+  parentId Int?
+  parent Folder? @relation("FolderTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Folder[] @relation("FolderTree")
+}
+```
+
+```kotlin
+db.folder.create { id = 1 }
+db.folder.create { id = 2; parent.connect { id eq 1 } }
+val root = db.folder.findUniqueOrThrow {
+    where { id eq 1 }
+    include { children { include { children() } } }
+}
+check(root.children.single().id == 2)
+db.folder.update {
+    where { id eq 2 }
+    data { parent.disconnect() }
+}
+check(db.folder.findUniqueOrThrow { where { id eq 2 } }.parentId == null)
+```
+
+Одинаковое имя FolderTree связывает две стороны self-relation. parentId и parent nullable: поэтому disconnect записывает NULL, а SetNull сохраняет детей при удалении родителя. children — список, а не NULL. Отсоединение не удаляет папку. Глубину чтения задавай явно; ORM не обеспечивает ацикличность дерева — проверяй её перед изменением родителя. [Проверяемый пример](https://github.com/chi2l3s/docs/blob/main/examples/query-guide-1.0.0/src/test/kotlin/org/example/RelationGuideExamplesTest.kt).

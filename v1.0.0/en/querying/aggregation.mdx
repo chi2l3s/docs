@@ -1,0 +1,22 @@
+---
+title: "Aggregation"
+description: "Request each calculation explicitly. Results expose only requested aggregates."
+---
+
+Request each calculation explicitly. Results expose only requested aggregates.
+
+```kotlin
+val stats = db.post.aggregate {
+    where { views gt 0 }
+    count()
+    sum { views }
+    average { views }
+    minimum { views }
+    maximum { views }
+}
+println("Posts: ${stats.count}")
+println("Views: ${stats.sumOfViews}")
+println("Average: ${stats.averageOfViews}")
+```
+
+count returns Long; sum BigDecimal?; average Double?; min/max the nullable field type. Empty input gives count=0 and null for the rest. Unrequested properties throw VolanAggregateNotAskedException. Available summary fields depend on scalar type. GroupBy/having have a separate page.

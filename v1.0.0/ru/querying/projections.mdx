@@ -1,0 +1,24 @@
+---
+title: "Проекции и DTO"
+description: "Выбери нужные скалярные поля через projectMany или projectFirst."
+---
+
+Выбери нужные скалярные поля через projectMany или projectFirst.
+
+```kotlin
+data class UserDto(val id: Int, val email: String)
+val result = db.user.projectMany {
+    select { id; email }
+    orderBy { id.asc() }
+}.map { UserDto(it.id, it.email) }
+```
+
+```java
+record UserDto(int id, String email) {}
+var result = db.getUser().projectMany(q -> {
+    q.select(s -> { s.id(); s.email(); });
+    q.orderBy(o -> o.getId().asc());
+}).stream().map(p -> new UserDto(p.getId(), p.getEmail())).toList();
+```
+
+`projectFirst` → nullable projection, `projectFirstOrThrow` → exception при отсутствии. Все варианты select имеют один класс проекции. Чтение невыбранного поля бросает VolanFieldNotSelectedException. Пустой select, relation-поле или сочетание select/include отклоняется. Сериализуй DTO, чтобы mapper/serializer не прочитал невыбранные поля или незагруженные связи.

@@ -1,0 +1,74 @@
+---
+title: "SchemaParser"
+description: "SourceFile, lexer, parser, AST, formatter и диагностика."
+---
+
+Контракты типов и членов volan-schema для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `ParseResult`, `SchemaParser`, `VolanSchemaException`
+
+```kotlin
+public class VolanSchemaException(message: String, public val diagnostics: List<Diagnostic>) : VolanException(message)
+
+public class ParseResult internal constructor(
+    public val document: SchemaDocument,
+    public val diagnostics: List<Diagnostic>,
+    public val source: SourceFile,
+)
+
+    public val hasErrors: Boolean
+
+    public val errors: List<Diagnostic>
+
+    public val warnings: List<Diagnostic>
+
+    public fun documentOrThrow(): SchemaDocument
+
+    public fun render(): String
+
+    override fun toString(): String
+
+public object SchemaParser
+
+    public fun parse(source: SourceFile): ParseResult
+
+    public fun parse(name: String, text: String): ParseResult
+
+    public fun parseOrThrow(source: SourceFile): SchemaDocument
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-schema/src/main/kotlin/io/github/thirtyeighttwentysix/volan/schema/SchemaParser.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-schema).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/schema/ParseResult {
+	public final fun documentOrThrow ()Lio/github/thirtyeighttwentysix/volan/schema/ast/SchemaDocument;
+	public final fun getDiagnostics ()Ljava/util/List;
+	public final fun getDocument ()Lio/github/thirtyeighttwentysix/volan/schema/ast/SchemaDocument;
+	public final fun getErrors ()Ljava/util/List;
+	public final fun getHasErrors ()Z
+	public final fun getSource ()Lio/github/thirtyeighttwentysix/volan/schema/SourceFile;
+	public final fun getWarnings ()Ljava/util/List;
+	public final fun render ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/schema/SchemaParser {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/schema/SchemaParser;
+	public static final fun parse (Lio/github/thirtyeighttwentysix/volan/schema/SourceFile;)Lio/github/thirtyeighttwentysix/volan/schema/ParseResult;
+	public static final fun parse (Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/schema/ParseResult;
+	public static final fun parseOrThrow (Lio/github/thirtyeighttwentysix/volan/schema/SourceFile;)Lio/github/thirtyeighttwentysix/volan/schema/ast/SchemaDocument;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/schema/VolanSchemaException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun getDiagnostics ()Ljava/util/List;
+}
+```
+
+</Accordion>

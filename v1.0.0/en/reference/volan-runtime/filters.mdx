@@ -1,0 +1,276 @@
+---
+title: "Filters"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `ComparisonOperator`, `Filter`, `And`, `Between`, `Companion`, `Compare`, `InList`, `IsNull`, `Not`, `Or`, `Related`, `RelationQuantifier`, `TextMatchMode`
+
+```kotlin
+public enum class ComparisonOperator
+
+public enum class TextMatchMode
+
+public enum class RelationQuantifier
+
+public sealed interface Filter
+
+    public data class Compare @JvmOverloads constructor(
+        public val column: String,
+        public val operator: ComparisonOperator,
+        public val value: @Nullable Any?,
+        public val mode: TextMatchMode = TextMatchMode.SENSITIVE,
+    ) : Filter
+
+    public data class Between(
+        public val column: String,
+        public val lower: @Nullable Any?,
+        public val upper: @Nullable Any?,
+    ) : Filter
+
+    public data class InList @JvmOverloads constructor(
+        public val column: String,
+        public val values: List<@Nullable Any?>,
+        public val negated: Boolean = false,
+    ) : Filter
+
+    public data class IsNull @JvmOverloads constructor(public val column: String, public val negated: Boolean = false) : Filter
+
+    public data class And(public val filters: List<Filter>) : Filter
+
+    public data class Or(public val filters: List<Filter>) : Filter
+
+    public data class Not(public val filter: Filter) : Filter
+
+    public data class Related(
+        public val relation: String,
+        public val quantifier: RelationQuantifier,
+        public val filter: @Nullable Filter?,
+    ) : Filter
+
+    public companion object
+
+        public fun all(filters: List<Filter>): @Nullable Filter?
+
+        public fun any(filters: List<Filter>): @Nullable Filter?
+
+/** Equal. */
+    EQUAL,
+
+    /** Not equal. */
+    NOT_EQUAL,
+
+    /** Less than. */
+    LESS_THAN,
+
+    /** Less than or equal. */
+    LESS_THAN_OR_EQUAL,
+
+    /** Greater than. */
+    GREATER_THAN,
+
+    /** Greater than or equal. */
+    GREATER_THAN_OR_EQUAL,
+
+    /** Contains the given text. */
+    CONTAINS,
+
+    /** Starts with the given text. */
+    STARTS_WITH,
+
+    /** Ends with the given text. */
+    ENDS_WITH,
+
+/** Compare exactly as stored, which is what the database does by default. */
+    SENSITIVE,
+
+    /** Ignore case. */
+    INSENSITIVE,
+
+/** At least one related row matches. */
+    SOME,
+
+    /** Every related row matches. */
+    EVERY,
+
+    /** No related row matches. */
+    NONE,
+
+    /** The single related row matches. */
+    IS,
+
+    /** The single related row does not match. */
+    IS_NOT,
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/Filters.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator : java/lang/Enum {
+	public static final field CONTAINS Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static final field ENDS_WITH Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static final field EQUAL Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static final field GREATER_THAN Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static final field GREATER_THAN_OR_EQUAL Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static final field LESS_THAN Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static final field LESS_THAN_OR_EQUAL Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static final field NOT_EQUAL Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static final field STARTS_WITH Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Companion;
+	public static fun all (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public static fun any (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$And : io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$And;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Filter$And;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$And;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilters ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$Between : io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Object;
+	public final fun component3 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Between;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Between;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Between;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getLower ()Ljava/lang/Object;
+	public final fun getUpper ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$Companion {
+	public final fun all (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun any (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$Compare : io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;Ljava/lang/Object;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;Ljava/lang/Object;Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;Ljava/lang/Object;Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public final fun component3 ()Ljava/lang/Object;
+	public final fun component4 ()Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;Ljava/lang/Object;Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Compare;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Compare;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;Ljava/lang/Object;Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Compare;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getMode ()Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;
+	public final fun getOperator ()Lio/github/thirtyeighttwentysix/volan/runtime/ComparisonOperator;
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$InList : io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Z)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$InList;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Filter$InList;Ljava/lang/String;Ljava/util/List;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$InList;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getNegated ()Z
+	public final fun getValues ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$IsNull : io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Z)V
+	public synthetic fun <init> (Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Z
+	public final fun copy (Ljava/lang/String;Z)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$IsNull;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Filter$IsNull;Ljava/lang/String;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$IsNull;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getNegated ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$Not : io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Not;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Not;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Not;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$Or : io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Or;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Or;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Or;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilters ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Filter$Related : io/github/thirtyeighttwentysix/volan/runtime/Filter {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Related;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Related;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter$Related;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun getQuantifier ()Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+	public final fun getRelation ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier : java/lang/Enum {
+	public static final field EVERY Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+	public static final field IS Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+	public static final field IS_NOT Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+	public static final field NONE Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+	public static final field SOME Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/runtime/RelationQuantifier;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/TextMatchMode : java/lang/Enum {
+	public static final field INSENSITIVE Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;
+	public static final field SENSITIVE Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/runtime/TextMatchMode;
+}
+```
+
+</Accordion>

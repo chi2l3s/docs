@@ -1,0 +1,25 @@
+---
+title: "GroupBy and having"
+description: "where filters input rows; having filters completed groups."
+---
+
+where filters input rows; having filters completed groups.
+
+```kotlin
+val groups = db.post.groupBy {
+    where { views gt 0 }
+    by { authorId }
+    count()
+    sum { views }
+    having { count gt 1L }
+    orderBy {
+        authorId.asc()
+    }
+    take = 10
+}
+groups.forEach { group ->
+    println("${group.authorId}: ${group.count} posts, ${group.sumOfViews} views")
+}
+```
+
+by needs scalar fields. Results expose grouped keys and selected summaries; omitted values throw. having exposes summaries rather than arbitrary grouped fields: filter those through where. orderBy supports grouped model fields; ordering by sumOfViews is not generated. Use raw SQL for aggregate ordering. take/skip page groups; groupBy has no cursors.

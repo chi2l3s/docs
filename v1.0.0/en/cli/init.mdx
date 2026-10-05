@@ -1,0 +1,17 @@
+---
+title: "Initialize a schema"
+description: "Creates a new file, datasource, generator and User. Existing files are preserved."
+---
+
+Creates a new file, datasource, generator and User. Existing files are preserved.
+
+```bash
+volan init --schema db/schema.volan --provider sqlite --package org.example.generated --java-friendly
+```
+
+| Flag | Default / behavior |
+| --- | --- |
+| --schema | schema.volan |
+| --provider | postgresql; also sqlite/h2/mysql/mariadb |
+| --package | com.example.volan |
+| --java-friendly | false; enables callbacks |

@@ -1,0 +1,27 @@
+---
+title: "Relation write operations"
+description: "Available methods depend on the relation side and nullable FK."
+---
+
+Available methods depend on the relation side and nullable FK.
+
+```kotlin
+db.user.update {
+    where { id eq authorId }
+    data {
+        posts.delete { views eq 0 }
+    }
+}
+```
+
+| Operation | Effect |
+| --- | --- |
+| create | create target and association |
+| connect | find and associate a target |
+| connectOrCreate | find by a covered unique key or create |
+| update | modify related target |
+| delete | delete related target |
+| disconnect | remove association, preserve target |
+| set | replace association set, preserve targets |
+
+A required FK cannot be detached: disconnect/set are generated only for supported shapes. List-relation nested update/delete can affect multiple matches. Nested updates support one relation level. Failure rolls back the logical operation. [Generated forms](/v1.0.0/en/reference/generated).

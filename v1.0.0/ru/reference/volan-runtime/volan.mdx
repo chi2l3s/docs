@@ -1,0 +1,128 @@
+---
+title: "Volan"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions и hooks."
+---
+
+Контракты типов и членов volan-runtime для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `Volan`, `Builder`, `Companion`
+
+```kotlin
+public class Volan internal constructor(
+    private val pool: @Nullable AutoCloseable?,
+    private val connections: ConnectionSource,
+    private val registry: TableRegistry,
+    /** The dialect in use, which is decided by the JDBC URL. */
+    public val dialect: Dialect,
+    readers: Map<String, EntityReader<*>>,
+    clock: Clock,
+    asyncExecutor: Executor = ForkJoinPool.commonPool(),
+    interceptors: List<QueryInterceptor> = emptyList(),
+) : AutoCloseable
+
+    public val async: AsyncAccess
+
+    public val executor: QueryExecutor
+
+    public val tables: TableRegistry get()
+
+    public fun <T : @Nullable Any?> transaction(
+        isolation: Isolation = Isolation.DEFAULT,
+        retry: RetryPolicy = RetryPolicy.NONE,
+        block: Function<QueryExecutor, T>,
+    ): T
+
+    public fun <T : @Nullable Any?> rawQuery(sql: String, parameters: List<@Nullable Any?>, mapper: RowMapper<T>): List<T>
+
+    public fun rawExecute(sql: String, parameters: List<@Nullable Any?> = emptyList()): Long
+
+    override fun close()
+
+    override fun toString(): String
+
+    public companion object
+
+        public fun builder(): Builder
+
+    public class Builder internal constructor()
+
+        public fun interceptor(interceptor: QueryInterceptor): Builder
+
+        public fun asyncExecutor(executor: Executor): Builder
+
+        public fun url(url: String): Builder
+
+        public fun username(username: @Nullable String?): Builder
+
+        public fun password(password: @Nullable String?): Builder
+
+        public fun maxPoolSize(size: Int): Builder
+
+        public fun connectionTimeout(millis: Long): Builder
+
+        public fun poolName(name: String): Builder
+
+        public fun tables(tables: List<TableMetadata>): Builder
+
+        public fun readers(readers: Map<String, EntityReader<*>>): Builder
+
+        public fun dataSource(dataSource: DataSource): Builder
+
+        public fun dialect(dialect: Dialect): Builder
+
+        public fun clock(clock: Clock): Builder
+
+        public fun build(): Volan
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/Volan.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-runtime).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/Volan : java/lang/AutoCloseable {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Companion;
+	public static final fun builder ()Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public fun close ()V
+	public final fun getAsync ()Lio/github/thirtyeighttwentysix/volan/runtime/AsyncAccess;
+	public final fun getDialect ()Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;
+	public final fun getExecutor ()Lio/github/thirtyeighttwentysix/volan/runtime/QueryExecutor;
+	public final fun getTables ()Lio/github/thirtyeighttwentysix/volan/runtime/TableRegistry;
+	public final fun rawExecute (Ljava/lang/String;)J
+	public final fun rawExecute (Ljava/lang/String;Ljava/util/List;)J
+	public static synthetic fun rawExecute$default (Lio/github/thirtyeighttwentysix/volan/runtime/Volan;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)J
+	public final fun rawQuery (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/RowMapper;)Ljava/util/List;
+	public fun toString ()Ljava/lang/String;
+	public final fun transaction (Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;Lio/github/thirtyeighttwentysix/volan/runtime/RetryPolicy;Ljava/util/function/Function;)Ljava/lang/Object;
+	public final fun transaction (Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;Ljava/util/function/Function;)Ljava/lang/Object;
+	public final fun transaction (Ljava/util/function/Function;)Ljava/lang/Object;
+	public static synthetic fun transaction$default (Lio/github/thirtyeighttwentysix/volan/runtime/Volan;Lio/github/thirtyeighttwentysix/volan/runtime/Isolation;Lio/github/thirtyeighttwentysix/volan/runtime/RetryPolicy;Ljava/util/function/Function;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Volan$Builder {
+	public final fun asyncExecutor (Ljava/util/concurrent/Executor;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun build ()Lio/github/thirtyeighttwentysix/volan/runtime/Volan;
+	public final fun clock (Ljava/time/Clock;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun connectionTimeout (J)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun dataSource (Ljavax/sql/DataSource;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun dialect (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun interceptor (Lio/github/thirtyeighttwentysix/volan/runtime/QueryInterceptor;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun maxPoolSize (I)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun password (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun poolName (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun readers (Ljava/util/Map;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun tables (Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun url (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+	public final fun username (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Volan$Companion {
+	public final fun builder ()Lio/github/thirtyeighttwentysix/volan/runtime/Volan$Builder;
+}
+```
+
+</Accordion>

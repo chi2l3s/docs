@@ -1,0 +1,24 @@
+---
+title: "SQL-план как библиотека"
+description: "Планирование читает каталог и не применяет изменения. Рендер выбирается под провайдера."
+---
+
+Планирование читает каталог и не применяет изменения. Рендер выбирается под провайдера.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+import io.github.thirtyeighttwentysix.volan.migrate.DatabaseSync
+import io.github.thirtyeighttwentysix.volan.migrate.SqliteReader
+import io.github.thirtyeighttwentysix.volan.dialect.sqlite.SqliteDialect
+import java.sql.DriverManager
+
+val schema = SchemaLoader.load("schema.volan", schemaText).schemaOrThrow()
+val sync = DatabaseSync(SqliteReader(), SqliteDialect)
+DriverManager.getConnection("jdbc:sqlite:./data.db").use { connection ->
+    val plan = sync.plan(connection, schema)
+    println(plan.warnings)
+    println(plan.toSql(SqliteDialect))
+}
+```
+
+MigrationPlan: steps, warnings, isEmpty, isDestructive, render(dialect), toSql(dialect). Каждая MigrationStep содержит DdlStatement и nullable warning. SQLite/MySQL требуют provider-aware DatabaseSync.plan; generic SchemaDiffer.diff не учитывает все rebuild/column details. Для пустой начальной БД SchemaMapper + SchemaDiffer подходит supported initial DDL.

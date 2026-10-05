@@ -1,0 +1,21 @@
+---
+title: "Micrometer"
+description: "The volan.query timer records physical statement counts and durations."
+---
+
+The volan.query timer records physical statement counts and durations.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.micrometer.MicrometerQueryInterceptor
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+
+val registry = SimpleMeterRegistry()
+val db = VolanClient.builder()
+    .url(url)
+    .interceptor(MicrometerQueryInterceptor(registry))
+    .build()
+// Optional custom metric name:
+val custom = MicrometerQueryInterceptor(registry, "app.database")
+```
+
+Add volan-micrometer separately. Tags: dialect=provider id; operation=query/execute; outcome=success/error/cancelled. SQL, parameters and exception messages never become labels. Duration includes pool wait and mapping. Includes/nested writes produce multiple samples. A successful statement remains success after outer transaction rollback. The application owns registry/exporters.

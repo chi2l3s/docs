@@ -1,0 +1,122 @@
+---
+title: "Row"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions и hooks."
+---
+
+Контракты типов и членов volan-runtime для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `Row`, `RowMapper`
+
+```kotlin
+public interface Row
+
+    public fun isNull(column: String): Boolean
+
+    public fun getString(column: String): String
+
+    public fun getStringOrNull(column: String): @Nullable String?
+
+    public fun getInt(column: String): Int
+
+    public fun getIntOrNull(column: String): @Nullable Int?
+
+    public fun getLong(column: String): Long
+
+    public fun getLongOrNull(column: String): @Nullable Long?
+
+    public fun getFloat(column: String): Float
+
+    public fun getFloatOrNull(column: String): @Nullable Float?
+
+    public fun getDouble(column: String): Double
+
+    public fun getDoubleOrNull(column: String): @Nullable Double?
+
+    public fun getDecimal(column: String): BigDecimal
+
+    public fun getDecimalOrNull(column: String): @Nullable BigDecimal?
+
+    public fun getBoolean(column: String): Boolean
+
+    public fun getBooleanOrNull(column: String): @Nullable Boolean?
+
+    public fun getInstant(column: String): Instant
+
+    public fun getInstantOrNull(column: String): @Nullable Instant?
+
+    public fun getLocalDate(column: String): LocalDate
+
+    public fun getLocalDateOrNull(column: String): @Nullable LocalDate?
+
+    public fun getLocalTime(column: String): LocalTime
+
+    public fun getLocalTimeOrNull(column: String): @Nullable LocalTime?
+
+    public fun getUuid(column: String): UUID
+
+    public fun getUuidOrNull(column: String): @Nullable UUID?
+
+    public fun getBytes(column: String): ByteArray
+
+    public fun getBytesOrNull(column: String): @Nullable ByteArray?
+
+    public fun getJson(column: String): Json
+
+    public fun getJsonOrNull(column: String): @Nullable Json?
+
+    public fun getScalarList(column: String): List<@Nullable Any?>
+
+    public fun getScalarListOrNull(column: String): @Nullable List<@Nullable Any?>?
+
+public fun interface RowMapper<T : @Nullable Any?>
+
+    public fun map(row: Row): T
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/Row.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-runtime).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public abstract interface class io/github/thirtyeighttwentysix/volan/runtime/Row {
+	public abstract fun getBoolean (Ljava/lang/String;)Z
+	public abstract fun getBooleanOrNull (Ljava/lang/String;)Ljava/lang/Boolean;
+	public abstract fun getBytes (Ljava/lang/String;)[B
+	public abstract fun getBytesOrNull (Ljava/lang/String;)[B
+	public abstract fun getDecimal (Ljava/lang/String;)Ljava/math/BigDecimal;
+	public abstract fun getDecimalOrNull (Ljava/lang/String;)Ljava/math/BigDecimal;
+	public abstract fun getDouble (Ljava/lang/String;)D
+	public abstract fun getDoubleOrNull (Ljava/lang/String;)Ljava/lang/Double;
+	public abstract fun getFloat (Ljava/lang/String;)F
+	public abstract fun getFloatOrNull (Ljava/lang/String;)Ljava/lang/Float;
+	public abstract fun getInstant (Ljava/lang/String;)Ljava/time/Instant;
+	public abstract fun getInstantOrNull (Ljava/lang/String;)Ljava/time/Instant;
+	public abstract fun getInt (Ljava/lang/String;)I
+	public abstract fun getIntOrNull (Ljava/lang/String;)Ljava/lang/Integer;
+	public abstract fun getJson (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/Json;
+	public abstract fun getJsonOrNull (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/Json;
+	public abstract fun getLocalDate (Ljava/lang/String;)Ljava/time/LocalDate;
+	public abstract fun getLocalDateOrNull (Ljava/lang/String;)Ljava/time/LocalDate;
+	public abstract fun getLocalTime (Ljava/lang/String;)Ljava/time/LocalTime;
+	public abstract fun getLocalTimeOrNull (Ljava/lang/String;)Ljava/time/LocalTime;
+	public abstract fun getLong (Ljava/lang/String;)J
+	public abstract fun getLongOrNull (Ljava/lang/String;)Ljava/lang/Long;
+	public abstract fun getScalarList (Ljava/lang/String;)Ljava/util/List;
+	public abstract fun getScalarListOrNull (Ljava/lang/String;)Ljava/util/List;
+	public abstract fun getString (Ljava/lang/String;)Ljava/lang/String;
+	public abstract fun getStringOrNull (Ljava/lang/String;)Ljava/lang/String;
+	public abstract fun getUuid (Ljava/lang/String;)Ljava/util/UUID;
+	public abstract fun getUuidOrNull (Ljava/lang/String;)Ljava/util/UUID;
+	public abstract fun isNull (Ljava/lang/String;)Z
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/runtime/RowMapper {
+	public abstract fun map (Lio/github/thirtyeighttwentysix/volan/runtime/Row;)Ljava/lang/Object;
+}
+```
+
+</Accordion>

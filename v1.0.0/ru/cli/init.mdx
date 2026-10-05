@@ -1,0 +1,17 @@
+---
+title: "Создать схему"
+description: "Создаёт новый файл, datasource, generator и User. Existing file не заменяется."
+---
+
+Создаёт новый файл, datasource, generator и User. Существующий файл не заменяется.
+
+```bash
+volan init --schema db/schema.volan --provider sqlite --package org.example.generated --java-friendly
+```
+
+| Флаг | Default / поведение |
+| --- | --- |
+| --schema | schema.volan |
+| --provider | postgresql; также sqlite/h2/mysql/mariadb |
+| --package | com.example.volan |
+| --java-friendly | false; включает callbacks |

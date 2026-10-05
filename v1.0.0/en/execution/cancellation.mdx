@@ -1,0 +1,26 @@
+---
+title: "Cancellation and timeouts"
+description: "Cancellation requests Statement.cancel. Stop latency depends on the driver."
+---
+
+Cancellation requests Statement.cancel. Stop latency depends on the driver.
+
+```java
+var pending = db.getUser().findManyAsync();
+pending.cancel(false);
+```
+
+```kotlin
+withTimeout(2_000) {
+    db.suspendQuery { user.count() }
+}
+```
+
+Queued work skips its callback after cancellation. Subsequent statements are refused. Cancellation before transaction commit rolls back. Already committed autocommit writes or a commit already underway cannot reliably be undone.
+
+| Interface | Cancellation completion |
+| --- | --- |
+| Coroutine | after worker statement/connection cleanup |
+| CompletableFuture | immediately; worker cleanup continues |
+
+mayInterruptIfRunning does not control JDBC cancellation; thread interruption is unnecessary. withTimeout requests cancellation rather than imposing a driver hard deadline. Builder connectionTimeout bounds checkout, not the entire SQL statement. Configure driver network/server timeouts separately.

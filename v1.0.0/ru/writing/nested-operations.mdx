@@ -1,0 +1,27 @@
+---
+title: "Операции над связями"
+description: "Доступные методы зависят от стороны связи и nullable FK."
+---
+
+Доступные методы зависят от стороны связи и nullable FK.
+
+```kotlin
+db.user.update {
+    where { id eq authorId }
+    data {
+        posts.delete { views eq 0 }
+    }
+}
+```
+
+| Операция | Эффект |
+| --- | --- |
+| create | создать target и связь |
+| connect | найти target и связать |
+| connectOrCreate | найти по covered unique key или создать |
+| update | изменить связанный target |
+| delete | удалить связанный target |
+| disconnect | удалить связь, сохранить target |
+| set | заменить набор связей, сохранить targets |
+
+Обязательный внешний ключ нельзя отсоединить: disconnect/set генерируются только для допустимых форм. В списочной связи nested update/delete может затронуть несколько совпадений. Глубина nested update — один уровень. Ошибка откатывает всю логическую операцию. [Сгенерированные формы](/v1.0.0/ru/reference/generated).

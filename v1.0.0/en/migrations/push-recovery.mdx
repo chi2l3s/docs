@@ -1,0 +1,18 @@
+---
+title: "Push recovery"
+description: "Unfinished push uses _volan_push. Resolve only verifies a repair."
+---
+
+Unfinished push uses _volan_push. Resolve only verifies a repair.
+
+```bash
+volan db push --schema schema.volan --url jdbc:h2:file:./data --dry-run
+# After manually repairing the original target:
+volan db push --schema schema.volan --url jdbc:h2:file:./data --resolve
+```
+
+```kotlin
+sync.resolvePush(connection, originalSchema)
+```
+
+H2/MySQL/MariaDB only. Resolve compares the original target fingerprint and actual structure; different targets or incomplete repairs are refused. It executes no repair DDL. --resolve cannot combine with --dry-run. Never delete unfinished rows to force retry.

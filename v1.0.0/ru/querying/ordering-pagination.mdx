@@ -1,0 +1,61 @@
+---
+title: "Сортировка и пагинация"
+description: "Для offset-страниц задай устойчивый порядок. Cursor продолжает чтение по PK."
+---
+
+Для offset-страниц задай устойчивый порядок. Cursor продолжает чтение по PK.
+
+```kotlin
+val posts = db.post.findMany {
+    orderBy {
+        views.desc()
+        id.asc()
+    }
+    take = 20
+}
+```
+
+```kotlin
+val pageNumber = 2
+val pageSize = 10
+val page = db.post.findMany {
+    orderBy { id.asc() }
+    take = pageSize
+    skip = (pageNumber - 1) * pageSize
+}
+```
+
+```kotlin
+val firstPage = db.post.findMany {
+    orderBy { id.asc() }
+    take = 10
+}
+val lastId = firstPage.lastOrNull()?.id
+val nextPage = if (lastId == null) {
+    emptyList()
+} else {
+    db.post.findMany {
+        cursor(id = lastId)
+        take = 10
+    }
+}
+```
+
+```kotlin
+val choices = db.user.projectMany {
+    select { id; email }
+    orderBy { id.asc() }
+    take = 20
+}
+choices.forEach { choice -> println("${choice.id}: ${choice.email}") }
+```
+
+```kotlin
+val authors = db.post.projectMany {
+    select { authorId }
+    distinct { authorId }
+}
+val authorIds = authors.map { it.authorId }
+```
+
+`take` и `skip` — nullable Int, неотрицательные; null снимает ограничение. `take=0` возвращает пустую страницу. При совпадающих значениях добавь PK вторым order term. Cursor требует все поля PK, по умолчанию исключает границу; inclusive=true включает её. Cursor вместе с явным orderBy не поддерживается; для продолжения не добавляй orderBy.

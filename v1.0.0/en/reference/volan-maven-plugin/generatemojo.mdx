@@ -1,0 +1,40 @@
+---
+title: "GenerateMojo"
+description: "GenerateMojo and generate-sources integration."
+---
+
+Type/member contracts of volan-maven-plugin for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `GenerateMojo`
+
+```kotlin
+public class GenerateMojo : AbstractMojo()
+
+    override fun execute()
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-maven-plugin/src/main/kotlin/io/github/thirtyeighttwentysix/volan/maven/GenerateMojo.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-maven-plugin).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/maven/GenerateMojo : org/apache/maven/plugin/AbstractMojo {
+	public field outputDirectory Ljava/io/File;
+	public field project Lorg/apache/maven/project/MavenProject;
+	public field schemaFile Ljava/io/File;
+	public fun <init> ()V
+	public fun execute ()V
+	public final fun getOutputDirectory ()Ljava/io/File;
+	public final fun getProject ()Lorg/apache/maven/project/MavenProject;
+	public final fun getSchemaFile ()Ljava/io/File;
+	public final fun setOutputDirectory (Ljava/io/File;)V
+	public final fun setProject (Lorg/apache/maven/project/MavenProject;)V
+	public final fun setSchemaFile (Ljava/io/File;)V
+}
+```
+
+</Accordion>

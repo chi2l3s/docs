@@ -1,0 +1,20 @@
+---
+title: "Ограничения 1.0.0"
+description: "Поддерживаемые границы API и способы обойти их."
+---
+
+| Ограничение | Альтернатива |
+| --- | --- |
+| count/Kotlin keyword в field name | другое имя + @map |
+| cursor + explicit orderBy | PK cursor без orderBy или offset |
+| aggregate ordering | raw SQL |
+| deep nested update | последовательность операций в transaction |
+| nested createMany/updateMany/upsert | набор данных без вложенных операций или transaction |
+| array/JSON-path/full-text typed filters | provider SQL |
+| tenant/soft-delete injection | явные conditions |
+| Spring @Transactional enlistment | Volan.transaction |
+| R2DBC/nonblocking driver | JDBC worker через futures/coroutines |
+| arbitrary introspection / multi-schema | supported shape или reviewed SQL |
+| nontransactional DDL rollback | журнал + manual repair |
+
+`findUnique` не проверяет уникальность where. Single writes PostgreSQL/SQLite/H2 не защищают от широкого фильтра. `include` batch-ит ключи, но большой набор может требовать несколько statements; per-parent take не означает SQL top-N. Эти детали описаны у соответствующих операций.

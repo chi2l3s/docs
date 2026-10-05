@@ -1,0 +1,17 @@
+---
+title: "volan-ir"
+description: "Загрузка и semantic analysis, типы, модели, ключи и связи."
+---
+
+Загрузка и semantic analysis, типы, модели, ключи и связи.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-ir:1.0.0")
+```
+
+## Контракты
+- [Ir](/v1.0.0/ru/reference/volan-ir/ir): `Cardinality`, `ConnectionUrl`, `Environment`, `Literal`, `DatasourceConfig`, `DefaultValue`, `AutoIncrement`, `BooleanValue`, `Cuid`, `DatabaseGenerated`, `EmptyList`, `EnumValueRef`, `Now`, `NumberValue`, `StringValue`, `Uuid`, `EnumType`, `EnumValue`, `Field`, `FieldType`, `EnumRef`, `Scalar`, `GeneratorConfig`, `Index`, `IndexKind`, `Model`, `NativeType`, `PrimaryKey`, `Provider`, `Companion`, `ReferentialAction`, `Companion`, `Relation`, `RelationEnd`, `RelationField`, `RelationKind`, `ScalarField`, `ScalarType`, `Companion`, `Schema`, `UniqueConstraint`
+- [SchemaLoader](/v1.0.0/ru/reference/volan-ir/schemaloader): `AnalysisResult`, `SchemaLoader`
+- [SemanticCode](/v1.0.0/ru/reference/volan-ir/semanticcode): `SemanticCode`
+
+Data-классы также имеют value equality, copy и componentN; enum — values/valueOf. Nullable обозначается `?`. Сигнатуры Kotlin с @JvmOverloads имеют Java-overloads; @JvmStatic/@JvmField дают static-доступ. Сериализация или миграция данных из самой сигнатуры не следует.

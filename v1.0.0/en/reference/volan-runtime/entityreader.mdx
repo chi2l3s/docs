@@ -1,0 +1,36 @@
+---
+title: "EntityReader"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `EntityReader`
+
+```kotlin
+public interface EntityReader<T : @Nullable Any?> : RowMapper<T>
+
+    public val model: String
+
+    public fun key(entity: T, columns: List<String>): List<@Nullable Any?>
+
+    public fun withRelation(entity: T, relation: String, value: @Nullable Any?): T
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/EntityReader.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public abstract interface class io/github/thirtyeighttwentysix/volan/runtime/EntityReader : io/github/thirtyeighttwentysix/volan/runtime/RowMapper {
+	public abstract fun getModel ()Ljava/lang/String;
+	public abstract fun key (Ljava/lang/Object;Ljava/util/List;)Ljava/util/List;
+	public abstract fun withRelation (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+}
+```
+
+</Accordion>

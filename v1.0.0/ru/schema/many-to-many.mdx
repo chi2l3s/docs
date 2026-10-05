@@ -1,0 +1,47 @@
+---
+title: "Many-to-many на практике"
+description: "Этот пример использует отдельные модели Article/Tag. Связь хранится в таблице соединения."
+---
+
+Этот пример использует отдельные модели Article/Tag. Связь хранится в таблице соединения.
+
+```prisma
+model Article {
+  id Int @id
+  title String
+  tags Tag[] @relation("ArticleTags")
+}
+
+model Tag {
+  id Int @id
+  label String @unique
+  articles Article[] @relation("ArticleTags")
+}
+```
+
+```kotlin
+db.tag.create { id = 1; label = "kotlin" }
+db.tag.create { id = 2; label = "sql" }
+db.article.create {
+    id = 10
+    title = "Relations"
+    tags.connect { id eq 1 }
+    tags.connect { id eq 2 }
+}
+db.article.update {
+    where { id eq 10 }
+    data { tags.disconnect { id eq 1 } }
+}
+db.article.update {
+    where { id eq 10 }
+    data { tags.`set` { row { id eq 1 } } }
+}
+val article = db.article.findUniqueOrThrow {
+    where { id eq 10 }
+    include { tags() }
+}
+check(article.tags.single().label == "kotlin")
+check(db.tag.count() == 2L)
+```
+
+disconnect удаляет строки связи; delete удаляет сам Tag и может затронуть другие Article. `set` заменяет набор связей, сохраняя все Tag. Пустой `set {}` убирает весь набор; `disconnect()` без фильтра отсоединяет всё. connect требует непустой фильтр; выбирай PK/unique. Дополнительные данные связи (дата, роль, порядок) храни в явной модели соединения с двумя FK.

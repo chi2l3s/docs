@@ -1,0 +1,17 @@
+---
+title: "Structural drift"
+description: "Check migration history and actual structure separately."
+---
+
+Check migration history and actual structure separately.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.migrate.SchemaMapper
+
+val expected = SchemaMapper.map(deployedSchema)
+val drift = sync.drift(connection, expected)
+check(drift.isEmpty) { drift.toSql(dialect) }
+val next = sync.plan(connection, nextSchema)
+```
+
+drift goes expected → actual. plan goes actual → desired. Both are read-only and compare structure rather than data. Keep the deployed version’s expected schema. Custom default expressions may need catalog spelling. Multi-schema models are unsupported.

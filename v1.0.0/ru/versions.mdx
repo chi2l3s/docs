@@ -1,0 +1,18 @@
+---
+title: "Переход на 1.0.0"
+description: "Обнови generator/plugin и runtime вместе, затем пересобери клиент."
+---
+
+Обнови generator/plugin и runtime вместе, затем пересобери клиент.
+
+```kotlin
+plugins {
+    kotlin("jvm") version "2.4.20"
+    id("io.github.thirtyeighttwentysix.volan") version "1.0.0"
+}
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+}
+```
+
+1.0.0 добавляет H2/MySQL/MariaDB, плагины автоматической генерации, корутины, метрики и CLI. Замени старые задачи генерации плагином. Диалект и JDBC-драйвер подключаются явно. Если использовался DropConstraint.copy из alpha, перекомпилируй код: сигнатура data class расширилась. Архивы alpha доступны в переключателе версий; эти страницы относятся к 1.0.0.

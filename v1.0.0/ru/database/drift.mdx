@@ -1,0 +1,17 @@
+---
+title: "Структурный drift"
+description: "История миграций и фактическая структура проверяются отдельно."
+---
+
+История миграций и фактическая структура проверяются отдельно.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.migrate.SchemaMapper
+
+val expected = SchemaMapper.map(deployedSchema)
+val drift = sync.drift(connection, expected)
+check(drift.isEmpty) { drift.toSql(dialect) }
+val next = sync.plan(connection, nextSchema)
+```
+
+`drift`: expected → actual. `plan`: actual → desired. Оба read-only; сравнивают структуру, не содержимое таблиц. Храни ожидаемую схему deployed version. Текст custom default-выражения может требовать spelling каталога. Multi-schema модели не поддерживаются.

@@ -1,0 +1,18 @@
+---
+title: "Восстановление push"
+description: "Незавершённый push использует _volan_push. Resolve только проверяет ремонт."
+---
+
+Незавершённый push использует _volan_push. Resolve только проверяет ремонт.
+
+```bash
+volan db push --schema schema.volan --url jdbc:h2:file:./data --dry-run
+# After manually repairing the original target:
+volan db push --schema schema.volan --url jdbc:h2:file:./data --resolve
+```
+
+```kotlin
+sync.resolvePush(connection, originalSchema)
+```
+
+Только H2/MySQL/MariaDB. Resolve сравнивает fingerprint первоначального target и фактическую структуру; другая цель или незавершённый repair отклоняются. Repair DDL он не исполняет. --resolve несовместим с --dry-run. Не удаляй unfinished rows для принудительного retry.

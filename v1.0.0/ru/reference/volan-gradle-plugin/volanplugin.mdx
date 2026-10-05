@@ -1,0 +1,59 @@
+---
+title: "VolanPlugin"
+description: "VolanPlugin, VolanExtension и VolanGenerateTask."
+---
+
+Контракты типов и членов volan-gradle-plugin для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `VolanExtension`, `VolanGenerateTask`, `VolanPlugin`
+
+```kotlin
+public abstract class VolanExtension
+
+    public abstract val schemaFile: RegularFileProperty
+
+    public abstract val outputDirectory: DirectoryProperty
+
+public abstract class VolanGenerateTask : DefaultTask()
+
+    public abstract val schemaFile: RegularFileProperty
+
+    public abstract val outputDirectory: DirectoryProperty
+
+    public fun generate()
+
+public class VolanPlugin : Plugin<Project>
+
+    override fun apply(target: Project)
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-gradle-plugin/src/main/kotlin/io/github/thirtyeighttwentysix/volan/gradle/VolanPlugin.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-gradle-plugin).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public abstract class io/github/thirtyeighttwentysix/volan/gradle/VolanExtension {
+	public fun <init> ()V
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getSchemaFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
+public abstract class io/github/thirtyeighttwentysix/volan/gradle/VolanGenerateTask : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public final fun generate ()V
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getSchemaFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/gradle/VolanPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+```
+
+</Accordion>

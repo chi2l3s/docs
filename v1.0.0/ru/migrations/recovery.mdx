@@ -1,0 +1,16 @@
+---
+title: "Восстановление после DDL-сбоя"
+description: "H2/MySQL/MariaDB могут сохранить часть DDL. Сначала проверь и вручную доведи БД до исходной цели."
+---
+
+H2/MySQL/MariaDB могут сохранить часть DDL. Сначала проверь и вручную доведи БД до исходной цели.
+
+```kotlin
+val original = directory.read().single { it.id == failedMigrationId }
+// After inspection and manual repair to the original migration's final state:
+val migrator = Migrator(directory)
+migrator.markApplied(connection, original)
+migrator.apply(connection)
+```
+
+Журнал хранит started_at, applied_steps и finished_at. Прогресс — нижняя граница: SQL-запрос мог сохраниться до записи счётчика. Частичный файл автоматически не выполняется повторно; дальнейшие apply/push блокируются. Сохрани оригинальный файл/checksum. markApplied не исправляет структуру БД и не проверяет SQL-результат; он подтверждает твою проверку и отказывается при изменённом checksum/завершённой записи журнала. Для push отдельный [resolve](/v1.0.0/ru/migrations/push-recovery).

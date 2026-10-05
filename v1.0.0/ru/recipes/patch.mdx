@@ -1,0 +1,19 @@
+---
+title: "PATCH без потери данных"
+description: "Передай флаг присутствия отдельно от nullable-значения."
+---
+
+Передай флаг присутствия отдельно от nullable-значения.
+
+```kotlin
+data class NamePatch(val present: Boolean, val value: String?)
+fun patchName(db: VolanClient, userId: Int, patch: NamePatch) {
+    if (!patch.present) return
+    db.user.update {
+        where { id eq userId }
+        data { name = patch.value }
+    }
+}
+```
+
+present=false сохраняет значение; present=true/value=null очищает. Не вызывай update с пустым payload.

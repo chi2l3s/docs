@@ -1,0 +1,16 @@
+---
+title: "volan-codegen"
+description: "Kotlin/Java API generation and output ownership."
+---
+
+Kotlin/Java API generation and output ownership.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-codegen:1.0.0")
+```
+
+## Contracts
+- [GeneratedSources](/v1.0.0/en/reference/volan-codegen/generatedsources): `GeneratedSources`
+- [VolanGenerator](/v1.0.0/en/reference/volan-codegen/volangenerator): `GeneratedFile`, `VolanGenerationException`, `VolanGenerator`
+
+Data classes also provide value equality, copy and componentN; enums expose values/valueOf. ? marks nullable types. Kotlin @JvmOverloads signatures have Java overloads; @JvmStatic/@JvmField provide static access. Signatures alone do not imply serialization or data migration.

@@ -1,0 +1,24 @@
+---
+title: "Projections and DTOs"
+description: "Select scalar fields through projectMany or projectFirst."
+---
+
+Select scalar fields through projectMany or projectFirst.
+
+```kotlin
+data class UserDto(val id: Int, val email: String)
+val result = db.user.projectMany {
+    select { id; email }
+    orderBy { id.asc() }
+}.map { UserDto(it.id, it.email) }
+```
+
+```java
+record UserDto(int id, String email) {}
+var result = db.getUser().projectMany(q -> {
+    q.select(s -> { s.id(); s.email(); });
+    q.orderBy(o -> o.getId().asc());
+}).stream().map(p -> new UserDto(p.getId(), p.getEmail())).toList();
+```
+
+projectFirst returns a nullable projection; projectFirstOrThrow throws if missing. All selections share a projection class. Reading an omitted field throws VolanFieldNotSelectedException. Empty select, relation selection and select/include combinations are refused. Serialize a DTO to avoid accessing omitted fields or unloaded relations.

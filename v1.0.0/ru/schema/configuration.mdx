@@ -1,0 +1,30 @@
+---
+title: "Datasource и generator"
+description: "Datasource выбирает правила СУБД. Generator выбирает package и форму клиента."
+---
+
+Datasource выбирает правила СУБД. Generator выбирает package и форму клиента.
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.generated"
+  output = "build/generated/volan"
+  javaFriendly = true
+}
+```
+
+| Параметр | Контракт |
+| --- | --- |
+| `datasource.provider` | `postgresql`, `sqlite`, `h2`, `mysql`, `mariadb` |
+| `datasource.url` | JDBC URL или `env("NAME")` |
+| `generator.provider` | `volan-kotlin` для генерации клиента |
+| `generator.package` | package Kotlin/Java |
+| `generator.output` | по умолчанию `build/generated/volan`; плагины перекрывают путь |
+| `generator.javaFriendly` | по умолчанию `false`; добавляет Java callbacks/builders |
+
+Ровно один datasource. Генерация не читает environment URL и не открывает БД. Builder получает URL отдельно; он не ищет `DATABASE_URL` автоматически. Литерал URL допустим, но вызывает предупреждение W/E0234.

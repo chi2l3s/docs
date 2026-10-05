@@ -1,0 +1,88 @@
+---
+title: "SourceFile"
+description: "SourceFile, lexer, parser, AST, formatter and diagnostics."
+---
+
+Type/member contracts of volan-schema for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `SourceFile`, `SourcePosition`, `SourceSpan`
+
+```kotlin
+public class SourceFile(public val name: String, public val text: String)
+
+    public val lineCount: Int
+
+    public fun positionOf(offset: Int): SourcePosition
+
+    public fun lineText(line: Int): String
+
+    override fun toString(): String
+
+public data class SourcePosition(
+    public val line: Int,
+    public val column: Int,
+    public val offset: Int,
+)
+
+    override fun toString(): String
+
+public data class SourceSpan(public val start: Int, public val end: Int)
+
+    public val length: Int
+
+    public fun union(other: SourceSpan): SourceSpan
+
+    override fun toString(): String
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-schema/src/main/kotlin/io/github/thirtyeighttwentysix/volan/schema/SourceFile.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-schema).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/schema/SourceFile {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getLineCount ()I
+	public final fun getName ()Ljava/lang/String;
+	public final fun getText ()Ljava/lang/String;
+	public final fun lineText (I)Ljava/lang/String;
+	public final fun positionOf (I)Lio/github/thirtyeighttwentysix/volan/schema/SourcePosition;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/schema/SourcePosition {
+	public fun <init> (III)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (III)Lio/github/thirtyeighttwentysix/volan/schema/SourcePosition;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/schema/SourcePosition;IIIILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/schema/SourcePosition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()I
+	public final fun getLine ()I
+	public final fun getOffset ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/schema/SourceSpan {
+	public fun <init> (II)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;IIILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnd ()I
+	public final fun getLength ()I
+	public final fun getStart ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun union (Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;)Lio/github/thirtyeighttwentysix/volan/schema/SourceSpan;
+}
+```
+
+</Accordion>

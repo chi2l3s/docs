@@ -1,0 +1,16 @@
+---
+title: "Library architecture"
+description: "Schemas pass through parser, IR and codegen. Runtime receives query descriptions and passes them to a dialect."
+---
+
+Schemas pass through parser, IR and codegen. Runtime receives query descriptions and passes them to a dialect.
+
+```text
+schema.volan -> volan-schema AST -> volan-ir Schema -> volan-codegen
+generated client -> QuerySpec/write specs -> QueryExecutor/QueryPlanner
+TableRegistry + Dialect -> SqlStatement -> JDBC -> RowMapper
+DatabaseReader -> DatabaseSchema -> MigrationPlan -> DdlRenderer
+MigrationDirectory -> Migrator -> MigrationJournal
+```
+
+Optional coroutine/metric modules wrap runtime without replacing the synchronous core. Generated readers avoid reflection on the mapping path. codegen-verify/java-compat-tests/release-smoke/plugin-smoke check generated clients, Java signatures and published consumers. [ADRs and architecture](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/ARCHITECTURE.md).

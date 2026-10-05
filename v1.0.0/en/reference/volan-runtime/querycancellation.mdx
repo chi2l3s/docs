@@ -1,0 +1,44 @@
+---
+title: "QueryCancellation"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `QueryCancellation`, `Companion`
+
+```kotlin
+public class QueryCancellation
+
+    public fun cancel()
+
+    public fun <T : @Nullable Any?> execute(block: Supplier<T>): T
+
+    public companion object
+
+        public fun requireDispatchable()
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/QueryCancellation.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/QueryCancellation {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/runtime/QueryCancellation$Companion;
+	public fun <init> ()V
+	public final fun cancel ()V
+	public final fun execute (Ljava/util/function/Supplier;)Ljava/lang/Object;
+	public static final fun requireDispatchable ()V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/QueryCancellation$Companion {
+	public final fun requireDispatchable ()V
+}
+```
+
+</Accordion>

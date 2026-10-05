@@ -1,0 +1,26 @@
+---
+title: "MariaDB"
+description: "Configure datasource, dependencies and the JDBC URL."
+---
+
+Configure datasource, dependencies and the JDBC URL.
+
+```prisma
+datasource db {
+  provider = "mariadb"
+  url = env("DATABASE_URL")
+}
+```
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-mysql")
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client:3.5.10")
+}
+val db = VolanClient.builder().url("jdbc:mariadb://localhost:3306/app").build()
+```
+
+Verified server: MariaDB 11.4. The shared dialect-mysql module discovers both providers. Use the MariaDB driver and provider=mariadb. Storage, locks, read-back, array/native-type limits and recovery follow MySQL; Json uses MariaDB’s validated JSON alias. DDL commits immediately.
+
+[Introspection limits](/v1.0.0/en/database/introspection).

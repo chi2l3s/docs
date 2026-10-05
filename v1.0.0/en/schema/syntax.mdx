@@ -1,0 +1,19 @@
+---
+title: "Schema syntax"
+description: "Four block kinds: datasource, generator, model and enum. Names are case-sensitive."
+---
+
+Four block kinds: datasource, generator, model and enum. Names are case-sensitive.
+
+```prisma
+// Comment
+/// Documentation retained in generated code
+model Document {
+  id Int @id @default(autoincrement())
+  title String
+  summary String?
+  @@map("documents")
+}
+```
+
+`name Type` declares a field; `?` makes it nullable, `[]` a list. `@` belongs to the field on its line; `@@` belongs to the block. Names begin with a letter or `_`, followed by letters, digits or `_`. Strings support `\n`, `\r`, `\t`, `\"`, `\\`, `\/`, `\uXXXX`. Numbers can be signed or fractional. Values are strings, numbers, booleans, names, lists or calls. Block comments, nested lists `[][]`, optional lists `[]?` and multiline strings are invalid. Block order is unrestricted. [Diagnostics](/v1.0.0/en/schema/diagnostics).

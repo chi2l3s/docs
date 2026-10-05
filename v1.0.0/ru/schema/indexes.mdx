@@ -1,0 +1,19 @@
+---
+title: "Индексы и ограничения"
+description: "Индекс ускоряет подходящие SQL-запросы. Уникальность — отдельное ограничение."
+---
+
+Индекс ускоряет подходящие SQL-запросы. Уникальность — отдельное ограничение.
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  slug String @unique
+  title String
+  published Boolean @default(false)
+  @@index([published, id])
+  @@fulltext([title])
+}
+```
+
+Этот фрагмент предназначен PostgreSQL или MySQL/MariaDB: H2 и SQLite отклоняют `@@fulltext`. Поля составного индекса упорядочены. `@@unique([a,b])` проверяет комбинацию. Имена и дополнительные аргументы смотри в [атрибутах](/v1.0.0/ru/schema/attributes). Индекс full-text можно создать; типизированного full-text поиска в 1.0.0 нет — используй SQL своего провайдера.

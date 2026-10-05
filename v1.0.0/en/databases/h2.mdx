@@ -1,0 +1,26 @@
+---
+title: "H2"
+description: "Configure datasource, dependencies and the JDBC URL."
+---
+
+Configure datasource, dependencies and the JDBC URL.
+
+```prisma
+datasource db {
+  provider = "h2"
+  url = env("DATABASE_URL")
+}
+```
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-h2")
+    runtimeOnly("com.h2database:h2:2.5.252")
+}
+val db = VolanClient.builder().url("jdbc:h2:file:./data").build()
+```
+
+Verified H2 version: 2.5.252, regular mode. jdbc:h2:mem: is private and uses one connection; jdbc:h2:mem:app is named and can use a pool. Volan disables memory-connection retirement. DateTime uses TIMESTAMP(9) WITH TIME ZONE, Time TIME(9), Decimal NUMERIC(65,30), Bytes BINARY VARYING, native JSON; scalar/enum arrays are available. @db and fulltext are refused. Create/update read through FINAL TABLE, delete through OLD TABLE. DDL commits immediately, requiring manual repair after interruption. Introspection uses the current schema and normal BY DEFAULT identities.
+
+[Introspection limits](/v1.0.0/en/database/introspection).

@@ -1,0 +1,26 @@
+---
+title: "SQLite"
+description: "Настрой datasource, зависимости и JDBC URL."
+---
+
+Настрой datasource, зависимости и JDBC URL.
+
+```prisma
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+```
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-sqlite")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.53.4.0")
+}
+val db = VolanClient.builder().url("jdbc:sqlite:./data.db").build()
+```
+
+Private memory URL `jdbc:sqlite::memory:` использует одно соединение и не retire-ится до close. Внешний DataSource должен самостоятельно удерживать данные. Foreign keys включаются на каждой borrowed connection до transaction. Explicit isolation: SERIALIZABLE или READ_UNCOMMITTED по JDBC; busy/locked переводится в retryable transaction failure. DateTime — UTC ISO TEXT с девятью дробными цифрами; Date/Time — ISO TEXT; Uuid — UUID TEXT; Json/enum — TEXT; Bytes — BLOB; Boolean — 0/1. SQLite now-default имеет миллисекунды, время из часов runtimes могут иметь наносекунды. Decimal, arrays, @db, fulltext отклоняются. String search sensitive использует escaped GLOB; ignoringCase — LOWER/LIKE с ASCII folding. Pull enum возвращает String. Long identity хранит INTEGER и декларативный комментарий для сохранения типа.
+
+[Ограничения introspection](/v1.0.0/ru/database/introspection).

@@ -1,0 +1,18 @@
+---
+title: "Common questions"
+description: "Short answers with focused next steps."
+---
+
+| Situation | Check |
+| --- | --- |
+| Build succeeds, table missing | generation does not create tables; apply migrations |
+| Relation getter throws after create | reread with include |
+| Java callbacks missing | javaFriendly=true and compiled Kotlin sources |
+| SQLite memory table disappears | separate connections / external DataSource / close |
+| Empty results | nullable reads or List; use OrThrow only for required rows |
+| Future failure | CompletionException/ExecutionException cause |
+| Timeout does not stop JDBC immediately | driver cancellation and cleanup |
+| Unfinished migration | original SQL + manual repair, then markApplied |
+| Missing dialect | add the dialect module and JDBC driver |
+
+Detailed contracts: [errors](/v1.0.0/en/errors), [cancellation](/v1.0.0/en/execution/cancellation), [recovery](/v1.0.0/en/migrations/recovery).

@@ -1,0 +1,32 @@
+---
+title: "Атрибуты"
+description: "Полный набор атрибутов языка 1.0.0. Проверяй ограничения выбранного диалекта."
+---
+
+Полный набор атрибутов языка 1.0.0. Проверяй ограничения выбранного диалекта.
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  title String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@map("articles")
+}
+```
+
+| Атрибут | Назначение |
+| --- | --- |
+| `@id` / `@@id` | PK |
+| `@unique` / `@@unique` | уникальное значение / комбинация |
+| `@default` | literal, enum, autoincrement(), now(), uuid(), dbgenerated(), [] |
+| `@updatedAt` | время из часов runtime при типизированной записи |
+| `@map` / `@@map` | имя поля, enum-значения, таблицы или enum-типа в БД |
+| `@ignore` / `@@ignore` | исключить из клиента |
+| `@relation` | name, fields, references, onDelete, onUpdate |
+| `@@index` / `@@fulltext` | обычный / full-text индекс |
+| `@db.<Type>` | PostgreSQL native type |
+
+Аргументы, default-выражения и referential actions имеют точный [контракт analyzer](/v1.0.0/ru/reference/volan-ir). Несовместимые target, повтор атрибута и лишние аргументы дают диагностику, а не молча игнорируются.

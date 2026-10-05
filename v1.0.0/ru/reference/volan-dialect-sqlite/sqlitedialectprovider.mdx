@@ -1,0 +1,34 @@
+---
+title: "SqliteDialectProvider"
+description: "SQLite SQL, DDL, scalar storage и initialization соединений."
+---
+
+Контракты типов и членов volan-dialect-sqlite для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `SqliteDialectProvider`
+
+```kotlin
+public class SqliteDialectProvider : DialectProvider
+
+    override fun supports(jdbcUrl: String): Boolean
+
+    override fun dialect(): Dialect
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-sqlite/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/sqlite/SqliteDialectProvider.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-dialect-sqlite).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/dialect/sqlite/SqliteDialectProvider : io/github/thirtyeighttwentysix/volan/dialect/DialectProvider {
+	public fun <init> ()V
+	public fun dialect ()Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;
+	public fun supports (Ljava/lang/String;)Z
+}
+```
+
+</Accordion>

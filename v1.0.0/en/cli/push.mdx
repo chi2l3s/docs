@@ -1,0 +1,23 @@
+---
+title: "DB push"
+description: "Run dry-run first. Push changes structure; resolve verifies a manual repair."
+---
+
+Run dry-run first. Push changes structure; resolve verifies a manual repair.
+
+```bash
+volan db push --schema schema.volan --dry-run
+volan db push --schema schema.volan
+# After review of warning-bearing changes:
+volan db push --schema schema.volan --accept-data-loss
+```
+
+| Flag | Default / behavior |
+| --- | --- |
+| --schema | schema.volan; target |
+| --url | override datasource / DATABASE_URL |
+| --dry-run | SQL stdout, warnings stderr, no changes |
+| --accept-data-loss | accept reviewed warnings |
+| --resolve | verify original target after repair |
+
+Credentials: DATABASE_USER and DATABASE_PASSWORD. Push resolves --url → schema literal/env URL → DATABASE_URL. Pull resolves --url → DATABASE_URL. Use a JDBC URL. --resolve/--dry-run cannot combine. [Recovery](/v1.0.0/en/migrations/recovery).

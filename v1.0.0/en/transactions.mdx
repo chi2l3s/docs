@@ -1,0 +1,27 @@
+---
+title: "Transactions"
+description: "A block runs on one thread and connection. Success commits; an exception rolls back."
+---
+
+A block runs on one thread and connection. Success commits; an exception rolls back.
+
+```kotlin
+val user = db.transaction { tx ->
+    val created = tx.user.create { email = "transaction@example.org" }
+    tx.post.create { title = "Welcome"; authorId = created.id }
+    created
+}
+```
+
+```java
+var user = db.transaction(tx -> {
+    var created = tx.getUser().create(d -> d.setEmail("transaction@example.org"));
+    tx.getPost().create(d -> {
+        d.setTitle("Welcome");
+        d.setAuthorId(created.getId());
+    });
+    return created;
+});
+```
+
+Use synchronous methods inside the callback. It cannot suspend or move its thread-bound context to another worker. Catching an exception and returning success can let the outer block commit; let failures escape when rollback is required. Raw SQL uses the same connection. A bare QueryExecutor client has no transaction ownership.

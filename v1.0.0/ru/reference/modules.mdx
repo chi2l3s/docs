@@ -1,0 +1,23 @@
+---
+title: "Модули и API"
+description: "Все публичные модули Volan 1.0.0 и точные контракты."
+---
+
+- [volan-core](/v1.0.0/ru/reference/volan-core): JSON и базовый тип исключения.
+- [volan-schema](/v1.0.0/ru/reference/volan-schema): SourceFile, lexer, parser, AST, formatter и диагностика.
+- [volan-ir](/v1.0.0/ru/reference/volan-ir): Загрузка и semantic analysis, типы, модели, ключи и связи.
+- [volan-codegen](/v1.0.0/ru/reference/volan-codegen): Генерация Kotlin/Java API и управление output-файлами.
+- [volan-dialect-api](/v1.0.0/ru/reference/volan-dialect-api): SQL/DDL-модель, параметры, capabilities и JDBC-диалект.
+- [volan-dialect-postgres](/v1.0.0/ru/reference/volan-dialect-postgres): PostgreSQL runtime SQL, DDL, binding и ServiceLoader provider.
+- [volan-dialect-sqlite](/v1.0.0/ru/reference/volan-dialect-sqlite): SQLite SQL, DDL, scalar storage и initialization соединений.
+- [volan-dialect-h2](/v1.0.0/ru/reference/volan-dialect-h2): H2 SQL/DDL, delta-table returning и memory pooling.
+- [volan-dialect-mysql](/v1.0.0/ru/reference/volan-dialect-mysql): MySQL/MariaDB SQL, DDL, locks и provider discovery.
+- [volan-runtime](/v1.0.0/ru/reference/volan-runtime): QueryExecutor, query/write descriptions, filters, mapping, transactions и hooks.
+- [volan-migrate](/v1.0.0/ru/reference/volan-migrate): Readers, structural schema, plans, scripts, sync и migration journal.
+- [volan-coroutines](/v1.0.0/ru/reference/volan-coroutines): CoroutineAccess, suspendQuery и SuspendingQueryExecutor.
+- [volan-micrometer](/v1.0.0/ru/reference/volan-micrometer): MicrometerQueryInterceptor и statement timers.
+- [volan-gradle-plugin](/v1.0.0/ru/reference/volan-gradle-plugin): VolanPlugin, VolanExtension и VolanGenerateTask.
+- [volan-maven-plugin](/v1.0.0/ru/reference/volan-maven-plugin): GenerateMojo и generate-sources integration.
+- [volan-cli](/v1.0.0/ru/reference/volan-cli): JVM entry point CLI. Команды и флаги — в CLI-справочнике.
+
+`volan-bom` выравнивает 13 библиотек. Gradle/Maven plugins и CLI имеют отдельную роль. Runtime не требует coroutines/Micrometer, пока ты не добавишь optional module. [Generated API](/v1.0.0/ru/reference/generated).

@@ -1,0 +1,26 @@
+---
+title: "SQLite"
+description: "Configure datasource, dependencies and the JDBC URL."
+---
+
+Configure datasource, dependencies and the JDBC URL.
+
+```prisma
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+```
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-sqlite")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.53.4.0")
+}
+val db = VolanClient.builder().url("jdbc:sqlite:./data.db").build()
+```
+
+Private memory URL jdbc:sqlite::memory: uses one connection and disables retirement until close. External DataSources own memory lifetime. Foreign keys are enabled on every borrowed connection before transactions. Explicit isolation is SERIALIZABLE or READ_UNCOMMITTED as supported by JDBC; busy/locked errors become retryable transaction failures. DateTime uses UTC ISO TEXT with nine fractional digits; Date/Time ISO TEXT; Uuid UUID TEXT; Json/enums TEXT; Bytes BLOB; Boolean 0/1. SQLite now defaults have millisecond precision, while runtime timestamps can retain nanoseconds. Decimal, arrays, @db and fulltext are refused. Sensitive string search uses escaped GLOB; ignoringCase uses LOWER/LIKE with ASCII folding. Pull exports enums as String. Long identity uses INTEGER with a declaration comment retaining logical type.
+
+[Introspection limits](/v1.0.0/en/database/introspection).

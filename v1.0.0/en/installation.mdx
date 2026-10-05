@@ -1,0 +1,20 @@
+---
+title: "Dependencies"
+description: "Choose a dialect and JDBC driver. Align plugin, generator and Volan libraries at 1.0.0."
+---
+
+Choose a dialect and JDBC driver. Align plugin, generator and Volan libraries at 1.0.0.
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-postgres")
+    runtimeOnly("org.postgresql:postgresql:42.7.13")
+    // Optional modules:
+    implementation("io.github.thirtyeighttwentysix:volan-migrate")
+    implementation("io.github.thirtyeighttwentysix:volan-coroutines")
+    implementation("io.github.thirtyeighttwentysix:volan-micrometer")
+}
+```
+
+The BOM aligns libraries, not plugin versions. Without a build plugin, add `volan-runtime:1.0.0` explicitly. [Gradle](/v1.0.0/en/build/gradle), [Maven](/v1.0.0/en/build/maven), [CLI](/v1.0.0/en/cli/install).

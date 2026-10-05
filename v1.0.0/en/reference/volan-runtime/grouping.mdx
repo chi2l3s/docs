@@ -1,0 +1,131 @@
+---
+title: "Grouping"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `GroupRow`, `GroupScope`, `GroupSpec`, `HavingScope`
+
+```kotlin
+public data class GroupSpec @JvmOverloads constructor(
+    public val model: String,
+    public val by: List<String>,
+    public val filter: @Nullable Filter? = null,
+    public val aggregations: List<Aggregation> = emptyList(),
+    public val having: @Nullable Filter? = null,
+    public val havingAggregations: Map<String, Aggregation> = emptyMap(),
+    public val orderBy: List<OrderTerm> = emptyList(),
+    public val pagination: Pagination = Pagination.NONE,
+)
+
+public data class GroupRow<K : @Nullable Any?>(public val key: K, public val values: Map<String, @Nullable Any?>)
+
+public abstract class HavingScope protected constructor() : FilterScope()
+
+    protected fun <T : Comparable<T>> aggregateField(
+        function: AggregateFunction,
+        column: @Nullable String?,
+        alias: String,
+    ): OrderedFilterField<T>
+
+    public fun aggregations(): Map<String, Aggregation>
+
+public abstract class GroupScope protected constructor(private val model: String)
+
+    public var take: @Nullable Int?
+
+    public var skip: @Nullable Int?
+
+    protected fun recordGrouping(fields: Set<String>)
+
+    protected fun recordFilter(scope: FilterScope)
+
+    protected fun recordHaving(scope: HavingScope)
+
+    protected fun recordOrder(scope: OrderScope)
+
+    protected fun record(function: AggregateFunction, column: @Nullable String?, alias: String)
+
+    public fun groupedFields(): Set<String>
+
+    public fun build(): GroupSpec
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/Grouping.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/GroupRow {
+	public fun <init> (Ljava/lang/Object;Ljava/util/Map;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/Object;Ljava/util/Map;)Lio/github/thirtyeighttwentysix/volan/runtime/GroupRow;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/GroupRow;Ljava/lang/Object;Ljava/util/Map;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/GroupRow;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/Object;
+	public final fun getValues ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/github/thirtyeighttwentysix/volan/runtime/GroupScope {
+	protected fun <init> (Ljava/lang/String;)V
+	public final fun build ()Lio/github/thirtyeighttwentysix/volan/runtime/GroupSpec;
+	public final fun getSkip ()Ljava/lang/Integer;
+	public final fun getTake ()Ljava/lang/Integer;
+	public final fun groupedFields ()Ljava/util/Set;
+	protected final fun record (Lio/github/thirtyeighttwentysix/volan/runtime/AggregateFunction;Ljava/lang/String;Ljava/lang/String;)V
+	protected final fun recordFilter (Lio/github/thirtyeighttwentysix/volan/runtime/FilterScope;)V
+	protected final fun recordGrouping (Ljava/util/Set;)V
+	protected final fun recordHaving (Lio/github/thirtyeighttwentysix/volan/runtime/HavingScope;)V
+	protected final fun recordOrder (Lio/github/thirtyeighttwentysix/volan/runtime/OrderScope;)V
+	public final fun setSkip (Ljava/lang/Integer;)V
+	public final fun setTake (Ljava/lang/Integer;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/GroupSpec {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun component6 ()Ljava/util/Map;
+	public final fun component7 ()Ljava/util/List;
+	public final fun component8 ()Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;)Lio/github/thirtyeighttwentysix/volan/runtime/GroupSpec;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/GroupSpec;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/GroupSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAggregations ()Ljava/util/List;
+	public final fun getBy ()Ljava/util/List;
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun getHaving ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun getHavingAggregations ()Ljava/util/Map;
+	public final fun getModel ()Ljava/lang/String;
+	public final fun getOrderBy ()Ljava/util/List;
+	public final fun getPagination ()Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/github/thirtyeighttwentysix/volan/runtime/HavingScope : io/github/thirtyeighttwentysix/volan/runtime/FilterScope {
+	protected fun <init> ()V
+	protected final fun aggregateField (Lio/github/thirtyeighttwentysix/volan/runtime/AggregateFunction;Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/OrderedFilterField;
+	public final fun aggregations ()Ljava/util/Map;
+}
+```
+
+</Accordion>

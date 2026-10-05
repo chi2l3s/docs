@@ -1,0 +1,13 @@
+---
+title: "Свой диалект"
+description: "Реализуй Dialect и DialectProvider, затем зарегистрируй provider через ServiceLoader."
+---
+
+Реализуй Dialect и DialectProvider, затем зарегистрируй provider через ServiceLoader.
+
+```text
+META-INF/services/io.github.thirtyeighttwentysix.volan.dialect.DialectProvider
+com.example.MyDialectProvider
+```
+
+Capabilities задают returning, conflict SQL, LIKE, distinctOn, nullsOrdering, tupleComparison, arrays и maximumParameters. Runtime использует initialize/poolSize/connectionMaxLifetime/jdbcValue/sqlState и render. SqlStatement содержит SQL и ordered parameters. DdlRenderer отдельный; для migration нужны Reader и type mapping. Добавление provider в discovery само по себе не делает unsupported provider допустимым в schema analyzer. [Dialect API](/v1.0.0/ru/reference/volan-dialect-api).

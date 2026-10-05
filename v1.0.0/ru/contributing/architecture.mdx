@@ -1,0 +1,16 @@
+---
+title: "Устройство библиотеки"
+description: "Схема проходит через parser, IR и codegen. Runtime получает query descriptions и передаёт их диалекту."
+---
+
+Схема проходит через parser, IR и codegen. Runtime получает query descriptions и передаёт их диалекту.
+
+```text
+schema.volan -> volan-schema AST -> volan-ir Schema -> volan-codegen
+generated client -> QuerySpec/write specs -> QueryExecutor/QueryPlanner
+TableRegistry + Dialect -> SqlStatement -> JDBC -> RowMapper
+DatabaseReader -> DatabaseSchema -> MigrationPlan -> DdlRenderer
+MigrationDirectory -> Migrator -> MigrationJournal
+```
+
+Optional coroutine/metric modules оборачивают runtime, не меняя synchronous core. Reflection на mapping hot path не нужен: readers генерируются. Separate projects codegen-verify/java-compat-tests/release-smoke/plugin-smoke проверяют generated clients, Java signatures и published consumers. [ADR и архитектура](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/ARCHITECTURE.md).

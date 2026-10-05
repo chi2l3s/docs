@@ -1,0 +1,22 @@
+---
+title: "Установка CLI"
+description: "CLI 1.0.0 требует Java 17+. Установщик проверяет SHA-256 и запуск."
+---
+
+CLI 1.0.0 требует Java 17+. Установщик проверяет SHA-256 и запуск.
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.ps1))) -Tag v1.0.0
+```
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/thirtyeighttwentysix/volan/main/scripts/install.sh |
+  VOLAN_TAG=v1.0.0 bash
+volan --help
+```
+
+Каталог по умолчанию: `%LOCALAPPDATA%\Programs\Volan` (Windows), `~/.local/share/volan` (Linux/macOS). Права администратора не нужны. Linux/macOS требуют curl, tar, sha256sum/shasum. JAVA_HOME выбирается раньше PATH. Архивы подходят x64/ARM64 с соответствующей Java.
+
+Windows обновляет текущий PowerShell и user PATH; другие терминалы перезапусти. Linux/macOS: открой новый terminal или `source "$HOME/.config/volan/env.sh"` (Bash/Zsh), `source "$HOME/.config/volan/env.fish"` (Fish). Для другого shell добавь bin в PATH вручную.
+
+Для offline-установки скачай volan-cli.zip/tar.gz и SHA256SUMS из [релиза 1.0.0](https://github.com/thirtyeighttwentysix/volan/releases/tag/v1.0.0), проверь checksum и добавь volan/bin в PATH.

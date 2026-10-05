@@ -1,0 +1,17 @@
+---
+title: "updatedAt and clocks"
+description: "Runtime writes updatedAt during typed writes. It is not a database trigger."
+---
+
+Runtime writes updatedAt during typed writes. It is not a database trigger.
+
+```kotlin
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
+
+val fixed = Clock.fixed(Instant.parse("2026-01-01T00:00:00Z"), ZoneOffset.UTC)
+val db = VolanClient.builder().url(url).clock(fixed).build()
+```
+
+@updatedAt requires a single DateTime or DateTime? field. Raw SQL and other applications do not maintain it automatically. Set the clock before build. Use Clock.fixed in repeatable tests; the default is Clock.systemUTC(). The @updatedAt field is absent from generated CreateData/UpdateData: runtime always writes its clock value.

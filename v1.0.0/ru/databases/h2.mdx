@@ -1,0 +1,26 @@
+---
+title: "H2"
+description: "Настрой datasource, зависимости и JDBC URL."
+---
+
+Настрой datasource, зависимости и JDBC URL.
+
+```prisma
+datasource db {
+  provider = "h2"
+  url = env("DATABASE_URL")
+}
+```
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-h2")
+    runtimeOnly("com.h2database:h2:2.5.252")
+}
+val db = VolanClient.builder().url("jdbc:h2:file:./data").build()
+```
+
+Проверяемая версия H2 2.5.252, regular mode. `jdbc:h2:mem:` — private, одно соединение; `jdbc:h2:mem:app` — named, может иметь пул. Volan отключает retirement memory-соединений. DateTime TIMESTAMP(9) WITH TIME ZONE, Time TIME(9), Decimal NUMERIC(65,30), Bytes BINARY VARYING, Json native JSON; массивы скаляров/enum доступны. @db и fulltext отклоняются. Create/update читаются через FINAL TABLE, delete — OLD TABLE. DDL commit происходит сразу: recovery требует ручного ремонта. Introspection использует current schema и обычные BY DEFAULT identities.
+
+[Ограничения introspection](/v1.0.0/ru/database/introspection).

@@ -1,0 +1,43 @@
+---
+title: "Подключение"
+description: "Создай один клиент на время жизни приложения. Он безопасен для параллельных запросов."
+---
+
+Создай один клиент на время жизни приложения. Он безопасен для параллельных запросов.
+
+```kotlin
+val db = VolanClient.builder()
+    .url(System.getenv("DATABASE_URL"))
+    .username(System.getenv("DATABASE_USER"))
+    .password(System.getenv("DATABASE_PASSWORD"))
+    .maxPoolSize(10)
+    .connectionTimeout(30_000)
+    .poolName("app-db")
+    .build()
+// Application shutdown:
+db.close()
+```
+
+```java
+try (var db = VolanClient.builder()
+        .url(System.getenv("DATABASE_URL"))
+        .username(System.getenv("DATABASE_USER"))
+        .password(System.getenv("DATABASE_PASSWORD"))
+        .build()) {
+    long total = db.getUser().count();
+}
+```
+
+| Builder method | Default / правило |
+| --- | --- |
+| url | обязателен без внешнего DataSource; JDBC URL выбирает диалект |
+| username/password | null |
+| maxPoolSize | 10; private memory dialect может ограничить до 1 |
+| connectionTimeout | 30 000 мс ожидания соединения |
+| poolName | volan |
+| asyncExecutor | ForkJoinPool.commonPool() |
+| dialect | ServiceLoader по URL |
+| interceptor | нет; порядок регистрации сохраняется |
+| clock | Clock.systemUTC() |
+
+Заверши активные операции до close. Клиент закрывает только созданный им пул. Для короткого console-примера используй use/try. Не создавай пул на каждый HTTP-запрос.

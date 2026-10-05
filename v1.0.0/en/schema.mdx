@@ -1,0 +1,33 @@
+---
+title: "User/Post schema"
+description: "This is the shared schema for read and write examples. Add it to the project and rebuild the client."
+---
+
+This is the shared schema for read and write examples. Add it to the project and rebuild the client.
+
+```prisma
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.generated"
+  javaFriendly = true
+}
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+  posts Post[]
+}
+model Post {
+  id Int @id @default(autoincrement())
+  title String
+  views Int @default(0)
+  authorId Int
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+```
+
+Code uses `org.example.generated.VolanClient` and an open `db`. Tables must exist. The [complete project](https://github.com/chi2l3s/docs/tree/main/examples/query-guide-1.0.0) supplies DDL, data and checks; each test owns a separate SQLite database.

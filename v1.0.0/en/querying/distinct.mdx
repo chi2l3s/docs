@@ -1,0 +1,15 @@
+---
+title: "Distinct"
+description: "Distinct removes duplicates by selected columns. Behavior depends on the provider."
+---
+
+Distinct removes duplicates by selected columns. Behavior depends on the provider.
+
+```kotlin
+val authors = db.post.projectMany {
+    select { authorId }
+    distinct { authorId }
+}
+```
+
+SQLite/MySQL/MariaDB require selecting exactly the distinct columns. PostgreSQL/H2 support DISTINCT ON; ordering must agree with distinct columns. Use groupBy for author summaries. Distinct is handled by runtime query planning, not client-side List.distinct.

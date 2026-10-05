@@ -1,0 +1,35 @@
+---
+title: "Custom raw SQL results"
+description: "RowMapper runs for each row while the result set is open. Return a materialized value."
+---
+
+RowMapper runs for each row while the result set is open. Return a materialized value.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.RowMapper
+data class UserEmail(val id: Int, val email: String)
+val emails = db.rawQuery(
+    "SELECT id, email FROM User WHERE id > ?",
+    listOf(0),
+    RowMapper { row -> UserEmail(row.getInt("id"), row.getString("email")) },
+)
+```
+
+| Row | Result type |
+| --- | --- |
+| `getString` / `getStringOrNull` | `String` / `String?` |
+| `getInt` / `getIntOrNull` | `Int` / `Int?` |
+| `getLong` / `getLongOrNull` | `Long` / `Long?` |
+| `getFloat` / `getFloatOrNull` | `Float` / `Float?` |
+| `getDouble` / `getDoubleOrNull` | `Double` / `Double?` |
+| `getDecimal` / `getDecimalOrNull` | `BigDecimal` / `BigDecimal?` |
+| `getBoolean` / `getBooleanOrNull` | `Boolean` / `Boolean?` |
+| `getInstant` / `getInstantOrNull` | `Instant` / `Instant?` |
+| `getLocalDate` / `getLocalDateOrNull` | `LocalDate` / `LocalDate?` |
+| `getLocalTime` / `getLocalTimeOrNull` | `LocalTime` / `LocalTime?` |
+| `getUuid` / `getUuidOrNull` | `UUID` / `UUID?` |
+| `getBytes` / `getBytesOrNull` | `ByteArray` / `ByteArray?` |
+| `getJson` / `getJsonOrNull` | `Json` / `Json?` |
+| `getScalarList` / `getScalarListOrNull` | `List<Any?>` / `List<Any?>?` |
+
+Pass a SQL column name or alias. Use OrNull for nullable columns; required accessors refuse NULL. isNull(column) checks SQL NULL. getScalarList returns driver elements without schema-specific casts. Copy values into a DTO inside the mapper: do not retain Row for later reads. Mapper failures leave the query and resources close.

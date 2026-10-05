@@ -1,0 +1,21 @@
+---
+title: "Programmatic generation"
+description: "For custom tooling, add volan-codegen:1.0.0. Choose owned-file writing or in-memory generation."
+---
+
+For custom tooling, add volan-codegen:1.0.0. Choose owned-file writing or in-memory generation.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+import io.github.thirtyeighttwentysix.volan.codegen.GeneratedSources
+import io.github.thirtyeighttwentysix.volan.codegen.VolanGenerator
+import java.nio.file.Path
+
+val result = SchemaLoader.load("schema.volan", schemaText)
+val schema = result.schemaOrThrow()
+println(result.render())
+val files = VolanGenerator.generate(schema)
+GeneratedSources.write(schema, Path.of("build/generated/volan"))
+```
+
+`generate` returns `List<GeneratedFile>` (relativePath and contents). `GeneratedSources.write` uses the ownership manifest. `VolanGenerator.writeTo` writes directly; use owned-file writing for regeneration. Exactly one `volan-kotlin` generator is required.

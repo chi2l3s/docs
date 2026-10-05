@@ -1,0 +1,16 @@
+---
+title: "volan-dialect-postgres"
+description: "PostgreSQL runtime SQL, DDL, binding и ServiceLoader provider."
+---
+
+PostgreSQL runtime SQL, DDL, binding и ServiceLoader provider.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-dialect-postgres:1.0.0")
+```
+
+## Контракты
+- [PostgresDialect](/v1.0.0/ru/reference/volan-dialect-postgres/postgresdialect): `PostgresDialect`
+- [PostgresDialectProvider](/v1.0.0/ru/reference/volan-dialect-postgres/postgresdialectprovider): `PostgresDialectProvider`
+
+Data-классы также имеют value equality, copy и componentN; enum — values/valueOf. Nullable обозначается `?`. Сигнатуры Kotlin с @JvmOverloads имеют Java-overloads; @JvmStatic/@JvmField дают static-доступ. Сериализация или миграция данных из самой сигнатуры не следует.

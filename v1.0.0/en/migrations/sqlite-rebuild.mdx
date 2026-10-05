@@ -1,0 +1,10 @@
+---
+title: "SQLite table rebuilds"
+description: "Changing columns and constraints while retaining surviving data."
+---
+
+Column/constraint changes rebuild a table transactionally: replacement → copy surviving columns → drop old → rename → recreate indexes. Index-only changes avoid rebuilds.
+
+Added columns use defaults or NULL. Required columns without defaults fail on populated tables. Surviving values and the AUTOINCREMENT high-water mark remain. Foreign keys are disabled before the transaction so dropping a parent cannot cascade; foreign-key validation runs before commit. The original FK setting is restored even on failure.
+
+Use a dedicated auto-commit connection. FK/unique/NOT NULL failure rolls back data, DDL and history. Unsupported triggers/views/constraints are not silently discarded: introspection refuses those shapes. Use explicit SQL for renames.

@@ -1,0 +1,47 @@
+---
+title: "Many-to-many in practice"
+description: "This example uses separate Article/Tag models. A join table stores associations."
+---
+
+This example uses separate Article/Tag models. A join table stores associations.
+
+```prisma
+model Article {
+  id Int @id
+  title String
+  tags Tag[] @relation("ArticleTags")
+}
+
+model Tag {
+  id Int @id
+  label String @unique
+  articles Article[] @relation("ArticleTags")
+}
+```
+
+```kotlin
+db.tag.create { id = 1; label = "kotlin" }
+db.tag.create { id = 2; label = "sql" }
+db.article.create {
+    id = 10
+    title = "Relations"
+    tags.connect { id eq 1 }
+    tags.connect { id eq 2 }
+}
+db.article.update {
+    where { id eq 10 }
+    data { tags.disconnect { id eq 1 } }
+}
+db.article.update {
+    where { id eq 10 }
+    data { tags.`set` { row { id eq 1 } } }
+}
+val article = db.article.findUniqueOrThrow {
+    where { id eq 10 }
+    include { tags() }
+}
+check(article.tags.single().label == "kotlin")
+check(db.tag.count() == 2L)
+```
+
+disconnect removes join rows; delete removes Tag itself and can affect other Articles. set replaces associations while retaining all Tags. Empty `set {}` clears the set; disconnect() with no predicate detaches all. connect needs a nonempty filter; choose a PK/unique key. Store association data such as a date, role or order in an explicit join model with two FKs.

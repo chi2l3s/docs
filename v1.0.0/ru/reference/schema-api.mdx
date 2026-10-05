@@ -1,0 +1,21 @@
+---
+title: "Parser и IR как библиотеки"
+description: "Выбери syntax-only разбор или полный semantic analysis."
+---
+
+Выбери syntax-only разбор или полный semantic analysis.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.schema.SourceFile
+import io.github.thirtyeighttwentysix.volan.schema.SchemaParser
+import io.github.thirtyeighttwentysix.volan.schema.SchemaFormatter
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+
+val source = SourceFile("schema.volan", schemaText)
+val parsed = SchemaParser.parse(source)
+val formatted = SchemaFormatter.format("schema.volan", schemaText)
+val loaded = SchemaLoader.load("schema.volan", schemaText)
+val schema = loaded.schemaOrThrow()
+```
+
+AST хранит spans/comments/documentation и синтаксические значения. IR связывает names/types/models/keys/relations, defaults, providers и generators. AnalysisResult содержит diagnostics и warnings; render даёт source frames. SchemaFormatter проверяет syntax, но не semantics. IrPrinter показывает нормализованную структуру. [Schema API](/v1.0.0/ru/reference/volan-schema), [IR API](/v1.0.0/ru/reference/volan-ir).

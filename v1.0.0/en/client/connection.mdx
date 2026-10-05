@@ -1,0 +1,43 @@
+---
+title: "Connecting"
+description: "Keep one client for the application lifetime. Independent queries are thread-safe."
+---
+
+Keep one client for the application lifetime. Independent queries are thread-safe.
+
+```kotlin
+val db = VolanClient.builder()
+    .url(System.getenv("DATABASE_URL"))
+    .username(System.getenv("DATABASE_USER"))
+    .password(System.getenv("DATABASE_PASSWORD"))
+    .maxPoolSize(10)
+    .connectionTimeout(30_000)
+    .poolName("app-db")
+    .build()
+// Application shutdown:
+db.close()
+```
+
+```java
+try (var db = VolanClient.builder()
+        .url(System.getenv("DATABASE_URL"))
+        .username(System.getenv("DATABASE_USER"))
+        .password(System.getenv("DATABASE_PASSWORD"))
+        .build()) {
+    long total = db.getUser().count();
+}
+```
+
+| Builder method | Default / rule |
+| --- | --- |
+| url | required without external DataSource; JDBC URL selects dialect |
+| username/password | null |
+| maxPoolSize | 10; private-memory dialect may reduce it to 1 |
+| connectionTimeout | 30,000 ms waiting for a connection |
+| poolName | volan |
+| asyncExecutor | ForkJoinPool.commonPool() |
+| dialect | ServiceLoader by URL |
+| interceptor | none; registration order preserved |
+| clock | Clock.systemUTC() |
+
+Finish active operations before close. The client closes only its owned pool. Use use/try in short console examples. Do not create a pool per HTTP request.
