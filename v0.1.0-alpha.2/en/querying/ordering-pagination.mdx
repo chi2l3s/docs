@@ -1,0 +1,95 @@
+---
+title: "Ordering and pagination"
+description: "Build stable pages, use a cursor and select only the columns you need."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+A result page combines selected rows, a defined order and a bounded size. Without ordering, successive reads can return records differently. Without a limit, a small example can become a full-table read.
+
+These fragments use an open `db` and the [User/Post models](/v0.1.0-alpha.2/en/schema). Page and cursor values normally come from the application; the examples define them directly.
+
+## Order with a tie-breaker
+
+```kotlin title="ordering"
+val posts = db.post.findMany {
+    orderBy {
+        views.desc()
+        id.asc()
+    }
+    take = 20
+}
+```
+
+Posts with more views come first. Equal view counts are resolved by unique `id`, making the order unambiguous. Ordering fields apply in declaration order.
+
+Alongside `asc()` and `desc()`, the API provides `ascNullsFirst()`, `ascNullsLast()`, `descNullsFirst()` and `descNullsLast()`. These control null placement; SQL support and implementation depend on the dialect. A required `id` does not need null placement.
+
+## Offset: jump to a numbered page
+
+```kotlin title="offset-page"
+val pageNumber = 2
+val pageSize = 10
+val page = db.post.findMany {
+    orderBy { id.asc() }
+    take = pageSize
+    skip = (pageNumber - 1) * pageSize
+}
+```
+
+Page two skips ten rows and returns the next ten when available. Validate a positive page number and a bounded page size in the application. Do not trust an arbitrary user-supplied limit.
+
+Offset suits numbered navigation. Deep pages still require the database to process the skipped range. Inserts and deletes between requests can shift pages despite stable `orderBy`: ordering does not preserve a snapshot between HTTP requests.
+
+## Cursor: continue after a key
+
+```kotlin title="cursor-page"
+val firstPage = db.post.findMany {
+    orderBy { id.asc() }
+    take = 10
+}
+val lastId = firstPage.lastOrNull()?.id
+val nextPage = if (lastId == null) {
+    emptyList()
+} else {
+    db.post.findMany {
+        cursor(id = lastId)
+        take = 10
+    }
+}
+```
+
+The first read orders by ascending key. The next continues after its last `id`, excluding the cursor record itself. Set `inclusive = true` when the operation should include that row again.
+
+Cursors use the primary key. A composite key requires every component and suitable tuple-comparison support from the dialect. A query with `cursor` **cannot supply an explicit `orderBy`**: the current planner rejects the combination. For ordering by views and `id`, use offset or tested handwritten SQL with its own continuation condition.
+
+A cursor does not guarantee speed on any schema: assess indexes, filters and query plans. Nor does it preserve an unchanged database snapshot between pages.
+
+## Projections: fetch only needed columns
+
+```kotlin title="projection"
+val choices = db.user.projectMany {
+    select { id; email }
+    orderBy { id.asc() }
+    take = 20
+}
+choices.forEach { choice -> println("${choice.id}: ${choice.email}") }
+```
+
+Results are `UserProjection` objects rather than complete entities. A projection exposes generated getters for scalar fields, but reading an unselected field raises `VolanFieldNotSelectedException`. The compiler does not produce a separate class for every select combination.
+
+`projectFirst` returns a projection or null. Do not combine a projection and include in one query. Build an explicit response DTO instead of passing the projection to a serializer that might access every getter.
+
+## Distinct: unique column values
+
+```kotlin title="distinct"
+val authors = db.post.projectMany {
+    select { authorId }
+    distinct { authorId }
+}
+val authorIds = authors.map { it.authorId }
+```
+
+This returns distinct `authorId` values, not posts. On SQLite, select must match the distinct columns exactly. PostgreSQL also supports selecting a representative row with distinct; that form is not portable to SQLite. For per-author counts, use [groupBy](/v0.1.0-alpha.2/en/querying/aggregation) to express the intended result directly.

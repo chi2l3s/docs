@@ -1,0 +1,108 @@
+---
+title: "Nested writes"
+description: "Create related rows, connect existing records and understand atomicity."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+An author and their first post should appear together. If the post fails to insert, a partially completed operation is usually undesirable. A nested create expresses both records as one operation, which runtime executes transactionally.
+
+These fragments use an open `db` and existing [User/Post tables](/v0.1.0-alpha.2/en/schema). Repeat them on a new test database because demonstration emails are unique. Several SQL statements in one transaction do not mean one SQL query.
+
+## Create a parent and its children
+
+<CodeGroup>
+```kotlin Kotlin title="nested-create"
+val author = db.user.create {
+    email = "author@example.org"
+    posts.create { title = "First post" }
+    posts.create { title = "Second post" }
+}
+val loaded = db.user.findUniqueOrThrow {
+    where { id eq author.id }
+    include { posts { orderBy { id.asc() } } }
+}
+println(loaded.posts.map { it.title })
+```
+
+```java Java title="nested-create-java"
+var author = db.getUser().create(data -> {
+    data.setEmail("author@example.org");
+    data.getPosts().create(post -> post.setTitle("First post"));
+    data.getPosts().create(post -> post.setTitle("Second post"));
+});
+var loaded = db.getUser().findUniqueOrThrow(q -> {
+    q.where(w -> w.getId().eq(author.getId()));
+    q.include(i -> i.posts());
+});
+System.out.println(loaded.getPosts().size());
+```
+</CodeGroup>
+
+Runtime obtains the user's generated key and supplies it as `Post.authorId`. The child block therefore needs only its required title; views receive their default. Creating a relation does not automatically load it on returned `author`: the separate include query reads its contents.
+
+The parent and children have a transaction boundary even without an explicit `db.transaction`. Inside an existing transaction, the operation follows that transaction's rules; the outer commit is needed for final persistence.
+
+## `connect`: use an existing record
+
+```kotlin title="nested-connect"
+val existingAuthor = db.user.create { email = "existing-author@example.org" }
+val post = db.post.create {
+    title = "Connected post"
+    author.connect { id eq existingAuthor.id }
+}
+println(post.authorId)
+```
+
+`connect` finds the author and establishes the association. Use a full-key condition identifying one record. It does not update the user's name or email. For many-to-many relationships, connecting writes an association through the join table rather than an author column.
+
+A missing target fails and rolls back the operation. If the author's key is already known and no lookup is needed, pass scalar `authorId` in an ordinary create; the database foreign key should still enforce existence.
+
+## `connectOrCreate`: find by a key or insert
+
+```kotlin title="nested-connect-or-create"
+val post = db.post.create {
+    title = "Shared author"
+    author.connectOrCreate {
+        email = "shared-author@example.org"
+        name = "Shared author"
+    }
+}
+println(post.authorId)
+```
+
+The payload must cover at least one unique key of the related model. Here it is email. When the author already exists, the supplied name does not update that record. Otherwise, a new user is created from the payload.
+
+The operation chooses the first fully covered unique key from model metadata. Do not supply contradictory values for several keys expecting a separate lookup predicate: this API accepts a create payload and derives its key.
+
+A lookup followed by insertion does not eliminate concurrent races. A unique constraint can reject a competing insert; handle the conflict according to application rules. One operation's transactional atomicity does not promise an absence of conflicts.
+
+## Change already related records
+
+```kotlin title="nested-update"
+val author = db.user.create {
+    email = "nested-edit@example.org"
+    posts.create { title = "Before" }
+}
+db.user.update {
+    where { id eq author.id }
+    data {
+        posts.update {
+            where { title eq "Before" }
+            data { title = "After" }
+        }
+    }
+}
+```
+
+The nested predicate applies to posts associated with this author. It changes their title here. Multiple matches in a list relation can mean multiple updates; the nested method's name does not guarantee one affected child.
+
+Available update operations depend on the relationship. Detachment requires nullable foreign keys or a join table. A required relation cannot simply be cleared, so it gets no `disconnect` method. `set` replaces the association set rather than deleting target records. Update nesting deeper than one relation level is limited.
+
+## When an explicit transaction is clearer
+
+`createMany` does not support nested writes. For bulk imports, supply keys explicitly and divide work into suitable batches. Use a [transaction](/v0.1.0-alpha.2/en/transactions) when several independent operations, complex branching or unsupported update depth require an explicit sequence.
+
+Let an exception escape the transactional callback when rollback is intended. Send emails, HTTP calls and other external side effects after successful database completion.

@@ -1,0 +1,83 @@
+---
+title: "Models and keys"
+description: "Turn tables into models, choose keys and declare indexes."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+</Info>
+
+A model describes one kind of record: users, posts or orders. Volan turns its `model` block into an entity, repository, query conditions and write payloads. The database stores those records in a table. Declaring a model does not create that table: apply structural changes through [schema synchronization](/next/en/sync) or a [migration](/next/en/migrations).
+
+## Start with one record
+
+Add this block to a `schema.volan` that already has its `datasource` and `generator`:
+
+```prisma
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+}
+```
+
+A user has an identifier, a required email and an optional name. The database supplies `id` on insertion when the application omits it. `@unique` on email declares a database constraint: two rows with the same email must conflict. Case sensitivity and comparison rules depend on the database and column configuration.
+
+Generation exposes `db.user` in Kotlin and `db.getUser()` in Java. The model remains `User`. The generator does not create a separate `findByEmail` method: express the lookup through `findUnique { where { email eq ... } }`. See [reading records](/next/en/querying/reading) for its behavior.
+
+## Primary and unique keys answer different questions
+
+The primary key identifies a row for client operations and cursor pagination. A model needs one primary key: an `@id` field or a set of fields in `@@id`. Its components must be required and cannot be lists.
+
+When an identifier has several components, declare them together. A membership here is identified by its organization and user:
+
+```prisma
+model Membership {
+  organizationId Int
+  userId Int
+  role String
+
+  @@id([organizationId, userId])
+}
+```
+
+The same pair cannot appear twice, while a user can belong to several organizations. A lookup for one membership must provide both components. Filtering only by `userId` can match several rows.
+
+Use `@@unique([organizationId, userId])` for an additional uniqueness constraint when the model already has another primary key. A unique constraint does not replace the primary-key requirement for a regular model. It does not enforce access control either: the application still supplies organization conditions.
+
+## Code names and SQL names
+
+Without mapping, a table has exactly the model's name and a column has exactly the field's name. Volan does not automatically turn `User` into `users` or `createdAt` into `created_at`.
+
+```prisma
+model Account {
+  id Int @id @default(autoincrement())
+  emailAddress String @unique @map("email_address")
+
+  @@map("accounts")
+}
+```
+
+Client code accesses `Account.emailAddress`; SQL uses `accounts` and `email_address`. This is useful for existing databases. Review migration SQL when renaming: changing a mapping does not establish that a plan will preserve data using `RENAME`.
+
+## When to add an index
+
+An index helps the database find and order records by chosen columns. It changes neither the query's result type nor the uniqueness of its records.
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  authorId Int
+  publishedAt DateTime
+
+  @@index([authorId, publishedAt])
+}
+```
+
+Consider this index for an author's posts ordered by publication time. Check its usefulness with a real query plan on your database. Declaring an index requires updating the database; regenerating the client does not install it.
+
+## A table without a suitable key
+
+Use `@@ignore` for an external table the client should not manage. An ignored model can omit its primary key, and no repository is generated for it. This is not access control: database permissions and response DTOs remain separate decisions.
+
+Continue with [field types](/next/en/schema/fields) and [model relations](/next/en/schema/relations).

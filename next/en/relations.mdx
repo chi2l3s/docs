@@ -28,6 +28,11 @@ db.user.count { where { posts { some { views gt 0 } } } }
 
 Java equivalents: `q.include(i -> i.posts())`, `q.select(s -> s.email())`, `data.getPosts().create(post -> post.setTitle("First"))`.
 
+
+## Defining and changing relationships
+
+This page explains loading declared relations. To add an author or profile to a model, see [schema relations](/next/en/schema/relations). For creating authors with posts or connecting existing records, see [nested writes](/next/en/writing/nested-writes).
+
 ## Loaded and selected fields
 
 An entity relation throws `VolanRelationNotLoadedException` unless included. Loaded nullable relations can be null; loaded lists can be empty. That differs from not loaded. A projection uses one generated `UserProjection` type, not a separate class for every column combination. Reading an omitted column raises `VolanFieldNotSelectedException`.

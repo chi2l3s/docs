@@ -24,16 +24,45 @@
                   "v0.1.0-alpha.2/en/installation",
                   "v0.1.0-alpha.2/en/quickstart",
                   "v0.1.0-alpha.2/en/build",
-                  "v0.1.0-alpha.2/en/schema",
                   "v0.1.0-alpha.2/en/frameworks"
                 ]
               },
               {
-                "group": "API",
+                "group": "Schema",
+                "pages": [
+                  "v0.1.0-alpha.2/en/schema",
+                  "v0.1.0-alpha.2/en/schema/models",
+                  "v0.1.0-alpha.2/en/schema/fields",
+                  "v0.1.0-alpha.2/en/schema/attributes",
+                  "v0.1.0-alpha.2/en/schema/enums",
+                  "v0.1.0-alpha.2/en/schema/relations"
+                ]
+              },
+              {
+                "group": "Reading data",
                 "pages": [
                   "v0.1.0-alpha.2/en/queries",
+                  "v0.1.0-alpha.2/en/querying/reading",
+                  "v0.1.0-alpha.2/en/querying/filtering",
+                  "v0.1.0-alpha.2/en/querying/ordering-pagination",
                   "v0.1.0-alpha.2/en/relations",
-                  "v0.1.0-alpha.2/en/transactions",
+                  "v0.1.0-alpha.2/en/querying/aggregation",
+                  "v0.1.0-alpha.2/en/querying/raw-sql"
+                ]
+              },
+              {
+                "group": "Writing data",
+                "pages": [
+                  "v0.1.0-alpha.2/en/writing/create",
+                  "v0.1.0-alpha.2/en/writing/update",
+                  "v0.1.0-alpha.2/en/writing/delete",
+                  "v0.1.0-alpha.2/en/writing/nested-writes",
+                  "v0.1.0-alpha.2/en/transactions"
+                ]
+              },
+              {
+                "group": "Execution",
+                "pages": [
                   "v0.1.0-alpha.2/en/async",
                   "v0.1.0-alpha.2/en/observability"
                 ]
@@ -120,16 +149,45 @@
                   "next/en/installation",
                   "next/en/quickstart",
                   "next/en/build",
-                  "next/en/schema",
                   "next/en/frameworks"
                 ]
               },
               {
-                "group": "API",
+                "group": "Schema",
+                "pages": [
+                  "next/en/schema",
+                  "next/en/schema/models",
+                  "next/en/schema/fields",
+                  "next/en/schema/attributes",
+                  "next/en/schema/enums",
+                  "next/en/schema/relations"
+                ]
+              },
+              {
+                "group": "Reading data",
                 "pages": [
                   "next/en/queries",
+                  "next/en/querying/reading",
+                  "next/en/querying/filtering",
+                  "next/en/querying/ordering-pagination",
                   "next/en/relations",
-                  "next/en/transactions",
+                  "next/en/querying/aggregation",
+                  "next/en/querying/raw-sql"
+                ]
+              },
+              {
+                "group": "Writing data",
+                "pages": [
+                  "next/en/writing/create",
+                  "next/en/writing/update",
+                  "next/en/writing/delete",
+                  "next/en/writing/nested-writes",
+                  "next/en/transactions"
+                ]
+              },
+              {
+                "group": "Execution",
+                "pages": [
                   "next/en/async",
                   "next/en/observability"
                 ]
@@ -174,16 +232,45 @@
                   "v0.1.0-alpha.2/ru/installation",
                   "v0.1.0-alpha.2/ru/quickstart",
                   "v0.1.0-alpha.2/ru/build",
-                  "v0.1.0-alpha.2/ru/schema",
                   "v0.1.0-alpha.2/ru/frameworks"
                 ]
               },
               {
-                "group": "API",
+                "group": "Схема",
+                "pages": [
+                  "v0.1.0-alpha.2/ru/schema",
+                  "v0.1.0-alpha.2/ru/schema/models",
+                  "v0.1.0-alpha.2/ru/schema/fields",
+                  "v0.1.0-alpha.2/ru/schema/attributes",
+                  "v0.1.0-alpha.2/ru/schema/enums",
+                  "v0.1.0-alpha.2/ru/schema/relations"
+                ]
+              },
+              {
+                "group": "Чтение данных",
                 "pages": [
                   "v0.1.0-alpha.2/ru/queries",
+                  "v0.1.0-alpha.2/ru/querying/reading",
+                  "v0.1.0-alpha.2/ru/querying/filtering",
+                  "v0.1.0-alpha.2/ru/querying/ordering-pagination",
                   "v0.1.0-alpha.2/ru/relations",
-                  "v0.1.0-alpha.2/ru/transactions",
+                  "v0.1.0-alpha.2/ru/querying/aggregation",
+                  "v0.1.0-alpha.2/ru/querying/raw-sql"
+                ]
+              },
+              {
+                "group": "Запись данных",
+                "pages": [
+                  "v0.1.0-alpha.2/ru/writing/create",
+                  "v0.1.0-alpha.2/ru/writing/update",
+                  "v0.1.0-alpha.2/ru/writing/delete",
+                  "v0.1.0-alpha.2/ru/writing/nested-writes",
+                  "v0.1.0-alpha.2/ru/transactions"
+                ]
+              },
+              {
+                "group": "Исполнение",
+                "pages": [
                   "v0.1.0-alpha.2/ru/async",
                   "v0.1.0-alpha.2/ru/observability"
                 ]
@@ -270,16 +357,45 @@
                   "next/ru/installation",
                   "next/ru/quickstart",
                   "next/ru/build",
-                  "next/ru/schema",
                   "next/ru/frameworks"
                 ]
               },
               {
-                "group": "API",
+                "group": "Схема",
+                "pages": [
+                  "next/ru/schema",
+                  "next/ru/schema/models",
+                  "next/ru/schema/fields",
+                  "next/ru/schema/attributes",
+                  "next/ru/schema/enums",
+                  "next/ru/schema/relations"
+                ]
+              },
+              {
+                "group": "Чтение данных",
                 "pages": [
                   "next/ru/queries",
+                  "next/ru/querying/reading",
+                  "next/ru/querying/filtering",
+                  "next/ru/querying/ordering-pagination",
                   "next/ru/relations",
-                  "next/ru/transactions",
+                  "next/ru/querying/aggregation",
+                  "next/ru/querying/raw-sql"
+                ]
+              },
+              {
+                "group": "Запись данных",
+                "pages": [
+                  "next/ru/writing/create",
+                  "next/ru/writing/update",
+                  "next/ru/writing/delete",
+                  "next/ru/writing/nested-writes",
+                  "next/ru/transactions"
+                ]
+              },
+              {
+                "group": "Исполнение",
+                "pages": [
                   "next/ru/async",
                   "next/ru/observability"
                 ]

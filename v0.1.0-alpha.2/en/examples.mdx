@@ -30,3 +30,15 @@ Use [Web frameworks](/v0.1.0-alpha.2/en/frameworks) for Spring bean and Ktor lif
 ## Adapt the scenario
 
 Add a Post relation using [Schema](/v0.1.0-alpha.2/en/schema), regenerate and apply a migration. Inspect related reads with include and keep writes in a transaction where the operation requires all-or-nothing behavior. A passing SQLite example does not replace testing on your deployment provider.
+
+## Run the detailed guide examples
+
+The [User/Post project](https://github.com/chi2l3s/docs/tree/main/examples/query-guide) includes its schema, test table setup and Kotlin/Java examples for [reading](/v0.1.0-alpha.2/en/querying/reading), [filtering](/v0.1.0-alpha.2/en/querying/filtering), [pagination](/v0.1.0-alpha.2/en/querying/ordering-pagination), [aggregation](/v0.1.0-alpha.2/en/querying/aggregation) and [writes](/v0.1.0-alpha.2/en/writing/create).
+
+Run from the project directory:
+
+```bash
+./gradlew test
+```
+
+For PowerShell, replace `./gradlew` with `.\gradlew.bat`. JDK 25 is required. Each check opens its own SQLite memory database, performs the operation and verifies its result. Data disappears when the client closes. Schema guide fragments are also generated and compiled in separate packages.

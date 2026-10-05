@@ -1,0 +1,66 @@
+---
+title: "Field types and null"
+description: "Choose value types and distinguish omitted fields from SQL NULL."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Published libraries for PostgreSQL and SQLite.
+</Info>
+
+A field type connects a stored database value, a generated entity property and its allowed query conditions. For example, `views Int` produces an integer in Kotlin and Java and supports `gt`, `gte` and `between`. A `title String` also supports substring matching.
+
+## Scalar types
+
+| Volan | Kotlin | Java for a required value |
+| --- | --- | --- |
+| `String` | `String` | `String` |
+| `Int` | `Int` | `int` |
+| `Long` | `Long` | `long` |
+| `Float` | `Float` | `float` |
+| `Double` | `Double` | `double` |
+| `Decimal` | `java.math.BigDecimal` | `BigDecimal` |
+| `Boolean` | `Boolean` | `boolean` |
+| `DateTime` | `java.time.Instant` | `Instant` |
+| `Date` | `java.time.LocalDate` | `LocalDate` |
+| `Time` | `java.time.LocalTime` | `LocalTime` |
+| `Json` | `io.github.thirtyeighttwentysix.volan.Json` | `Json` |
+| `Bytes` | `ByteArray` | `byte[]` |
+| `Uuid` | `java.util.UUID` | `UUID` |
+
+Nullable numbers use boxed Java types, such as `Integer` instead of `int`. `DateTime` represents an instant, `Date` a calendar date and `Time` a time of day. Choose by meaning: a date of birth should not depend on the application's time zone.
+
+SQL storage depends on the [database](/v0.1.0-alpha.2/en/databases). In particular, Volan's SQLite schema does not support `Decimal` or scalar arrays. An identical Kotlin type does not promise identical storage on every database.
+
+## Required values, null and lists
+
+```prisma
+model Document {
+  id Int @id @default(autoincrement())
+  title String
+  summary String?
+}
+```
+
+This fragment adds a document model. `title` must have a value, while `summary` can store SQL `NULL`. Kotlin exposes `String` and `String?`; check a nullable Java property before using it.
+
+The `[]` suffix means a list. `String[]` is a scalar array on a database that supports it; `Post[]` is a relation to several posts, without an array column on the parent table. Nullable lists such as `Post[]?` and nested lists such as `Post[][]` are invalid. An empty loaded list already expresses the absence of elements.
+
+## Omitting a field differs from writing null
+
+In `create`, provide every required field without a default. The database can fill an omitted defaulted field; an omitted nullable field without a default can become SQL `NULL`. The actual table matters: the client does not create a column default while inserting.
+
+In `update`, an omitted assignment leaves the column unchanged. Explicit `name = null` clears a nullable name. Preserve the distinction between an absent PATCH parameter and a parameter explicitly set to null. Otherwise, a request can erase data the user did not intend to change.
+
+Check absence through `name.isNull()` or `name.isNotNull()`, rather than `name eq null`. See [filtering](/v0.1.0-alpha.2/en/querying/filtering) for examples.
+
+## JSON and binary data
+
+`Json` wraps JSON text. Access the original string through Kotlin's `raw` or Java's `getRaw()`. Volan does not turn JSON contents into your application classes: your chosen library handles serialization, parsing and structural validation.
+
+`Bytes` produces a byte array. It can carry a small binary payload, but its type alone does not set a reasonable attachment size. Assess storage and transfer costs separately for large files.
+
+## Defaults and business rules
+
+`views Int @default(0)` supplies an initial value when the field is omitted. It does not prevent explicitly writing `-1`. Types, defaults and business validation serve different purposes; express range and access checks in the application and suitable database constraints.
+
+See [attributes](/v0.1.0-alpha.2/en/schema/attributes) for defaults, mapping and timestamps. For a fixed set of states such as `DRAFT` and `PUBLISHED`, use an [enum](/v0.1.0-alpha.2/en/schema/enums).

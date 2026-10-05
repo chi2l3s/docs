@@ -36,6 +36,19 @@ model Post {
 }
 ```
 
+
+## Reading the schema section
+
+Start with User/Post above: it connects the model to the query examples. Then open the detailed page for your task.
+
+- [Models and keys](/v0.1.0-alpha.2/en/schema/models): tables, composite keys, uniqueness and indexes.
+- [Field types and null](/v0.1.0-alpha.2/en/schema/fields): Kotlin and Java types, nullability, arrays and relations.
+- [Attributes](/v0.1.0-alpha.2/en/schema/attributes): defaults, timestamps, mapping and client exclusion.
+- [Enums](/v0.1.0-alpha.2/en/schema/enums): allowed states and stored values.
+- [Schema relations](/v0.1.0-alpha.2/en/schema/relations): foreign keys, relationship shapes and deletion actions.
+
+Schema fragments show standalone models or explicitly identified replacements. Regenerate the client and update table structure before querying added fields.
+
 ## Fields and keys
 
 `String` is required, `String?` nullable, `Post[]` a relation list. Optional lists and nested lists are invalid. Scalars: String, Int, Long, Float, Double, Decimal, Boolean, DateTime, Date, Time, Json, Bytes, Uuid. Supported storage depends on [database](/v0.1.0-alpha.2/en/databases); SQLite rejects Decimal and scalar arrays.

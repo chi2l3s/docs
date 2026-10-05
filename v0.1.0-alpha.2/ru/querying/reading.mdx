@@ -1,0 +1,97 @@
+---
+title: "Чтение записей"
+description: "Найди одну запись, получи список и правильно обработай отсутствие данных."
+---
+
+<Info>
+Volan 0.1.0-alpha.2. Опубликованные библиотеки для PostgreSQL и SQLite.
+</Info>
+
+Экран списка, профиль пользователя и проверка занятого email требуют разных результатов. Для списка удобно получить пустую коллекцию, для профиля — запись или отсутствие, а для проверки — boolean. Выбирай метод по тому, что должен сделать вызывающий код.
+
+Примеры ниже — фрагменты внутри приложения с открытым клиентом `db`. Используется [схема User/Post](/v0.1.0-alpha.2/ru/schema); таблицы уже созданы. Полный запуск клиента разобран в [первом запросе](/v0.1.0-alpha.2/ru/quickstart).
+
+## `findMany`: список, который может быть пустым
+
+```kotlin title="reading-list"
+val users = db.user.findMany {
+    where { email endsWith "@example.org" }
+    orderBy { id.asc() }
+    take = 20
+}
+users.forEach { user -> println(user.email) }
+```
+
+Условие выбирает email с указанным окончанием, `orderBy` задаёт порядок, а `take` ограничивает размер результата. Если совпадений нет, `users` — пустой `List<User>`, а не null. Его можно сразу обходить или показывать как пустой список интерфейса.
+
+Без `where` метод читает все строки. Без `take` нет автоматического лимита. Без `orderBy` база не обязана возвращать стабильный порядок. Для endpoint списка явно задай фильтр доступа, размер страницы и сортировку.
+
+## `findFirst`: первая по заданному порядку
+
+```kotlin title="reading-first"
+val first = db.user.findFirst {
+    where { name.isNotNull() }
+    orderBy { id.asc() }
+}
+println(first?.email ?: "No matching user")
+```
+
+Несколько пользователей могут иметь имя. Запрос выбирает среди них пользователя с наименьшим `id`. Без порядка слово «первая» не определяет, какой именно пользователь будет выбран.
+
+`findFirstOrThrow` использует тот же сценарий поиска, но при отсутствии строки выбрасывает `VolanNotFoundException`. Он подходит, когда отсутствие нарушает предусловие операции. Для ожидаемо пустого результата nullable-вариант позволяет обработать отсутствие без исключения.
+
+## `findUnique`: условие должно идентифицировать строку
+
+<CodeGroup>
+```kotlin Kotlin title="reading-unique"
+val userId = 1
+val user = db.user.findUnique {
+    where { id eq userId }
+}
+println(user?.email ?: "User not found")
+```
+
+```java Java title="reading-unique-java"
+var userId = 1;
+var user = db.getUser().findUnique(q -> {
+    q.where(w -> w.getId().eq(userId));
+});
+System.out.println(user == null ? "User not found" : user.getEmail());
+```
+</CodeGroup>
+
+Замени демонстрационный `userId` идентификатором из приложения. `id` — первичный ключ, поэтому условие соответствует максимум одной строке. По полю `email @unique` можно искать тем же способом через равенство.
+
+`findUnique` не проверяет, что фильтр использует уникальный ключ, и не обнаруживает несколько совпадений. Он читает первую строку, как `findFirst`. Гарантию одной записи даёт условие вместе с ограничением базы. Для составного ключа передавай все части. `findUniqueOrThrow` меняет только результат при отсутствии строки, а не правила уникальности.
+
+## `count` и `exists`: когда сами записи не нужны
+
+```kotlin title="reading-summary"
+val total = db.user.count {
+    where { email endsWith "@example.org" }
+}
+val emailTaken = db.user.exists {
+    where { email eq "alice@example.org" }
+}
+println("Users: $total, email taken: $emailTaken")
+```
+
+`count` возвращает `Long`, при пустой выборке — `0L`. `exists` отвечает `true` или `false`. Оба метода работают в базе и не загружают список сущностей, чтобы потом считать его в памяти.
+
+Проверка `exists` перед `create` полезна для сообщения пользователю, но не заменяет уникальное ограничение. Между двумя командами другой запрос может вставить такой же email. Обработай конфликт записи, даже если предварительная проверка прошла.
+
+## Форма результата
+
+| Метод | Kotlin | Когда строки нет |
+| --- | --- | --- |
+| `findMany` | `List<User>` | Пустой список |
+| `findFirst`, `findUnique` | `User?` | `null` |
+| `findFirstOrThrow`, `findUniqueOrThrow` | `User` | `VolanNotFoundException` |
+| `projectMany` | `List<UserProjection>` | Пустой список |
+| `projectFirst` | `UserProjection?` | `null` |
+| `count` | `Long` | `0L` |
+| `exists` | `Boolean` | `false` |
+
+Для нескольких колонок вместо целой строки используй [проекцию](/v0.1.0-alpha.2/ru/querying/ordering-pagination). Для публикаций пользователя добавь [include](/v0.1.0-alpha.2/ru/relations): чтение само по себе не загружает связи.
+
+Для запуска всех фрагментов вместе с подготовкой базы открой [пример User/Post](/v0.1.0-alpha.2/ru/examples).

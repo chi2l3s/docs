@@ -23,6 +23,11 @@ Java uses `db.transaction(tx -> { ...; return result; })`, or `transactionAsync(
 
 The complete callback uses one thread and connection. Returning normally commits; throwing rolls back. Nested synchronous transactions create savepoints. DDL rollback is a separate [database guarantee](/next/en/databases), not implied by DML transactions.
 
+
+## Related records in one operation
+
+Creating an author and their posts does not always require a manual sequence. [Nested writes](/next/en/writing/nested-writes) express these operations through create and update payloads with a transaction boundary. An explicit transaction is useful for other repositories, checks and several independent actions.
+
 ## Isolation and retry
 
 `Isolation.DEFAULT` follows the driver. Explicit levels depend on the provider; SQLite supports SERIALIZABLE and READ_UNCOMMITTED. Use `RetryPolicy.NONE` by default. A configured retry repeats the entire outer callback for retryable transaction failures, so it must be safe to execute again. Keep payments, HTTP calls, messages and other irreversible side effects outside it.

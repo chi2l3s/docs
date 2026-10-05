@@ -22,3 +22,10 @@ This repository publishes Russian and English documentation at https://volan.min
 - Archive the previous version when publishing a new release: add a new directory and version entry; do not overwrite a release snapshot. Add redirects for old unversioned URLs deliberately.
 - Quickstarts must match their corresponding examples: first-query for alpha.2, first-query-alpha1 for alpha.1 and first-query-next for development. Use the matching generator and runtime.
 - When changing query, raw SQL or transaction contracts, run the corresponding example's `test` task. Alpha.1 checks require a dedicated PostgreSQL database and explicit DATABASE_URL, DATABASE_USER and DATABASE_PASSWORD; the other examples use isolated SQLite memory databases. Keep verification commands in each example's README.
+
+## Detailed guides
+
+- Keep the detailed `schema/`, `querying/` and `writing/` guides in published alpha.2 and development complete in both languages. The alpha.1 archive retains its release-specific structure.
+- Use the explanatory depth and small topic-focused examples of https://3826.mintlify.app as editorial context. Verify every transferred API claim against the selected release; that site contains obsolete Java calls, uniqueness guarantees and aggregate ordering examples.
+- Keep guide snippets aligned with `examples/query-guide` for alpha.2 and `examples/query-guide-next` for development. Run their `test` tasks after changing snippets. Generate and compile the schema fragments as part of those builds.
+- Use one User/Post schema across related guides. State when code is an application fragment, requires existing data, replaces a model or uses provider-specific SQL. Nested write results do not imply loaded relations.

@@ -1,0 +1,110 @@
+---
+title: "Filtering"
+description: "Combine comparisons, text matching, null checks and relation conditions."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+</Info>
+
+`where` describes which rows the application needs. Its block exposes the current model's fields, builds SQL conditions and binds values as parameters. Consecutive conditions mean `AND`: a row must satisfy all of them.
+
+These fragments use an open client `db` and the [User/Post schema](/next/en/schema), after creating tables and test records. Filtering by a relation does not require loading it through include.
+
+## Strings, numbers and value sets
+
+| Condition | Meaning |
+| --- | --- |
+| `eq`, `notEq` | Equal or not equal |
+| `gt`, `gte`, `lt`, `lte` | Greater, at least, less, at most |
+| `between(lower, upper)` | Both bounds included |
+| `oneOf(values)`, `notOneOf(values)` | Membership or exclusion |
+| `contains`, `startsWith`, `endsWith` | Substring, prefix or suffix |
+| `isNull()`, `isNotNull()` | Absence or presence of a value |
+
+Operators depend on field types. Numbers and temporal types support ranges. Enums and booleans provide equality and membership conditions; enum fields do not offer `gt`. You do not need numerical status comparisons to express allowed states.
+
+```kotlin title="filter-range"
+val posts = db.post.findMany {
+    where {
+        views.between(100, 1000)
+        title contains "Volan"
+    }
+    orderBy { id.asc() }
+    take = 20
+}
+```
+
+A post must have between 100 and 1000 views and contain the title substring. Typed filters do not add hidden ownership checks: include `authorId` when the application's access rule requires it.
+
+## Case and null
+
+```kotlin title="filter-text-null"
+val users = db.user.findMany {
+    where {
+        email.ignoringCase() endsWith "@example.org"
+        name.isNotNull()
+    }
+    orderBy { id.asc() }
+    take = 20
+}
+```
+
+`ignoringCase()` affects `eq`, `notEq`, `contains`, `startsWith` and `endsWith`. It does not change `oneOf` or `notOneOf`. Case behavior depends on the database; SQLite's standard conversion handles ASCII. Check the actual alphabets in your data before promising case-insensitive search.
+
+Check SQL `NULL` through its dedicated conditions, rather than the string `"null"` or `eq null`. Negating `name eq "Alice"` does not automatically include null names: SQL gives NULL its own logic. Add an explicit `isNull()` alternative when missing values must match.
+
+## `or`, `and` and `not`
+
+```kotlin title="filter-groups"
+val users = db.user.findMany {
+    where {
+        email endsWith "@example.org"
+        or {
+            name eq "Alice"
+            name.isNull()
+        }
+        not { email startsWith "blocked" }
+    }
+    orderBy { id.asc() }
+}
+```
+
+The query requires the email domain, accepts Alice **or** a missing name, then excludes the email prefix. Outer conditions combine with AND; one branch of `or` is enough. Use `and` to group joint conditions inside an alternative; `not` negates its whole nested block.
+
+An empty DSL group is not a denial condition: if the application adds no conditions, no protective filter appears. Validate required access parameters before building the query.
+
+## Relation conditions
+
+```kotlin title="filter-relations"
+val authors = db.user.findMany {
+    where { posts { some { views gt 100 } } }
+    orderBy { id.asc() }
+}
+val posts = db.post.findMany {
+    where { author { matches { email endsWith "@example.org" } } }
+    orderBy { id.asc() }
+}
+```
+
+`some` requires at least one matching child; `none` requires no matching children; `every` requires no child that violates the condition. Thus `every` also holds for an empty list. Use `some` to require the existence of posts.
+
+To-one relations use `matches` and `notMatches`. These conditions select parent records. They neither populate relation properties nor automatically restrict a separate include: configure [relation loading](/next/en/relations) independently.
+
+## The same logic in Java
+
+```java title="filter-java"
+var users = db.getUser().findMany(q -> {
+    q.where(w -> {
+        w.getEmail().endsWith("@example.org");
+        w.or(alternative -> {
+            alternative.getName().eq("Alice");
+            alternative.getName().isNull();
+        });
+    });
+    q.orderBy(o -> o.getId().asc());
+    q.setTake(20);
+});
+```
+
+Getters supply filter fields; callbacks open groups. Values still use parameter binding. Apply that principle explicitly when writing your own SQL with [rawQuery](/next/en/querying/raw-sql).

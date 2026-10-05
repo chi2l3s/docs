@@ -11,6 +11,20 @@ Start with the model repository: `db.user` in Kotlin or `db.getUser()` in Java. 
 
 These examples use the [User/Post schema](/v0.1.0-alpha.2/en/schema). `db` is an open client and the tables must already exist. The blocks show operations inside an application; [First query](/v0.1.0-alpha.2/en/quickstart) covers the complete connection and table setup.
 
+
+## Explore each operation
+
+This page gives an API overview. If you are learning Volan, move from reads to filters and pagination, then writes. Each detailed guide explains a small example together with its result.
+
+- [Reading records](/v0.1.0-alpha.2/en/querying/reading): lists, nullable results, OrThrow and existence checks.
+- [Filtering](/v0.1.0-alpha.2/en/querying/filtering): operators, logical groups, null and relation conditions.
+- [Ordering and pagination](/v0.1.0-alpha.2/en/querying/ordering-pagination): stable ordering, offset, cursor, select and distinct.
+- [Loading relations](/v0.1.0-alpha.2/en/relations): include and loaded data.
+- [Aggregation](/v0.1.0-alpha.2/en/querying/aggregation): statistics and groupBy.
+- [Raw SQL](/v0.1.0-alpha.2/en/querying/raw-sql): parameters, mapping and response DTOs.
+- [Creation](/v0.1.0-alpha.2/en/writing/create), [updates](/v0.1.0-alpha.2/en/writing/update) and [deletion](/v0.1.0-alpha.2/en/writing/delete): payloads and filter scope.
+- [Nested writes](/v0.1.0-alpha.2/en/writing/nested-writes): related data in one transactional operation.
+
 ## CRUD
 
 ```kotlin

@@ -1,0 +1,71 @@
+---
+title: "Deleting records"
+description: "Delete by key, check affected counts and account for dependent records."
+---
+
+<Info>
+Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+</Info>
+
+Deletion affects more than the list a user sees. A record can have dependents; foreign keys may reject deletion or cascade it to children. Determine deletion scope and relation rules before choosing a method.
+
+These examples target a test database with an open `db` and the [User/Post schema](/next/en/schema). Its `onDelete: Cascade` deletes posts when their user is removed. Do not run demonstration bulk deletion against a working database.
+
+## Delete a specific user
+
+<CodeGroup>
+```kotlin Kotlin title="delete-one"
+val created = db.user.create { email = "remove@example.org" }
+val deleted = db.user.delete {
+    where { id eq created.id }
+}
+println("Deleted user: ${deleted.email}")
+```
+
+```java Java title="delete-one-java"
+var created = db.getUser().create(data -> data.setEmail("remove@example.org"));
+var deleted = db.getUser().delete(q -> {
+    q.where(w -> w.getId().eq(created.getId()));
+});
+System.out.println("Deleted user: " + deleted.getEmail());
+```
+</CodeGroup>
+
+The method returns scalar data from the deleted user. It confirms the command rather than representing a record still present in the database. Relations are not loaded automatically into this result.
+
+A missing key raises `VolanNotFoundException`. For “delete if present,” use `deleteMany` with the full key and handle `0L` or `1L` according to application rules.
+
+## Define the deletion scope
+
+<Warning>
+On PostgreSQL and SQLite, `delete` with a broad filter removes every matching row while returning one. Omitting `where` provides no protection against deleting the entire table. Use the full primary or unique key and required access conditions for a single record.
+</Warning>
+
+H2 uses the row-returning path. The MySQL and MariaDB path without RETURNING checks selected rows and rejects multiple matches. This is dialect-specific behavior rather than a portable safety guard: always supply the correct key.
+
+The query does not add tenant isolation, soft deletion or ownership checks. If only an owner may delete a record, express that in application access rules and the predicate.
+
+## Delete a set and receive a count
+
+```kotlin title="delete-many"
+val deletedCount = db.user.deleteMany {
+    where { email endsWith "@temporary.example.org" }
+}
+println("Deleted users: $deletedCount")
+```
+
+On a test database, this removes users with that email suffix. It returns a `Long`, or zero when none match. It does not return deleted objects. Plan required audit or archive data before deletion and coordinate it with the transaction.
+
+The count belongs to the command's model rows. Do not interpret it as a complete count of dependent records removed by foreign keys. Users and posts are different tables.
+
+## Cascade, SetNull and deletion restrictions
+
+In [relation definitions](/next/en/schema/relations), `Cascade` means database-managed dependent deletion. `SetNull` preserves a child and clears its nullable key. `Restrict` and `NoAction` can reject deletion while references remain.
+
+The actual database structure enforces these rules. Include does not control cascade: unloaded posts can still be removed. If data must survive, change the model rule and prepare a migration rather than relying on the client not having requested children.
+
+## Physical deletion and soft deletion
+
+`delete` and `deleteMany` physically remove rows. An application using `deletedAt` defines an ordinary model field: set it through update and explicitly exclude marked records in reads. Volan does not turn delete into soft delete or add a universal soft-delete filter.
+
+Use a [transaction](/next/en/transactions) when deletion belongs to several coordinated database actions. Send external notifications after successful completion; HTTP requests do not roll back with SQL.

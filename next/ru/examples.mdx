@@ -13,7 +13,7 @@ Volan 0.1.0-alpha.3-SNAPSHOT. Документация разработки; б�
 
 | Пример | Проверки | Требования |
 |---|---|---|
-| [Первый запрос](/next/ru/quickstart) | Alpha.2 Kotlin/Java, SQLite, создание и чтение записи, закрытие | JDK 25, Gradle |
+| [Первый запрос](/next/ru/quickstart) | Staged alpha.3 Kotlin/Java, SQLite, создание и чтение записи, закрытие | JDK 25, Gradle |
 | [plugin-smoke/gradle](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/gradle) | Alpha.3 plugin, Kotlin/Java H2 CRUD, корутины, метрики | Staged artifacts |
 | [plugin-smoke/maven](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/maven) | Alpha.3 generation и Java H2 CRUD | Maven 3.9+, staged artifacts |
 | [release-smoke](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/release-smoke) | Независимые artifacts, SQLite/H2 и серверные consumers | Docker для серверных тестов |
@@ -58,3 +58,17 @@ API-примеры используют одну схему User/Post. Чтоб�
 Пример приложения собирается из внешних artifacts и показывает, что кодогенерация и runtime действительно работают вместе. Он также обнаруживает ошибки публикации, которые тесты внутренних модулей могут не увидеть: отсутствующий dependency, неверные plugin markers или незарегистрированные generated sources.
 
 H2 consumer не является доказательством всех гарантий PostgreSQL/MySQL. Для целевого provider запускай соответствующие проверки и проверяй миграции на предыдущей структуре с данными. Полный web lifecycle тоже проверяется отдельно от маленького CRUD-сценария.
+
+## Запустить примеры подробных руководств
+
+[Проект User/Post](https://github.com/chi2l3s/docs/tree/main/examples/query-guide-next) содержит схему, создание тестовых таблиц и Kotlin/Java-примеры [чтения](/next/ru/querying/reading), [фильтров](/next/ru/querying/filtering), [пагинации](/next/ru/querying/ordering-pagination), [агрегатов](/next/ru/querying/aggregation) и [записи](/next/ru/writing/create).
+
+В каталоге проекта запусти:
+
+```bash
+./gradlew test "-PvolanRepository=file:///ABSOLUTE/PATH/TO/release-repository"
+```
+
+Для PowerShell используй `.\gradlew.bat` вместо `./gradlew`. Нужен JDK 25. Каждая проверка создаёт свою SQLite-базу в памяти, выполняет операцию и проверяет результат. Временные данные исчезают при закрытии клиента. Схемы из раздела схемы также генерируются и компилируются в отдельных packages.
+
+Подготовь библиотеки по [руководству сборки](/next/ru/build) и замени `ABSOLUTE/PATH/TO/release-repository` абсолютным путём своего файлового Maven-репозитория. Эти артефакты alpha.3 не опубликованы в Central.
