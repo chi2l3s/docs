@@ -4,7 +4,7 @@ description: "Update database structure with reviewed SQL files and a recorded a
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 A migration ties a model change to concrete SQL your team can review, commit and apply during deployment. With existing data, adding a field or changing a key must account for stored rows as well as the new schema.
@@ -48,7 +48,7 @@ Scripts must not contain their own transaction control. PostgreSQL CREATE INDEX 
 
 ## H2, MySQL, MariaDB
 
-These providers require alpha.3. DDL has implicit commit. H2 acquires exclusive mode; use a maintenance window, a dedicated administrator connection and no outstanding application transactions. MySQL/MariaDB acquire a database-specific named session lock, waiting up to 60 seconds. Locks coordinate Volan writers, not unrelated application SQL or other tools.
+These providers require Volan 1.0. DDL has implicit commit. H2 acquires exclusive mode; use a maintenance window, a dedicated administrator connection and no outstanding application transactions. MySQL/MariaDB acquire a database-specific named session lock, waiting up to 60 seconds. Locks coordinate Volan writers, not unrelated application SQL or other tools.
 
 The journal commits a start record, acknowledges each completed statement in `applied_steps`, then sets `finished_at`. Failure leaves committed steps and an unfinished record. Further apply stops; partial scripts are never replayed automatically. After a crash, the acknowledged count is only a lower bound: another statement may already have committed.
 
@@ -78,7 +78,7 @@ volan db push --schema schema.volan --url jdbc:h2:file:./data --resolve
 
 Reserve `_volan_push` and `_volan_migrations`. Push interlocks with the default versioned journal; custom journal users must coordinate unfinished states themselves. Nontransactional scripts must not change session, transaction, schema/database or locking state, directly or through routines. Executable MySQL/MariaDB version comments are refused.
 
-[Detailed script restrictions and recovery](https://github.com/thirtyeighttwentysix/volan/blob/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/docs/migrations.md).
+[Detailed script restrictions and recovery](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/docs/migrations.md).
 
 ## Change a database with existing rows
 

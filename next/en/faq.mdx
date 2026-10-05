@@ -4,7 +4,7 @@ description: "Answers about generation, queries, relations, transactions and mig
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
 These questions often come up between installation and the first real endpoint. Each answer explains ORM behavior and points to a worked example or a more detailed guide.
@@ -23,7 +23,7 @@ The client is generated as Kotlin and must compile before Java uses it. `javaFri
 
 ## Why does current CLI output fail with alpha.2?
 
-The preview CLI generates the alpha.3 API. Alpha.2 runtime need not contain those methods. Use the matching alpha.2 generator or a complete staged alpha.3 set. Updating the CLI does not update application dependencies; see [Versions](/next/en/versions).
+The 1.0.0 CLI generates the 1.0.0 API. Alpha.2 runtime need not contain those methods. Use a matching generator or upgrade libraries and plugin together to 1.0.0. Updating the CLI does not update application dependencies; see [Versions](/next/en/versions).
 
 ## Why did findUnique return null?
 
@@ -51,7 +51,7 @@ The annotation alone does not prove Volan joins a Spring transaction. Use `db.tr
 
 ## Do coroutines make JDBC nonblocking?
 
-JDBC still occupies a worker. `suspendQuery` suspends the caller and schedules work on a dispatcher. In alpha.3, cancellation requests `Statement.cancel()` and waits for coroutine cleanup; it cannot reverse a commit already underway. Java future cancellation and cleanup occur at different times. See [Async](/next/en/async).
+JDBC still occupies a worker. `suspendQuery` suspends the caller and schedules work on a dispatcher. In Volan 1.0, cancellation requests `Statement.cancel()` and waits for coroutine cleanup; it cannot reverse a commit already underway. Java future cancellation and cleanup occur at different times. See [Async](/next/en/async).
 
 ## Can I rerun a failed H2 migration?
 
@@ -63,4 +63,4 @@ Review types, defaults, filters and migration SQL. A shared client scenario can 
 
 ## Is Volan stable for every project?
 
-It is an alpha before 1.0. Suitability depends on operations and provider. Start with a reproducible scenario, review [Limitations](/next/en/limitations), pin versions and test your queries and migrations. The documentation describes current guarantees rather than support for every workload.
+Suitability depends on operations and provider. Start with a reproducible scenario, review [Limitations](/next/en/limitations), pin versions and test your queries and migrations. The documentation describes current guarantees rather than support for every workload.

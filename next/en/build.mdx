@@ -4,26 +4,15 @@ description: "Connect client generation to compilation and understand each build
 ---
 
 <Info>
-Volan 0.1.0-alpha.3-SNAPSHOT. Development documentation; library artifacts must be staged from source.
+Volan 1.0.0. Libraries and build plugins are available from Maven Central.
 </Info>
 
-The generated client belongs to the build just like your application classes. When `schema.volan` changes, generation must run before code that uses the client is compiled. A stale field reference then fails during compilation instead of after the service starts.
-
-All build configurations in this section use alpha.3 artifacts staged from source. Keep codegen, runtime and plugins together. Use the published alpha.2 documentation for dependencies resolved only from Central.
-
-## Stage alpha.3
-
-Clone the [source repository](https://github.com/thirtyeighttwentysix/volan), check out the documentation baseline `d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4` and run from its root:
-```bash
-git checkout d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4
-./gradlew publishAllPublicationsToReleaseTestRepository "-Pversion=0.1.0-alpha.3" -PvolanUnsignedLocalPublication --no-configuration-cache
-```
-
-This creates `build/release-repository`; it does not publish to Central. Use that repository for generator, plugins and runtime together. Keep the local candidate version `0.1.0-alpha.3` distinct from a published release. Main's default version is `0.1.0-alpha.3-SNAPSHOT`.
+The build plugin validates the schema and generates the client before compilation. Use the same version for the plugin and runtime. Generation needs no database connection.
 
 ## Gradle
 
-These are the checked-in [Gradle consumer](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/gradle) files. Java 17+, Kotlin/JVM main sources, tested Gradle 9.8.0. `settings.gradle.kts`:
+These are the checked-in [Gradle consumer](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/plugin-smoke/gradle) files. Java 17+, Kotlin/JVM main sources, tested Gradle 9.8.0. `settings.gradle.kts`:
+
 ```kotlin
 pluginManagement {
     repositories {
@@ -33,7 +22,7 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        id("io.github.thirtyeighttwentysix.volan") version providers.gradleProperty("volanVersion").getOrElse("0.1.0-alpha.3")
+        id("io.github.thirtyeighttwentysix.volan") version providers.gradleProperty("volanVersion").getOrElse("1.0.0")
     }
 }
 
@@ -48,13 +37,14 @@ rootProject.name = "volan-gradle-consumer"
 ```
 
 `build.gradle.kts`:
+
 ```kotlin
 plugins {
     kotlin("jvm") version "2.4.20"
     id("io.github.thirtyeighttwentysix.volan")
 }
 
-val volanVersion = providers.gradleProperty("volanVersion").getOrElse("0.1.0-alpha.3")
+val volanVersion = providers.gradleProperty("volanVersion").getOrElse("1.0.0")
 dependencies {
     implementation("io.github.thirtyeighttwentysix:volan-dialect-h2:$volanVersion")
     runtimeOnly("com.h2database:h2:2.5.252")
@@ -69,20 +59,21 @@ tasks.withType<JavaCompile>().configureEach { options.release.set(17) }
 tasks.test { useJUnitPlatform() }
 ```
 
-Use the H2 schema from [Examples](/next/en/examples). Run `./gradlew -p plugin-smoke/gradle test "-PvolanRepository=file:///absolute/path/build/release-repository"`. On Windows, a URI is `file:///D:/Projects/Volan/build/release-repository`.
+Use the H2 schema from [Examples](/next/en/examples). Run `./gradlew -p plugin-smoke/gradle test -PvolanVersion=1.0.0` from the repository root.
 
 The plugin adds matching runtime, registers generated Kotlin and wires `volanGenerate` into compilation. Add the dialect and driver yourself. Customize paths with `volan { schemaFile.set(layout.projectDirectory.file("db/schema.volan")); outputDirectory.set(layout.buildDirectory.dir("generated/client")) }`.
 
 ## Maven
 
-Maven 3.9+, Java 17+. Complete [Maven consumer](https://github.com/thirtyeighttwentysix/volan/tree/d9c8906caba4bcd3ccec0dbfcdf4961c62b679e4/plugin-smoke/maven) POM:
+Maven 3.9+, Java 17+. Complete [Maven consumer](https://github.com/thirtyeighttwentysix/volan/tree/v1.0.0/plugin-smoke/maven) POM:
+
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>example</groupId><artifactId>volan-maven-consumer</artifactId><version>1.0</version>
   <properties>
-    <volan.version>0.1.0-alpha.3</volan.version>
+    <volan.version>1.0.0</volan.version>
     <kotlin.version>2.4.20</kotlin.version>
     <kotlin.compiler.jdkRelease>17</kotlin.compiler.jdkRelease>
     <kotlin.compiler.daemon>false</kotlin.compiler.daemon>
@@ -121,7 +112,7 @@ Maven 3.9+, Java 17+. Complete [Maven consumer](https://github.com/thirtyeighttw
 </project>
 ```
 
-Run `mvn -f plugin-smoke/maven/pom.xml test -DvolanRepository=file:///absolute/path/build/release-repository`.
+Run `mvn -f plugin-smoke/maven/pom.xml test -Dvolan.version=1.0.0`.
 
 The `generate` goal defaults to `generate-sources`. Generated Kotlin needs the Kotlin compiler even for Java applications. The BOM aligns libraries, not plugin versions. Incremental Kotlin compilation removes bytecode of deleted models; otherwise run `mvn clean test` after schema removals.
 
