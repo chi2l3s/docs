@@ -1,0 +1,44 @@
+---
+title: "Raw SQL"
+description: "Текст SQL задаёшь ты; значения передавай отдельными параметрами."
+---
+
+Текст SQL задаёшь ты; значения передавай отдельными параметрами.
+
+```kotlin
+val emailToFind = "alice@example.org"
+val emails = db.rawQuery(
+    """SELECT "email" FROM "User" WHERE "email" = ?""",
+    listOf(emailToFind),
+) { row -> row.getString("email") }
+```
+
+```java
+var emailToFind = "alice@example.org";
+var emails = db.rawQuery(
+    "SELECT \"email\" FROM \"User\" WHERE \"email\" = ?",
+    java.util.List.of(emailToFind),
+    row -> row.getString("email")
+);
+```
+
+```kotlin
+data class UserLabel(val email: String, val name: String?)
+
+val labels = db.rawQuery(
+    """SELECT "email", "name" FROM "User" ORDER BY "id" LIMIT 20""",
+    emptyList(),
+) { row ->
+    UserLabel(row.getString("email"), row.getStringOrNull("name"))
+}
+```
+
+```kotlin
+val affected = db.rawExecute(
+    """UPDATE "User" SET "name" = ? WHERE "email" = ?""",
+    listOf("Alice", "alice@example.org"),
+)
+println("Updated rows: $affected")
+```
+
+`rawQuery` возвращает List результатов mapper, `rawExecute` — Long affected rows. SQL не переводится между диалектами. `?` задаёт значение, а не имя таблицы, колонки или направление сортировки. Row читается внутри mapper; используй nullable accessor для SQL NULL. Java List.of не принимает null; используй Arrays.asList. Bare QueryExecutor-клиент не имеет raw-доступа.

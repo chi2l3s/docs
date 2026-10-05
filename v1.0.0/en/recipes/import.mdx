@@ -1,0 +1,21 @@
+---
+title: "Bulk import"
+description: "Supply rows in batches and explicit relation keys."
+---
+
+Supply rows in batches and explicit relation keys.
+
+```kotlin
+val rows = listOf("One", "Two", "Three")
+db.transaction { tx ->
+    rows.chunked(100).forEach { batch ->
+        tx.post.createMany {
+            batch.forEach { titleValue ->
+                row { title = titleValue; authorId = existingAuthorId }
+            }
+        }
+    }
+}
+```
+
+100 is an application batch size, not a Volan hard limit. Runtime also respects parameter limits. An outer transaction makes the whole import atomic but holds its connection throughout. Apply batches separately for partial progress.

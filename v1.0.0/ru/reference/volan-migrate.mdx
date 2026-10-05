@@ -1,0 +1,32 @@
+---
+title: "volan-migrate"
+description: "Readers, structural schema, plans, scripts, sync и migration journal."
+---
+
+Readers, structural schema, plans, scripts, sync и migration journal.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-migrate:1.0.0")
+```
+
+## Контракты
+- [DatabaseReader](/v1.0.0/ru/reference/volan-migrate/databasereader): `DatabaseReader`, `Companion`
+- [DatabaseSchema](/v1.0.0/ru/reference/volan-migrate/databaseschema): `DatabaseSchema`, `EnumDefinition`, `TableDefinition`, `VolanMigrationException`
+- [DatabaseSync](/v1.0.0/ru/reference/volan-migrate/databasesync): `DatabaseSync`
+- [H2Reader](/v1.0.0/ru/reference/volan-migrate/h2reader): `H2Reader`
+- [H2Types](/v1.0.0/ru/reference/volan-migrate/h2types): `H2Types`
+- [MigrationDirectory](/v1.0.0/ru/reference/volan-migrate/migrationdirectory): `MigrationDirectory`, `MigrationFile`, `Companion`
+- [MigrationJournal](/v1.0.0/ru/reference/volan-migrate/migrationjournal): `AppliedMigration`, `MigrationJournal`, `Companion`
+- [MigrationPlan](/v1.0.0/ru/reference/volan-migrate/migrationplan): `MigrationPlan`, `Companion`, `MigrationStep`
+- [Migrator](/v1.0.0/ru/reference/volan-migrate/migrator): `MigrationStatus`, `Migrator`
+- [MySqlReader](/v1.0.0/ru/reference/volan-migrate/mysqlreader): `MySqlReader`
+- [MySqlTypes](/v1.0.0/ru/reference/volan-migrate/mysqltypes): `MySqlTypes`
+- [NativeTypeTable](/v1.0.0/ru/reference/volan-migrate/nativetypetable): `NativeTypeTable`, `Companion`, `PostgresTypes`
+- [PostgresReader](/v1.0.0/ru/reference/volan-migrate/postgresreader): `PostgresReader`
+- [SchemaDiffer](/v1.0.0/ru/reference/volan-migrate/schemadiffer): `SchemaDiffer`
+- [SchemaMapper](/v1.0.0/ru/reference/volan-migrate/schemamapper): `SchemaMapper`
+- [SchemaWriter](/v1.0.0/ru/reference/volan-migrate/schemawriter): `SchemaWriter`
+- [SqliteReader](/v1.0.0/ru/reference/volan-migrate/sqlitereader): `SqliteReader`
+- [SqliteTypes](/v1.0.0/ru/reference/volan-migrate/sqlitetypes): `SqliteTypes`
+
+Data-классы также имеют value equality, copy и componentN; enum — values/valueOf. Nullable обозначается `?`. Сигнатуры Kotlin с @JvmOverloads имеют Java-overloads; @JvmStatic/@JvmField дают static-доступ. Сериализация или миграция данных из самой сигнатуры не следует.

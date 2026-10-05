@@ -1,0 +1,31 @@
+---
+title: "Composite keys and cursors"
+description: "This example uses a separate Membership model. @@id field order determines cursor order."
+---
+
+This example uses a separate Membership model. @@id field order determines cursor order.
+
+```prisma
+model Membership {
+  tenantId Int
+  userId Int
+  role String
+  @@id([tenantId, userId])
+}
+```
+
+```kotlin
+db.membership.create { tenantId = 1; userId = 1; role = "reader" }
+db.membership.create { tenantId = 1; userId = 2; role = "writer" }
+db.membership.create { tenantId = 2; userId = 1; role = "reader" }
+val exact = db.membership.findUniqueOrThrow {
+    where { tenantId eq 1; userId eq 2 }
+}
+val next = db.membership.findMany {
+    cursor(tenantId = exact.tenantId, userId = exact.userId)
+    take = 10
+}
+check(next.single().tenantId == 2)
+```
+
+Use every PK part in single reads/updates/deletes. findUnique does not enforce a complete key: tenantId alone can return the first row. Cursor compares the full ordered tuple; (2,1), (2,2), … follow (1,2). It excludes the boundary by default; inclusive=true includes it. Explicit orderBy with a cursor is refused. To page one tenant, add `where { tenantId eq tenant }` and supply the complete cursor.

@@ -1,0 +1,21 @@
+---
+title: "Choosing a database"
+description: "Capabilities of five providers and setup guides."
+---
+
+| Capability | PostgreSQL | SQLite | H2 | MySQL/MariaDB |
+| --- | --- | --- | --- | --- |
+| CRUD, relations, nested writes, summaries | Yes | Yes | Yes | Yes |
+| Composite keys, cursors, savepoints | Yes | Yes | Yes | Yes |
+| Decimal | Yes | No | NUMERIC(65,30) | DECIMAL(65,30) |
+| Scalar arrays | Yes | No | Yes | No |
+| @db | Yes | No | No | No |
+| Distinct | DISTINCT ON | Exact selected columns | DISTINCT ON | Exact selected columns |
+| Full-text index DDL | Yes | No | No | Yes |
+| Typed full-text queries | No | No | No | No |
+| Transactional DDL apply | Yes | Yes | No | No |
+| Pull, push, drift, journal | Yes | Yes | Yes | Yes |
+
+[PostgreSQL](/v1.0.0/en/databases/postgresql), [SQLite](/v1.0.0/en/databases/sqlite), [H2](/v1.0.0/en/databases/h2), [MySQL](/v1.0.0/en/databases/mysql), [MariaDB](/v1.0.0/en/databases/mariadb).
+
+MySQL/MariaDB use InnoDB. Pull covers a representable structural subset and refuses unsupported objects.

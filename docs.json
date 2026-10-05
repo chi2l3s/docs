@@ -13,9 +13,376 @@
         "language": "en",
         "versions": [
           {
-            "version": "0.1.0-alpha.2",
-            "tag": "Published",
+            "version": "1.0.0",
+            "tag": "Stable",
             "default": true,
+            "groups": [
+              {
+                "group": "Start",
+                "pages": [
+                  "v1.0.0/en/introduction",
+                  "v1.0.0/en/quickstart",
+                  "v1.0.0/en/installation"
+                ]
+              },
+              {
+                "group": "Build",
+                "pages": [
+                  "v1.0.0/en/build/gradle",
+                  "v1.0.0/en/build/maven",
+                  "v1.0.0/en/build/generation",
+                  "v1.0.0/en/build/programmatic",
+                  "v1.0.0/en/build"
+                ]
+              },
+              {
+                "group": "Schema",
+                "pages": [
+                  "v1.0.0/en/schema",
+                  "v1.0.0/en/schema/syntax",
+                  "v1.0.0/en/schema/configuration",
+                  "v1.0.0/en/schema/models",
+                  "v1.0.0/en/schema/fields",
+                  "v1.0.0/en/schema/null",
+                  "v1.0.0/en/schema/defaults",
+                  "v1.0.0/en/schema/timestamps",
+                  "v1.0.0/en/schema/mapping",
+                  "v1.0.0/en/schema/indexes",
+                  "v1.0.0/en/schema/ignore",
+                  "v1.0.0/en/schema/enums",
+                  "v1.0.0/en/schema/json",
+                  "v1.0.0/en/schema/arrays",
+                  "v1.0.0/en/schema/native-types",
+                  "v1.0.0/en/schema/relations",
+                  "v1.0.0/en/schema/attributes",
+                  "v1.0.0/en/schema/referential-actions",
+                  "v1.0.0/en/schema/attribute-arguments",
+                  "v1.0.0/en/schema/postgresql-types",
+                  "v1.0.0/en/schema/self-relations",
+                  "v1.0.0/en/schema/many-to-many",
+                  "v1.0.0/en/schema/scalar-values",
+                  "v1.0.0/en/schema/diagnostics"
+                ]
+              },
+              {
+                "group": "Reads",
+                "pages": [
+                  "v1.0.0/en/querying/reading",
+                  "v1.0.0/en/querying/filtering",
+                  "v1.0.0/en/querying/ordering-pagination",
+                  "v1.0.0/en/querying/aggregation",
+                  "v1.0.0/en/querying/raw-sql",
+                  "v1.0.0/en/querying/projections",
+                  "v1.0.0/en/querying/distinct",
+                  "v1.0.0/en/querying/null-order",
+                  "v1.0.0/en/querying/relation-filters",
+                  "v1.0.0/en/relations",
+                  "v1.0.0/en/querying/deep-include",
+                  "v1.0.0/en/querying/grouping",
+                  "v1.0.0/en/queries",
+                  "v1.0.0/en/querying/row-mapping",
+                  "v1.0.0/en/querying/composite-keys"
+                ]
+              },
+              {
+                "group": "Writes",
+                "pages": [
+                  "v1.0.0/en/writing/create",
+                  "v1.0.0/en/writing/update",
+                  "v1.0.0/en/writing/delete",
+                  "v1.0.0/en/writing/nested-writes",
+                  "v1.0.0/en/writing/upsert",
+                  "v1.0.0/en/writing/nested-operations"
+                ]
+              },
+              {
+                "group": "Client and execution",
+                "pages": [
+                  "v1.0.0/en/client/connection",
+                  "v1.0.0/en/client/data-source",
+                  "v1.0.0/en/client/entities",
+                  "v1.0.0/en/transactions",
+                  "v1.0.0/en/transactions/savepoints",
+                  "v1.0.0/en/transactions/isolation-retry",
+                  "v1.0.0/en/async",
+                  "v1.0.0/en/execution/async-transaction",
+                  "v1.0.0/en/execution/coroutines",
+                  "v1.0.0/en/execution/cancellation",
+                  "v1.0.0/en/observability",
+                  "v1.0.0/en/execution/metrics",
+                  "v1.0.0/en/production",
+                  "v1.0.0/en/execution/sql-errors"
+                ]
+              },
+              {
+                "group": "Databases and structure",
+                "pages": [
+                  "v1.0.0/en/databases",
+                  "v1.0.0/en/databases/postgresql",
+                  "v1.0.0/en/databases/sqlite",
+                  "v1.0.0/en/databases/h2",
+                  "v1.0.0/en/databases/mysql",
+                  "v1.0.0/en/databases/mariadb",
+                  "v1.0.0/en/sync",
+                  "v1.0.0/en/database/plans",
+                  "v1.0.0/en/database/drift",
+                  "v1.0.0/en/database/introspection"
+                ]
+              },
+              {
+                "group": "Migrations",
+                "pages": [
+                  "v1.0.0/en/migrations",
+                  "v1.0.0/en/migrations/history",
+                  "v1.0.0/en/migrations/recovery",
+                  "v1.0.0/en/migrations/push-recovery",
+                  "v1.0.0/en/migrations/locking",
+                  "v1.0.0/en/migrations/sql-scripts",
+                  "v1.0.0/en/migrations/sqlite-rebuild"
+                ]
+              },
+              {
+                "group": "CLI",
+                "pages": [
+                  "v1.0.0/en/cli/install",
+                  "v1.0.0/en/cli/upgrade",
+                  "v1.0.0/en/cli/init",
+                  "v1.0.0/en/cli/generate",
+                  "v1.0.0/en/cli/validate",
+                  "v1.0.0/en/cli/format",
+                  "v1.0.0/en/cli/pull",
+                  "v1.0.0/en/cli/push",
+                  "v1.0.0/en/cli"
+                ]
+              },
+              {
+                "group": "Recipes",
+                "pages": [
+                  "v1.0.0/en/recipes/search",
+                  "v1.0.0/en/recipes/import",
+                  "v1.0.0/en/recipes/patch",
+                  "v1.0.0/en/recipes/tenant-soft-delete",
+                  "v1.0.0/en/recipes/testing"
+                ]
+              },
+              {
+                "group": "Applications",
+                "pages": [
+                  "v1.0.0/en/examples/kotlin-basic",
+                  "v1.0.0/en/examples/java-basic",
+                  "v1.0.0/en/examples/spring-boot",
+                  "v1.0.0/en/examples/ktor",
+                  "v1.0.0/en/frameworks",
+                  "v1.0.0/en/examples"
+                ]
+              },
+              {
+                "group": "API reference",
+                "pages": [
+                  "v1.0.0/en/reference/modules",
+                  "v1.0.0/en/reference/generated",
+                  "v1.0.0/en/reference/query-descriptions",
+                  "v1.0.0/en/reference/custom-dialect",
+                  "v1.0.0/en/reference/schema-api",
+                  {
+                    "group": "Generated API",
+                    "pages": [
+                      "v1.0.0/en/reference/generated/post",
+                      "v1.0.0/en/reference/generated/user",
+                      "v1.0.0/en/reference/generated/volanclient"
+                    ]
+                  },
+                  {
+                    "group": "volan-core",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-core",
+                      "v1.0.0/en/reference/volan-core/json",
+                      "v1.0.0/en/reference/volan-core/volanexception"
+                    ]
+                  },
+                  {
+                    "group": "volan-schema",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-schema",
+                      "v1.0.0/en/reference/volan-schema/ast",
+                      "v1.0.0/en/reference/volan-schema/diagnostic",
+                      "v1.0.0/en/reference/volan-schema/diagnosticrenderer",
+                      "v1.0.0/en/reference/volan-schema/schemaformatter",
+                      "v1.0.0/en/reference/volan-schema/schemaparser",
+                      "v1.0.0/en/reference/volan-schema/sourcefile",
+                      "v1.0.0/en/reference/volan-schema/suggestions"
+                    ]
+                  },
+                  {
+                    "group": "volan-ir",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-ir",
+                      "v1.0.0/en/reference/volan-ir/ir",
+                      "v1.0.0/en/reference/volan-ir/schemaloader",
+                      "v1.0.0/en/reference/volan-ir/semanticcode"
+                    ]
+                  },
+                  {
+                    "group": "volan-codegen",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-codegen",
+                      "v1.0.0/en/reference/volan-codegen/generatedsources",
+                      "v1.0.0/en/reference/volan-codegen/volangenerator"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-api",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-dialect-api",
+                      "v1.0.0/en/reference/volan-dialect-api/ddl",
+                      "v1.0.0/en/reference/volan-dialect-api/ddlrenderer",
+                      "v1.0.0/en/reference/volan-dialect-api/dialect",
+                      "v1.0.0/en/reference/volan-dialect-api/dialectprovider",
+                      "v1.0.0/en/reference/volan-dialect-api/sql",
+                      "v1.0.0/en/reference/volan-dialect-api/sqlrenderer",
+                      "v1.0.0/en/reference/volan-dialect-api/volandialectexception"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-postgres",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-dialect-postgres",
+                      "v1.0.0/en/reference/volan-dialect-postgres/postgresdialect",
+                      "v1.0.0/en/reference/volan-dialect-postgres/postgresdialectprovider"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-sqlite",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-dialect-sqlite",
+                      "v1.0.0/en/reference/volan-dialect-sqlite/sqlitedialect",
+                      "v1.0.0/en/reference/volan-dialect-sqlite/sqlitedialectprovider"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-h2",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-dialect-h2",
+                      "v1.0.0/en/reference/volan-dialect-h2/h2dialect",
+                      "v1.0.0/en/reference/volan-dialect-h2/h2dialectprovider"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-mysql",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-dialect-mysql",
+                      "v1.0.0/en/reference/volan-dialect-mysql/mysqldialect",
+                      "v1.0.0/en/reference/volan-dialect-mysql/mysqldialectprovider"
+                    ]
+                  },
+                  {
+                    "group": "volan-runtime",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-runtime",
+                      "v1.0.0/en/reference/volan-runtime/aggregates",
+                      "v1.0.0/en/reference/volan-runtime/asyncaccess",
+                      "v1.0.0/en/reference/volan-runtime/entityreader",
+                      "v1.0.0/en/reference/volan-runtime/exceptions",
+                      "v1.0.0/en/reference/volan-runtime/filters",
+                      "v1.0.0/en/reference/volan-runtime/filterscope",
+                      "v1.0.0/en/reference/volan-runtime/grouping",
+                      "v1.0.0/en/reference/volan-runtime/metadata",
+                      "v1.0.0/en/reference/volan-runtime/nestedwrites",
+                      "v1.0.0/en/reference/volan-runtime/querycancellation",
+                      "v1.0.0/en/reference/volan-runtime/queryexecutor",
+                      "v1.0.0/en/reference/volan-runtime/queryinterceptor",
+                      "v1.0.0/en/reference/volan-runtime/queryscope",
+                      "v1.0.0/en/reference/volan-runtime/queryspec",
+                      "v1.0.0/en/reference/volan-runtime/row",
+                      "v1.0.0/en/reference/volan-runtime/tableregistry",
+                      "v1.0.0/en/reference/volan-runtime/transactions",
+                      "v1.0.0/en/reference/volan-runtime/volan"
+                    ]
+                  },
+                  {
+                    "group": "volan-migrate",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-migrate",
+                      "v1.0.0/en/reference/volan-migrate/databasereader",
+                      "v1.0.0/en/reference/volan-migrate/databaseschema",
+                      "v1.0.0/en/reference/volan-migrate/databasesync",
+                      "v1.0.0/en/reference/volan-migrate/h2reader",
+                      "v1.0.0/en/reference/volan-migrate/h2types",
+                      "v1.0.0/en/reference/volan-migrate/migrationdirectory",
+                      "v1.0.0/en/reference/volan-migrate/migrationjournal",
+                      "v1.0.0/en/reference/volan-migrate/migrationplan",
+                      "v1.0.0/en/reference/volan-migrate/migrator",
+                      "v1.0.0/en/reference/volan-migrate/mysqlreader",
+                      "v1.0.0/en/reference/volan-migrate/mysqltypes",
+                      "v1.0.0/en/reference/volan-migrate/nativetypetable",
+                      "v1.0.0/en/reference/volan-migrate/postgresreader",
+                      "v1.0.0/en/reference/volan-migrate/schemadiffer",
+                      "v1.0.0/en/reference/volan-migrate/schemamapper",
+                      "v1.0.0/en/reference/volan-migrate/schemawriter",
+                      "v1.0.0/en/reference/volan-migrate/sqlitereader",
+                      "v1.0.0/en/reference/volan-migrate/sqlitetypes"
+                    ]
+                  },
+                  {
+                    "group": "volan-coroutines",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-coroutines",
+                      "v1.0.0/en/reference/volan-coroutines/coroutineaccess",
+                      "v1.0.0/en/reference/volan-coroutines/suspendingqueryexecutor"
+                    ]
+                  },
+                  {
+                    "group": "volan-micrometer",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-micrometer",
+                      "v1.0.0/en/reference/volan-micrometer/micrometerqueryinterceptor"
+                    ]
+                  },
+                  {
+                    "group": "volan-gradle-plugin",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-gradle-plugin",
+                      "v1.0.0/en/reference/volan-gradle-plugin/volanplugin"
+                    ]
+                  },
+                  {
+                    "group": "volan-maven-plugin",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-maven-plugin",
+                      "v1.0.0/en/reference/volan-maven-plugin/generatemojo"
+                    ]
+                  },
+                  {
+                    "group": "volan-cli",
+                    "pages": [
+                      "v1.0.0/en/reference/volan-cli",
+                      "v1.0.0/en/reference/volan-cli/main"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "v1.0.0/en/errors",
+                  "v1.0.0/en/versions",
+                  "v1.0.0/en/limitations",
+                  "v1.0.0/en/faq",
+                  "v1.0.0/en/benchmarks"
+                ]
+              },
+              {
+                "group": "Library development",
+                "pages": [
+                  "v1.0.0/en/contributing/architecture",
+                  "v1.0.0/en/contributing/build-test"
+                ]
+              }
+            ]
+          },
+          {
+            "version": "0.1.0-alpha.2",
+            "tag": "Archive",
             "groups": [
               {
                 "group": "Start",
@@ -140,7 +507,7 @@
           },
           {
             "version": "0.1.0-alpha.3-SNAPSHOT",
-            "tag": "Development",
+            "tag": "Pre-release archive",
             "groups": [
               {
                 "group": "Start",
@@ -221,9 +588,376 @@
         "language": "ru",
         "versions": [
           {
-            "version": "0.1.0-alpha.2",
-            "tag": "Опубликована",
+            "version": "1.0.0",
+            "tag": "Стабильная",
             "default": true,
+            "groups": [
+              {
+                "group": "Начало",
+                "pages": [
+                  "v1.0.0/ru/introduction",
+                  "v1.0.0/ru/quickstart",
+                  "v1.0.0/ru/installation"
+                ]
+              },
+              {
+                "group": "Сборка",
+                "pages": [
+                  "v1.0.0/ru/build/gradle",
+                  "v1.0.0/ru/build/maven",
+                  "v1.0.0/ru/build/generation",
+                  "v1.0.0/ru/build/programmatic",
+                  "v1.0.0/ru/build"
+                ]
+              },
+              {
+                "group": "Схема",
+                "pages": [
+                  "v1.0.0/ru/schema",
+                  "v1.0.0/ru/schema/syntax",
+                  "v1.0.0/ru/schema/configuration",
+                  "v1.0.0/ru/schema/models",
+                  "v1.0.0/ru/schema/fields",
+                  "v1.0.0/ru/schema/null",
+                  "v1.0.0/ru/schema/defaults",
+                  "v1.0.0/ru/schema/timestamps",
+                  "v1.0.0/ru/schema/mapping",
+                  "v1.0.0/ru/schema/indexes",
+                  "v1.0.0/ru/schema/ignore",
+                  "v1.0.0/ru/schema/enums",
+                  "v1.0.0/ru/schema/json",
+                  "v1.0.0/ru/schema/arrays",
+                  "v1.0.0/ru/schema/native-types",
+                  "v1.0.0/ru/schema/relations",
+                  "v1.0.0/ru/schema/attributes",
+                  "v1.0.0/ru/schema/referential-actions",
+                  "v1.0.0/ru/schema/attribute-arguments",
+                  "v1.0.0/ru/schema/postgresql-types",
+                  "v1.0.0/ru/schema/self-relations",
+                  "v1.0.0/ru/schema/many-to-many",
+                  "v1.0.0/ru/schema/scalar-values",
+                  "v1.0.0/ru/schema/diagnostics"
+                ]
+              },
+              {
+                "group": "Чтение",
+                "pages": [
+                  "v1.0.0/ru/querying/reading",
+                  "v1.0.0/ru/querying/filtering",
+                  "v1.0.0/ru/querying/ordering-pagination",
+                  "v1.0.0/ru/querying/aggregation",
+                  "v1.0.0/ru/querying/raw-sql",
+                  "v1.0.0/ru/querying/projections",
+                  "v1.0.0/ru/querying/distinct",
+                  "v1.0.0/ru/querying/null-order",
+                  "v1.0.0/ru/querying/relation-filters",
+                  "v1.0.0/ru/relations",
+                  "v1.0.0/ru/querying/deep-include",
+                  "v1.0.0/ru/querying/grouping",
+                  "v1.0.0/ru/queries",
+                  "v1.0.0/ru/querying/row-mapping",
+                  "v1.0.0/ru/querying/composite-keys"
+                ]
+              },
+              {
+                "group": "Запись",
+                "pages": [
+                  "v1.0.0/ru/writing/create",
+                  "v1.0.0/ru/writing/update",
+                  "v1.0.0/ru/writing/delete",
+                  "v1.0.0/ru/writing/nested-writes",
+                  "v1.0.0/ru/writing/upsert",
+                  "v1.0.0/ru/writing/nested-operations"
+                ]
+              },
+              {
+                "group": "Клиент и исполнение",
+                "pages": [
+                  "v1.0.0/ru/client/connection",
+                  "v1.0.0/ru/client/data-source",
+                  "v1.0.0/ru/client/entities",
+                  "v1.0.0/ru/transactions",
+                  "v1.0.0/ru/transactions/savepoints",
+                  "v1.0.0/ru/transactions/isolation-retry",
+                  "v1.0.0/ru/async",
+                  "v1.0.0/ru/execution/async-transaction",
+                  "v1.0.0/ru/execution/coroutines",
+                  "v1.0.0/ru/execution/cancellation",
+                  "v1.0.0/ru/observability",
+                  "v1.0.0/ru/execution/metrics",
+                  "v1.0.0/ru/production",
+                  "v1.0.0/ru/execution/sql-errors"
+                ]
+              },
+              {
+                "group": "СУБД и схема БД",
+                "pages": [
+                  "v1.0.0/ru/databases",
+                  "v1.0.0/ru/databases/postgresql",
+                  "v1.0.0/ru/databases/sqlite",
+                  "v1.0.0/ru/databases/h2",
+                  "v1.0.0/ru/databases/mysql",
+                  "v1.0.0/ru/databases/mariadb",
+                  "v1.0.0/ru/sync",
+                  "v1.0.0/ru/database/plans",
+                  "v1.0.0/ru/database/drift",
+                  "v1.0.0/ru/database/introspection"
+                ]
+              },
+              {
+                "group": "Миграции",
+                "pages": [
+                  "v1.0.0/ru/migrations",
+                  "v1.0.0/ru/migrations/history",
+                  "v1.0.0/ru/migrations/recovery",
+                  "v1.0.0/ru/migrations/push-recovery",
+                  "v1.0.0/ru/migrations/locking",
+                  "v1.0.0/ru/migrations/sql-scripts",
+                  "v1.0.0/ru/migrations/sqlite-rebuild"
+                ]
+              },
+              {
+                "group": "CLI",
+                "pages": [
+                  "v1.0.0/ru/cli/install",
+                  "v1.0.0/ru/cli/upgrade",
+                  "v1.0.0/ru/cli/init",
+                  "v1.0.0/ru/cli/generate",
+                  "v1.0.0/ru/cli/validate",
+                  "v1.0.0/ru/cli/format",
+                  "v1.0.0/ru/cli/pull",
+                  "v1.0.0/ru/cli/push",
+                  "v1.0.0/ru/cli"
+                ]
+              },
+              {
+                "group": "Рецепты",
+                "pages": [
+                  "v1.0.0/ru/recipes/search",
+                  "v1.0.0/ru/recipes/import",
+                  "v1.0.0/ru/recipes/patch",
+                  "v1.0.0/ru/recipes/tenant-soft-delete",
+                  "v1.0.0/ru/recipes/testing"
+                ]
+              },
+              {
+                "group": "Приложения",
+                "pages": [
+                  "v1.0.0/ru/examples/kotlin-basic",
+                  "v1.0.0/ru/examples/java-basic",
+                  "v1.0.0/ru/examples/spring-boot",
+                  "v1.0.0/ru/examples/ktor",
+                  "v1.0.0/ru/frameworks",
+                  "v1.0.0/ru/examples"
+                ]
+              },
+              {
+                "group": "Справочник API",
+                "pages": [
+                  "v1.0.0/ru/reference/modules",
+                  "v1.0.0/ru/reference/generated",
+                  "v1.0.0/ru/reference/query-descriptions",
+                  "v1.0.0/ru/reference/custom-dialect",
+                  "v1.0.0/ru/reference/schema-api",
+                  {
+                    "group": "Generated API",
+                    "pages": [
+                      "v1.0.0/ru/reference/generated/post",
+                      "v1.0.0/ru/reference/generated/user",
+                      "v1.0.0/ru/reference/generated/volanclient"
+                    ]
+                  },
+                  {
+                    "group": "volan-core",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-core",
+                      "v1.0.0/ru/reference/volan-core/json",
+                      "v1.0.0/ru/reference/volan-core/volanexception"
+                    ]
+                  },
+                  {
+                    "group": "volan-schema",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-schema",
+                      "v1.0.0/ru/reference/volan-schema/ast",
+                      "v1.0.0/ru/reference/volan-schema/diagnostic",
+                      "v1.0.0/ru/reference/volan-schema/diagnosticrenderer",
+                      "v1.0.0/ru/reference/volan-schema/schemaformatter",
+                      "v1.0.0/ru/reference/volan-schema/schemaparser",
+                      "v1.0.0/ru/reference/volan-schema/sourcefile",
+                      "v1.0.0/ru/reference/volan-schema/suggestions"
+                    ]
+                  },
+                  {
+                    "group": "volan-ir",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-ir",
+                      "v1.0.0/ru/reference/volan-ir/ir",
+                      "v1.0.0/ru/reference/volan-ir/schemaloader",
+                      "v1.0.0/ru/reference/volan-ir/semanticcode"
+                    ]
+                  },
+                  {
+                    "group": "volan-codegen",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-codegen",
+                      "v1.0.0/ru/reference/volan-codegen/generatedsources",
+                      "v1.0.0/ru/reference/volan-codegen/volangenerator"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-api",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-dialect-api",
+                      "v1.0.0/ru/reference/volan-dialect-api/ddl",
+                      "v1.0.0/ru/reference/volan-dialect-api/ddlrenderer",
+                      "v1.0.0/ru/reference/volan-dialect-api/dialect",
+                      "v1.0.0/ru/reference/volan-dialect-api/dialectprovider",
+                      "v1.0.0/ru/reference/volan-dialect-api/sql",
+                      "v1.0.0/ru/reference/volan-dialect-api/sqlrenderer",
+                      "v1.0.0/ru/reference/volan-dialect-api/volandialectexception"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-postgres",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-dialect-postgres",
+                      "v1.0.0/ru/reference/volan-dialect-postgres/postgresdialect",
+                      "v1.0.0/ru/reference/volan-dialect-postgres/postgresdialectprovider"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-sqlite",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-dialect-sqlite",
+                      "v1.0.0/ru/reference/volan-dialect-sqlite/sqlitedialect",
+                      "v1.0.0/ru/reference/volan-dialect-sqlite/sqlitedialectprovider"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-h2",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-dialect-h2",
+                      "v1.0.0/ru/reference/volan-dialect-h2/h2dialect",
+                      "v1.0.0/ru/reference/volan-dialect-h2/h2dialectprovider"
+                    ]
+                  },
+                  {
+                    "group": "volan-dialect-mysql",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-dialect-mysql",
+                      "v1.0.0/ru/reference/volan-dialect-mysql/mysqldialect",
+                      "v1.0.0/ru/reference/volan-dialect-mysql/mysqldialectprovider"
+                    ]
+                  },
+                  {
+                    "group": "volan-runtime",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-runtime",
+                      "v1.0.0/ru/reference/volan-runtime/aggregates",
+                      "v1.0.0/ru/reference/volan-runtime/asyncaccess",
+                      "v1.0.0/ru/reference/volan-runtime/entityreader",
+                      "v1.0.0/ru/reference/volan-runtime/exceptions",
+                      "v1.0.0/ru/reference/volan-runtime/filters",
+                      "v1.0.0/ru/reference/volan-runtime/filterscope",
+                      "v1.0.0/ru/reference/volan-runtime/grouping",
+                      "v1.0.0/ru/reference/volan-runtime/metadata",
+                      "v1.0.0/ru/reference/volan-runtime/nestedwrites",
+                      "v1.0.0/ru/reference/volan-runtime/querycancellation",
+                      "v1.0.0/ru/reference/volan-runtime/queryexecutor",
+                      "v1.0.0/ru/reference/volan-runtime/queryinterceptor",
+                      "v1.0.0/ru/reference/volan-runtime/queryscope",
+                      "v1.0.0/ru/reference/volan-runtime/queryspec",
+                      "v1.0.0/ru/reference/volan-runtime/row",
+                      "v1.0.0/ru/reference/volan-runtime/tableregistry",
+                      "v1.0.0/ru/reference/volan-runtime/transactions",
+                      "v1.0.0/ru/reference/volan-runtime/volan"
+                    ]
+                  },
+                  {
+                    "group": "volan-migrate",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-migrate",
+                      "v1.0.0/ru/reference/volan-migrate/databasereader",
+                      "v1.0.0/ru/reference/volan-migrate/databaseschema",
+                      "v1.0.0/ru/reference/volan-migrate/databasesync",
+                      "v1.0.0/ru/reference/volan-migrate/h2reader",
+                      "v1.0.0/ru/reference/volan-migrate/h2types",
+                      "v1.0.0/ru/reference/volan-migrate/migrationdirectory",
+                      "v1.0.0/ru/reference/volan-migrate/migrationjournal",
+                      "v1.0.0/ru/reference/volan-migrate/migrationplan",
+                      "v1.0.0/ru/reference/volan-migrate/migrator",
+                      "v1.0.0/ru/reference/volan-migrate/mysqlreader",
+                      "v1.0.0/ru/reference/volan-migrate/mysqltypes",
+                      "v1.0.0/ru/reference/volan-migrate/nativetypetable",
+                      "v1.0.0/ru/reference/volan-migrate/postgresreader",
+                      "v1.0.0/ru/reference/volan-migrate/schemadiffer",
+                      "v1.0.0/ru/reference/volan-migrate/schemamapper",
+                      "v1.0.0/ru/reference/volan-migrate/schemawriter",
+                      "v1.0.0/ru/reference/volan-migrate/sqlitereader",
+                      "v1.0.0/ru/reference/volan-migrate/sqlitetypes"
+                    ]
+                  },
+                  {
+                    "group": "volan-coroutines",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-coroutines",
+                      "v1.0.0/ru/reference/volan-coroutines/coroutineaccess",
+                      "v1.0.0/ru/reference/volan-coroutines/suspendingqueryexecutor"
+                    ]
+                  },
+                  {
+                    "group": "volan-micrometer",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-micrometer",
+                      "v1.0.0/ru/reference/volan-micrometer/micrometerqueryinterceptor"
+                    ]
+                  },
+                  {
+                    "group": "volan-gradle-plugin",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-gradle-plugin",
+                      "v1.0.0/ru/reference/volan-gradle-plugin/volanplugin"
+                    ]
+                  },
+                  {
+                    "group": "volan-maven-plugin",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-maven-plugin",
+                      "v1.0.0/ru/reference/volan-maven-plugin/generatemojo"
+                    ]
+                  },
+                  {
+                    "group": "volan-cli",
+                    "pages": [
+                      "v1.0.0/ru/reference/volan-cli",
+                      "v1.0.0/ru/reference/volan-cli/main"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Справка",
+                "pages": [
+                  "v1.0.0/ru/errors",
+                  "v1.0.0/ru/versions",
+                  "v1.0.0/ru/limitations",
+                  "v1.0.0/ru/faq",
+                  "v1.0.0/ru/benchmarks"
+                ]
+              },
+              {
+                "group": "Разработка библиотеки",
+                "pages": [
+                  "v1.0.0/ru/contributing/architecture",
+                  "v1.0.0/ru/contributing/build-test"
+                ]
+              }
+            ]
+          },
+          {
+            "version": "0.1.0-alpha.2",
+            "tag": "Архив",
             "groups": [
               {
                 "group": "Начало",
@@ -348,7 +1082,7 @@
           },
           {
             "version": "0.1.0-alpha.3-SNAPSHOT",
-            "tag": "В разработке",
+            "tag": "Предрелизный архив",
             "groups": [
               {
                 "group": "Начало",
@@ -453,232 +1187,1362 @@
   "redirects": [
     {
       "source": "/index",
-      "destination": "/v0.1.0-alpha.2/en/introduction",
+      "destination": "/v1.0.0/en/introduction",
       "permanent": true
     },
     {
       "source": "/quickstart",
-      "destination": "/v0.1.0-alpha.2/en/quickstart",
+      "destination": "/v1.0.0/en/quickstart",
       "permanent": true
     },
     {
       "source": "/en/async",
-      "destination": "/v0.1.0-alpha.2/en/async",
+      "destination": "/v1.0.0/en/async",
       "permanent": true
     },
     {
       "source": "/en/benchmarks",
-      "destination": "/v0.1.0-alpha.2/en/benchmarks",
+      "destination": "/v1.0.0/en/benchmarks",
       "permanent": true
     },
     {
       "source": "/en/build",
-      "destination": "/v0.1.0-alpha.2/en/build",
+      "destination": "/v1.0.0/en/build",
       "permanent": true
     },
     {
       "source": "/en/cli",
-      "destination": "/v0.1.0-alpha.2/en/cli",
+      "destination": "/v1.0.0/en/cli",
       "permanent": true
     },
     {
       "source": "/en/databases",
-      "destination": "/v0.1.0-alpha.2/en/databases",
+      "destination": "/v1.0.0/en/databases",
       "permanent": true
     },
     {
       "source": "/en/errors",
-      "destination": "/v0.1.0-alpha.2/en/errors",
+      "destination": "/v1.0.0/en/errors",
       "permanent": true
     },
     {
       "source": "/en/examples",
-      "destination": "/v0.1.0-alpha.2/en/examples",
+      "destination": "/v1.0.0/en/examples",
       "permanent": true
     },
     {
       "source": "/en/faq",
-      "destination": "/v0.1.0-alpha.2/en/faq",
+      "destination": "/v1.0.0/en/faq",
       "permanent": true
     },
     {
       "source": "/en/frameworks",
-      "destination": "/v0.1.0-alpha.2/en/frameworks",
+      "destination": "/v1.0.0/en/frameworks",
       "permanent": true
     },
     {
       "source": "/en/installation",
-      "destination": "/v0.1.0-alpha.2/en/installation",
+      "destination": "/v1.0.0/en/installation",
       "permanent": true
     },
     {
       "source": "/en/introduction",
-      "destination": "/v0.1.0-alpha.2/en/introduction",
+      "destination": "/v1.0.0/en/introduction",
       "permanent": true
     },
     {
       "source": "/en/limitations",
-      "destination": "/v0.1.0-alpha.2/en/limitations",
+      "destination": "/v1.0.0/en/limitations",
       "permanent": true
     },
     {
       "source": "/en/migrations",
-      "destination": "/v0.1.0-alpha.2/en/migrations",
+      "destination": "/v1.0.0/en/migrations",
       "permanent": true
     },
     {
       "source": "/en/observability",
-      "destination": "/v0.1.0-alpha.2/en/observability",
+      "destination": "/v1.0.0/en/observability",
       "permanent": true
     },
     {
       "source": "/en/production",
-      "destination": "/v0.1.0-alpha.2/en/production",
+      "destination": "/v1.0.0/en/production",
       "permanent": true
     },
     {
       "source": "/en/queries",
-      "destination": "/v0.1.0-alpha.2/en/queries",
+      "destination": "/v1.0.0/en/queries",
       "permanent": true
     },
     {
       "source": "/en/quickstart",
-      "destination": "/v0.1.0-alpha.2/en/quickstart",
+      "destination": "/v1.0.0/en/quickstart",
       "permanent": true
     },
     {
       "source": "/en/relations",
-      "destination": "/v0.1.0-alpha.2/en/relations",
+      "destination": "/v1.0.0/en/relations",
       "permanent": true
     },
     {
       "source": "/en/schema",
-      "destination": "/v0.1.0-alpha.2/en/schema",
+      "destination": "/v1.0.0/en/schema",
       "permanent": true
     },
     {
       "source": "/en/sync",
-      "destination": "/v0.1.0-alpha.2/en/sync",
+      "destination": "/v1.0.0/en/sync",
       "permanent": true
     },
     {
       "source": "/en/transactions",
-      "destination": "/v0.1.0-alpha.2/en/transactions",
+      "destination": "/v1.0.0/en/transactions",
       "permanent": true
     },
     {
       "source": "/en/versions",
-      "destination": "/v0.1.0-alpha.2/en/versions",
+      "destination": "/v1.0.0/en/versions",
       "permanent": true
     },
     {
       "source": "/ru/async",
-      "destination": "/v0.1.0-alpha.2/ru/async",
+      "destination": "/v1.0.0/ru/async",
       "permanent": true
     },
     {
       "source": "/ru/benchmarks",
-      "destination": "/v0.1.0-alpha.2/ru/benchmarks",
+      "destination": "/v1.0.0/ru/benchmarks",
       "permanent": true
     },
     {
       "source": "/ru/build",
-      "destination": "/v0.1.0-alpha.2/ru/build",
+      "destination": "/v1.0.0/ru/build",
       "permanent": true
     },
     {
       "source": "/ru/cli",
-      "destination": "/v0.1.0-alpha.2/ru/cli",
+      "destination": "/v1.0.0/ru/cli",
       "permanent": true
     },
     {
       "source": "/ru/databases",
-      "destination": "/v0.1.0-alpha.2/ru/databases",
+      "destination": "/v1.0.0/ru/databases",
       "permanent": true
     },
     {
       "source": "/ru/errors",
-      "destination": "/v0.1.0-alpha.2/ru/errors",
+      "destination": "/v1.0.0/ru/errors",
       "permanent": true
     },
     {
       "source": "/ru/examples",
-      "destination": "/v0.1.0-alpha.2/ru/examples",
+      "destination": "/v1.0.0/ru/examples",
       "permanent": true
     },
     {
       "source": "/ru/faq",
-      "destination": "/v0.1.0-alpha.2/ru/faq",
+      "destination": "/v1.0.0/ru/faq",
       "permanent": true
     },
     {
       "source": "/ru/frameworks",
-      "destination": "/v0.1.0-alpha.2/ru/frameworks",
+      "destination": "/v1.0.0/ru/frameworks",
       "permanent": true
     },
     {
       "source": "/ru/installation",
-      "destination": "/v0.1.0-alpha.2/ru/installation",
+      "destination": "/v1.0.0/ru/installation",
       "permanent": true
     },
     {
       "source": "/ru/introduction",
-      "destination": "/v0.1.0-alpha.2/ru/introduction",
+      "destination": "/v1.0.0/ru/introduction",
       "permanent": true
     },
     {
       "source": "/ru/limitations",
-      "destination": "/v0.1.0-alpha.2/ru/limitations",
+      "destination": "/v1.0.0/ru/limitations",
       "permanent": true
     },
     {
       "source": "/ru/migrations",
-      "destination": "/v0.1.0-alpha.2/ru/migrations",
+      "destination": "/v1.0.0/ru/migrations",
       "permanent": true
     },
     {
       "source": "/ru/observability",
-      "destination": "/v0.1.0-alpha.2/ru/observability",
+      "destination": "/v1.0.0/ru/observability",
       "permanent": true
     },
     {
       "source": "/ru/production",
-      "destination": "/v0.1.0-alpha.2/ru/production",
+      "destination": "/v1.0.0/ru/production",
       "permanent": true
     },
     {
       "source": "/ru/queries",
-      "destination": "/v0.1.0-alpha.2/ru/queries",
+      "destination": "/v1.0.0/ru/queries",
       "permanent": true
     },
     {
       "source": "/ru/quickstart",
-      "destination": "/v0.1.0-alpha.2/ru/quickstart",
+      "destination": "/v1.0.0/ru/quickstart",
       "permanent": true
     },
     {
       "source": "/ru/relations",
-      "destination": "/v0.1.0-alpha.2/ru/relations",
+      "destination": "/v1.0.0/ru/relations",
       "permanent": true
     },
     {
       "source": "/ru/schema",
-      "destination": "/v0.1.0-alpha.2/ru/schema",
+      "destination": "/v1.0.0/ru/schema",
       "permanent": true
     },
     {
       "source": "/ru/sync",
-      "destination": "/v0.1.0-alpha.2/ru/sync",
+      "destination": "/v1.0.0/ru/sync",
       "permanent": true
     },
     {
       "source": "/ru/transactions",
-      "destination": "/v0.1.0-alpha.2/ru/transactions",
+      "destination": "/v1.0.0/ru/transactions",
       "permanent": true
     },
     {
       "source": "/ru/versions",
-      "destination": "/v0.1.0-alpha.2/ru/versions",
+      "destination": "/v1.0.0/ru/versions",
+      "permanent": true
+    },
+    {
+      "source": "/ru/build/gradle",
+      "destination": "/v1.0.0/ru/build/gradle",
+      "permanent": true
+    },
+    {
+      "source": "/en/build/gradle",
+      "destination": "/v1.0.0/en/build/gradle",
+      "permanent": true
+    },
+    {
+      "source": "/ru/build/maven",
+      "destination": "/v1.0.0/ru/build/maven",
+      "permanent": true
+    },
+    {
+      "source": "/en/build/maven",
+      "destination": "/v1.0.0/en/build/maven",
+      "permanent": true
+    },
+    {
+      "source": "/ru/build/generation",
+      "destination": "/v1.0.0/ru/build/generation",
+      "permanent": true
+    },
+    {
+      "source": "/en/build/generation",
+      "destination": "/v1.0.0/en/build/generation",
+      "permanent": true
+    },
+    {
+      "source": "/ru/build/programmatic",
+      "destination": "/v1.0.0/ru/build/programmatic",
+      "permanent": true
+    },
+    {
+      "source": "/en/build/programmatic",
+      "destination": "/v1.0.0/en/build/programmatic",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/syntax",
+      "destination": "/v1.0.0/ru/schema/syntax",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/syntax",
+      "destination": "/v1.0.0/en/schema/syntax",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/configuration",
+      "destination": "/v1.0.0/ru/schema/configuration",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/configuration",
+      "destination": "/v1.0.0/en/schema/configuration",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/models",
+      "destination": "/v1.0.0/ru/schema/models",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/models",
+      "destination": "/v1.0.0/en/schema/models",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/fields",
+      "destination": "/v1.0.0/ru/schema/fields",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/fields",
+      "destination": "/v1.0.0/en/schema/fields",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/null",
+      "destination": "/v1.0.0/ru/schema/null",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/null",
+      "destination": "/v1.0.0/en/schema/null",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/defaults",
+      "destination": "/v1.0.0/ru/schema/defaults",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/defaults",
+      "destination": "/v1.0.0/en/schema/defaults",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/timestamps",
+      "destination": "/v1.0.0/ru/schema/timestamps",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/timestamps",
+      "destination": "/v1.0.0/en/schema/timestamps",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/mapping",
+      "destination": "/v1.0.0/ru/schema/mapping",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/mapping",
+      "destination": "/v1.0.0/en/schema/mapping",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/indexes",
+      "destination": "/v1.0.0/ru/schema/indexes",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/indexes",
+      "destination": "/v1.0.0/en/schema/indexes",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/ignore",
+      "destination": "/v1.0.0/ru/schema/ignore",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/ignore",
+      "destination": "/v1.0.0/en/schema/ignore",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/enums",
+      "destination": "/v1.0.0/ru/schema/enums",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/enums",
+      "destination": "/v1.0.0/en/schema/enums",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/json",
+      "destination": "/v1.0.0/ru/schema/json",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/json",
+      "destination": "/v1.0.0/en/schema/json",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/arrays",
+      "destination": "/v1.0.0/ru/schema/arrays",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/arrays",
+      "destination": "/v1.0.0/en/schema/arrays",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/native-types",
+      "destination": "/v1.0.0/ru/schema/native-types",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/native-types",
+      "destination": "/v1.0.0/en/schema/native-types",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/relations",
+      "destination": "/v1.0.0/ru/schema/relations",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/relations",
+      "destination": "/v1.0.0/en/schema/relations",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/reading",
+      "destination": "/v1.0.0/ru/querying/reading",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/reading",
+      "destination": "/v1.0.0/en/querying/reading",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/filtering",
+      "destination": "/v1.0.0/ru/querying/filtering",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/filtering",
+      "destination": "/v1.0.0/en/querying/filtering",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/ordering-pagination",
+      "destination": "/v1.0.0/ru/querying/ordering-pagination",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/ordering-pagination",
+      "destination": "/v1.0.0/en/querying/ordering-pagination",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/aggregation",
+      "destination": "/v1.0.0/ru/querying/aggregation",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/aggregation",
+      "destination": "/v1.0.0/en/querying/aggregation",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/raw-sql",
+      "destination": "/v1.0.0/ru/querying/raw-sql",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/raw-sql",
+      "destination": "/v1.0.0/en/querying/raw-sql",
+      "permanent": true
+    },
+    {
+      "source": "/ru/writing/create",
+      "destination": "/v1.0.0/ru/writing/create",
+      "permanent": true
+    },
+    {
+      "source": "/en/writing/create",
+      "destination": "/v1.0.0/en/writing/create",
+      "permanent": true
+    },
+    {
+      "source": "/ru/writing/update",
+      "destination": "/v1.0.0/ru/writing/update",
+      "permanent": true
+    },
+    {
+      "source": "/en/writing/update",
+      "destination": "/v1.0.0/en/writing/update",
+      "permanent": true
+    },
+    {
+      "source": "/ru/writing/delete",
+      "destination": "/v1.0.0/ru/writing/delete",
+      "permanent": true
+    },
+    {
+      "source": "/en/writing/delete",
+      "destination": "/v1.0.0/en/writing/delete",
+      "permanent": true
+    },
+    {
+      "source": "/ru/writing/nested-writes",
+      "destination": "/v1.0.0/ru/writing/nested-writes",
+      "permanent": true
+    },
+    {
+      "source": "/en/writing/nested-writes",
+      "destination": "/v1.0.0/en/writing/nested-writes",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/attributes",
+      "destination": "/v1.0.0/ru/schema/attributes",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/attributes",
+      "destination": "/v1.0.0/en/schema/attributes",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/projections",
+      "destination": "/v1.0.0/ru/querying/projections",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/projections",
+      "destination": "/v1.0.0/en/querying/projections",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/distinct",
+      "destination": "/v1.0.0/ru/querying/distinct",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/distinct",
+      "destination": "/v1.0.0/en/querying/distinct",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/null-order",
+      "destination": "/v1.0.0/ru/querying/null-order",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/null-order",
+      "destination": "/v1.0.0/en/querying/null-order",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/relation-filters",
+      "destination": "/v1.0.0/ru/querying/relation-filters",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/relation-filters",
+      "destination": "/v1.0.0/en/querying/relation-filters",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/deep-include",
+      "destination": "/v1.0.0/ru/querying/deep-include",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/deep-include",
+      "destination": "/v1.0.0/en/querying/deep-include",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/grouping",
+      "destination": "/v1.0.0/ru/querying/grouping",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/grouping",
+      "destination": "/v1.0.0/en/querying/grouping",
+      "permanent": true
+    },
+    {
+      "source": "/ru/writing/upsert",
+      "destination": "/v1.0.0/ru/writing/upsert",
+      "permanent": true
+    },
+    {
+      "source": "/en/writing/upsert",
+      "destination": "/v1.0.0/en/writing/upsert",
+      "permanent": true
+    },
+    {
+      "source": "/ru/writing/nested-operations",
+      "destination": "/v1.0.0/ru/writing/nested-operations",
+      "permanent": true
+    },
+    {
+      "source": "/en/writing/nested-operations",
+      "destination": "/v1.0.0/en/writing/nested-operations",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/referential-actions",
+      "destination": "/v1.0.0/ru/schema/referential-actions",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/referential-actions",
+      "destination": "/v1.0.0/en/schema/referential-actions",
+      "permanent": true
+    },
+    {
+      "source": "/ru/client/connection",
+      "destination": "/v1.0.0/ru/client/connection",
+      "permanent": true
+    },
+    {
+      "source": "/en/client/connection",
+      "destination": "/v1.0.0/en/client/connection",
+      "permanent": true
+    },
+    {
+      "source": "/ru/client/data-source",
+      "destination": "/v1.0.0/ru/client/data-source",
+      "permanent": true
+    },
+    {
+      "source": "/en/client/data-source",
+      "destination": "/v1.0.0/en/client/data-source",
+      "permanent": true
+    },
+    {
+      "source": "/ru/client/entities",
+      "destination": "/v1.0.0/ru/client/entities",
+      "permanent": true
+    },
+    {
+      "source": "/en/client/entities",
+      "destination": "/v1.0.0/en/client/entities",
+      "permanent": true
+    },
+    {
+      "source": "/ru/transactions/savepoints",
+      "destination": "/v1.0.0/ru/transactions/savepoints",
+      "permanent": true
+    },
+    {
+      "source": "/en/transactions/savepoints",
+      "destination": "/v1.0.0/en/transactions/savepoints",
+      "permanent": true
+    },
+    {
+      "source": "/ru/transactions/isolation-retry",
+      "destination": "/v1.0.0/ru/transactions/isolation-retry",
+      "permanent": true
+    },
+    {
+      "source": "/en/transactions/isolation-retry",
+      "destination": "/v1.0.0/en/transactions/isolation-retry",
+      "permanent": true
+    },
+    {
+      "source": "/ru/execution/async-transaction",
+      "destination": "/v1.0.0/ru/execution/async-transaction",
+      "permanent": true
+    },
+    {
+      "source": "/en/execution/async-transaction",
+      "destination": "/v1.0.0/en/execution/async-transaction",
+      "permanent": true
+    },
+    {
+      "source": "/ru/execution/coroutines",
+      "destination": "/v1.0.0/ru/execution/coroutines",
+      "permanent": true
+    },
+    {
+      "source": "/en/execution/coroutines",
+      "destination": "/v1.0.0/en/execution/coroutines",
+      "permanent": true
+    },
+    {
+      "source": "/ru/execution/cancellation",
+      "destination": "/v1.0.0/ru/execution/cancellation",
+      "permanent": true
+    },
+    {
+      "source": "/en/execution/cancellation",
+      "destination": "/v1.0.0/en/execution/cancellation",
+      "permanent": true
+    },
+    {
+      "source": "/ru/execution/metrics",
+      "destination": "/v1.0.0/ru/execution/metrics",
+      "permanent": true
+    },
+    {
+      "source": "/en/execution/metrics",
+      "destination": "/v1.0.0/en/execution/metrics",
+      "permanent": true
+    },
+    {
+      "source": "/ru/databases/postgresql",
+      "destination": "/v1.0.0/ru/databases/postgresql",
+      "permanent": true
+    },
+    {
+      "source": "/en/databases/postgresql",
+      "destination": "/v1.0.0/en/databases/postgresql",
+      "permanent": true
+    },
+    {
+      "source": "/ru/databases/sqlite",
+      "destination": "/v1.0.0/ru/databases/sqlite",
+      "permanent": true
+    },
+    {
+      "source": "/en/databases/sqlite",
+      "destination": "/v1.0.0/en/databases/sqlite",
+      "permanent": true
+    },
+    {
+      "source": "/ru/databases/h2",
+      "destination": "/v1.0.0/ru/databases/h2",
+      "permanent": true
+    },
+    {
+      "source": "/en/databases/h2",
+      "destination": "/v1.0.0/en/databases/h2",
+      "permanent": true
+    },
+    {
+      "source": "/ru/databases/mysql",
+      "destination": "/v1.0.0/ru/databases/mysql",
+      "permanent": true
+    },
+    {
+      "source": "/en/databases/mysql",
+      "destination": "/v1.0.0/en/databases/mysql",
+      "permanent": true
+    },
+    {
+      "source": "/ru/databases/mariadb",
+      "destination": "/v1.0.0/ru/databases/mariadb",
+      "permanent": true
+    },
+    {
+      "source": "/en/databases/mariadb",
+      "destination": "/v1.0.0/en/databases/mariadb",
+      "permanent": true
+    },
+    {
+      "source": "/ru/database/plans",
+      "destination": "/v1.0.0/ru/database/plans",
+      "permanent": true
+    },
+    {
+      "source": "/en/database/plans",
+      "destination": "/v1.0.0/en/database/plans",
+      "permanent": true
+    },
+    {
+      "source": "/ru/database/drift",
+      "destination": "/v1.0.0/ru/database/drift",
+      "permanent": true
+    },
+    {
+      "source": "/en/database/drift",
+      "destination": "/v1.0.0/en/database/drift",
+      "permanent": true
+    },
+    {
+      "source": "/ru/database/introspection",
+      "destination": "/v1.0.0/ru/database/introspection",
+      "permanent": true
+    },
+    {
+      "source": "/en/database/introspection",
+      "destination": "/v1.0.0/en/database/introspection",
+      "permanent": true
+    },
+    {
+      "source": "/ru/migrations/history",
+      "destination": "/v1.0.0/ru/migrations/history",
+      "permanent": true
+    },
+    {
+      "source": "/en/migrations/history",
+      "destination": "/v1.0.0/en/migrations/history",
+      "permanent": true
+    },
+    {
+      "source": "/ru/migrations/recovery",
+      "destination": "/v1.0.0/ru/migrations/recovery",
+      "permanent": true
+    },
+    {
+      "source": "/en/migrations/recovery",
+      "destination": "/v1.0.0/en/migrations/recovery",
+      "permanent": true
+    },
+    {
+      "source": "/ru/migrations/push-recovery",
+      "destination": "/v1.0.0/ru/migrations/push-recovery",
+      "permanent": true
+    },
+    {
+      "source": "/en/migrations/push-recovery",
+      "destination": "/v1.0.0/en/migrations/push-recovery",
+      "permanent": true
+    },
+    {
+      "source": "/ru/migrations/locking",
+      "destination": "/v1.0.0/ru/migrations/locking",
+      "permanent": true
+    },
+    {
+      "source": "/en/migrations/locking",
+      "destination": "/v1.0.0/en/migrations/locking",
+      "permanent": true
+    },
+    {
+      "source": "/ru/migrations/sql-scripts",
+      "destination": "/v1.0.0/ru/migrations/sql-scripts",
+      "permanent": true
+    },
+    {
+      "source": "/en/migrations/sql-scripts",
+      "destination": "/v1.0.0/en/migrations/sql-scripts",
+      "permanent": true
+    },
+    {
+      "source": "/ru/migrations/sqlite-rebuild",
+      "destination": "/v1.0.0/ru/migrations/sqlite-rebuild",
+      "permanent": true
+    },
+    {
+      "source": "/en/migrations/sqlite-rebuild",
+      "destination": "/v1.0.0/en/migrations/sqlite-rebuild",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli/install",
+      "destination": "/v1.0.0/ru/cli/install",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli/install",
+      "destination": "/v1.0.0/en/cli/install",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli/upgrade",
+      "destination": "/v1.0.0/ru/cli/upgrade",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli/upgrade",
+      "destination": "/v1.0.0/en/cli/upgrade",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli/init",
+      "destination": "/v1.0.0/ru/cli/init",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli/init",
+      "destination": "/v1.0.0/en/cli/init",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli/generate",
+      "destination": "/v1.0.0/ru/cli/generate",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli/generate",
+      "destination": "/v1.0.0/en/cli/generate",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli/validate",
+      "destination": "/v1.0.0/ru/cli/validate",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli/validate",
+      "destination": "/v1.0.0/en/cli/validate",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli/format",
+      "destination": "/v1.0.0/ru/cli/format",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli/format",
+      "destination": "/v1.0.0/en/cli/format",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli/pull",
+      "destination": "/v1.0.0/ru/cli/pull",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli/pull",
+      "destination": "/v1.0.0/en/cli/pull",
+      "permanent": true
+    },
+    {
+      "source": "/ru/cli/push",
+      "destination": "/v1.0.0/ru/cli/push",
+      "permanent": true
+    },
+    {
+      "source": "/en/cli/push",
+      "destination": "/v1.0.0/en/cli/push",
+      "permanent": true
+    },
+    {
+      "source": "/ru/recipes/search",
+      "destination": "/v1.0.0/ru/recipes/search",
+      "permanent": true
+    },
+    {
+      "source": "/en/recipes/search",
+      "destination": "/v1.0.0/en/recipes/search",
+      "permanent": true
+    },
+    {
+      "source": "/ru/recipes/import",
+      "destination": "/v1.0.0/ru/recipes/import",
+      "permanent": true
+    },
+    {
+      "source": "/en/recipes/import",
+      "destination": "/v1.0.0/en/recipes/import",
+      "permanent": true
+    },
+    {
+      "source": "/ru/recipes/patch",
+      "destination": "/v1.0.0/ru/recipes/patch",
+      "permanent": true
+    },
+    {
+      "source": "/en/recipes/patch",
+      "destination": "/v1.0.0/en/recipes/patch",
+      "permanent": true
+    },
+    {
+      "source": "/ru/recipes/tenant-soft-delete",
+      "destination": "/v1.0.0/ru/recipes/tenant-soft-delete",
+      "permanent": true
+    },
+    {
+      "source": "/en/recipes/tenant-soft-delete",
+      "destination": "/v1.0.0/en/recipes/tenant-soft-delete",
+      "permanent": true
+    },
+    {
+      "source": "/ru/recipes/testing",
+      "destination": "/v1.0.0/ru/recipes/testing",
+      "permanent": true
+    },
+    {
+      "source": "/en/recipes/testing",
+      "destination": "/v1.0.0/en/recipes/testing",
+      "permanent": true
+    },
+    {
+      "source": "/ru/examples/kotlin-basic",
+      "destination": "/v1.0.0/ru/examples/kotlin-basic",
+      "permanent": true
+    },
+    {
+      "source": "/en/examples/kotlin-basic",
+      "destination": "/v1.0.0/en/examples/kotlin-basic",
+      "permanent": true
+    },
+    {
+      "source": "/ru/examples/java-basic",
+      "destination": "/v1.0.0/ru/examples/java-basic",
+      "permanent": true
+    },
+    {
+      "source": "/en/examples/java-basic",
+      "destination": "/v1.0.0/en/examples/java-basic",
+      "permanent": true
+    },
+    {
+      "source": "/ru/examples/spring-boot",
+      "destination": "/v1.0.0/ru/examples/spring-boot",
+      "permanent": true
+    },
+    {
+      "source": "/en/examples/spring-boot",
+      "destination": "/v1.0.0/en/examples/spring-boot",
+      "permanent": true
+    },
+    {
+      "source": "/ru/examples/ktor",
+      "destination": "/v1.0.0/ru/examples/ktor",
+      "permanent": true
+    },
+    {
+      "source": "/en/examples/ktor",
+      "destination": "/v1.0.0/en/examples/ktor",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-core",
+      "destination": "/v1.0.0/ru/reference/volan-core",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-core",
+      "destination": "/v1.0.0/en/reference/volan-core",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-schema",
+      "destination": "/v1.0.0/ru/reference/volan-schema",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-schema",
+      "destination": "/v1.0.0/en/reference/volan-schema",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-ir",
+      "destination": "/v1.0.0/ru/reference/volan-ir",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-ir",
+      "destination": "/v1.0.0/en/reference/volan-ir",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-codegen",
+      "destination": "/v1.0.0/ru/reference/volan-codegen",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-codegen",
+      "destination": "/v1.0.0/en/reference/volan-codegen",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-dialect-api",
+      "destination": "/v1.0.0/ru/reference/volan-dialect-api",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-dialect-api",
+      "destination": "/v1.0.0/en/reference/volan-dialect-api",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-dialect-postgres",
+      "destination": "/v1.0.0/ru/reference/volan-dialect-postgres",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-dialect-postgres",
+      "destination": "/v1.0.0/en/reference/volan-dialect-postgres",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-dialect-sqlite",
+      "destination": "/v1.0.0/ru/reference/volan-dialect-sqlite",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-dialect-sqlite",
+      "destination": "/v1.0.0/en/reference/volan-dialect-sqlite",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-dialect-h2",
+      "destination": "/v1.0.0/ru/reference/volan-dialect-h2",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-dialect-h2",
+      "destination": "/v1.0.0/en/reference/volan-dialect-h2",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-dialect-mysql",
+      "destination": "/v1.0.0/ru/reference/volan-dialect-mysql",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-dialect-mysql",
+      "destination": "/v1.0.0/en/reference/volan-dialect-mysql",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-runtime",
+      "destination": "/v1.0.0/ru/reference/volan-runtime",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-runtime",
+      "destination": "/v1.0.0/en/reference/volan-runtime",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-migrate",
+      "destination": "/v1.0.0/ru/reference/volan-migrate",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-migrate",
+      "destination": "/v1.0.0/en/reference/volan-migrate",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-coroutines",
+      "destination": "/v1.0.0/ru/reference/volan-coroutines",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-coroutines",
+      "destination": "/v1.0.0/en/reference/volan-coroutines",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-micrometer",
+      "destination": "/v1.0.0/ru/reference/volan-micrometer",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-micrometer",
+      "destination": "/v1.0.0/en/reference/volan-micrometer",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-gradle-plugin",
+      "destination": "/v1.0.0/ru/reference/volan-gradle-plugin",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-gradle-plugin",
+      "destination": "/v1.0.0/en/reference/volan-gradle-plugin",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-maven-plugin",
+      "destination": "/v1.0.0/ru/reference/volan-maven-plugin",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-maven-plugin",
+      "destination": "/v1.0.0/en/reference/volan-maven-plugin",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/volan-cli",
+      "destination": "/v1.0.0/ru/reference/volan-cli",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/volan-cli",
+      "destination": "/v1.0.0/en/reference/volan-cli",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/modules",
+      "destination": "/v1.0.0/ru/reference/modules",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/modules",
+      "destination": "/v1.0.0/en/reference/modules",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/generated",
+      "destination": "/v1.0.0/ru/reference/generated",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/generated",
+      "destination": "/v1.0.0/en/reference/generated",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/query-descriptions",
+      "destination": "/v1.0.0/ru/reference/query-descriptions",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/query-descriptions",
+      "destination": "/v1.0.0/en/reference/query-descriptions",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/custom-dialect",
+      "destination": "/v1.0.0/ru/reference/custom-dialect",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/custom-dialect",
+      "destination": "/v1.0.0/en/reference/custom-dialect",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/schema-api",
+      "destination": "/v1.0.0/ru/reference/schema-api",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/schema-api",
+      "destination": "/v1.0.0/en/reference/schema-api",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/diagnostics",
+      "destination": "/v1.0.0/ru/schema/diagnostics",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/diagnostics",
+      "destination": "/v1.0.0/en/schema/diagnostics",
+      "permanent": true
+    },
+    {
+      "source": "/ru/contributing/architecture",
+      "destination": "/v1.0.0/ru/contributing/architecture",
+      "permanent": true
+    },
+    {
+      "source": "/en/contributing/architecture",
+      "destination": "/v1.0.0/en/contributing/architecture",
+      "permanent": true
+    },
+    {
+      "source": "/ru/contributing/build-test",
+      "destination": "/v1.0.0/ru/contributing/build-test",
+      "permanent": true
+    },
+    {
+      "source": "/en/contributing/build-test",
+      "destination": "/v1.0.0/en/contributing/build-test",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/row-mapping",
+      "destination": "/v1.0.0/ru/querying/row-mapping",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/row-mapping",
+      "destination": "/v1.0.0/en/querying/row-mapping",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/attribute-arguments",
+      "destination": "/v1.0.0/ru/schema/attribute-arguments",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/attribute-arguments",
+      "destination": "/v1.0.0/en/schema/attribute-arguments",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/postgresql-types",
+      "destination": "/v1.0.0/ru/schema/postgresql-types",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/postgresql-types",
+      "destination": "/v1.0.0/en/schema/postgresql-types",
+      "permanent": true
+    },
+    {
+      "source": "/ru/execution/sql-errors",
+      "destination": "/v1.0.0/ru/execution/sql-errors",
+      "permanent": true
+    },
+    {
+      "source": "/en/execution/sql-errors",
+      "destination": "/v1.0.0/en/execution/sql-errors",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/generated/post",
+      "destination": "/v1.0.0/ru/reference/generated/post",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/generated/post",
+      "destination": "/v1.0.0/en/reference/generated/post",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/generated/user",
+      "destination": "/v1.0.0/ru/reference/generated/user",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/generated/user",
+      "destination": "/v1.0.0/en/reference/generated/user",
+      "permanent": true
+    },
+    {
+      "source": "/ru/reference/generated/volanclient",
+      "destination": "/v1.0.0/ru/reference/generated/volanclient",
+      "permanent": true
+    },
+    {
+      "source": "/en/reference/generated/volanclient",
+      "destination": "/v1.0.0/en/reference/generated/volanclient",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/self-relations",
+      "destination": "/v1.0.0/ru/schema/self-relations",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/self-relations",
+      "destination": "/v1.0.0/en/schema/self-relations",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/many-to-many",
+      "destination": "/v1.0.0/ru/schema/many-to-many",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/many-to-many",
+      "destination": "/v1.0.0/en/schema/many-to-many",
+      "permanent": true
+    },
+    {
+      "source": "/ru/querying/composite-keys",
+      "destination": "/v1.0.0/ru/querying/composite-keys",
+      "permanent": true
+    },
+    {
+      "source": "/en/querying/composite-keys",
+      "destination": "/v1.0.0/en/querying/composite-keys",
+      "permanent": true
+    },
+    {
+      "source": "/ru/schema/scalar-values",
+      "destination": "/v1.0.0/ru/schema/scalar-values",
+      "permanent": true
+    },
+    {
+      "source": "/en/schema/scalar-values",
+      "destination": "/v1.0.0/en/schema/scalar-values",
       "permanent": true
     }
   ],

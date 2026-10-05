@@ -1,0 +1,31 @@
+---
+title: "Составной ключ и cursor"
+description: "Этот пример использует отдельную модель Membership. Порядок @@id определяет порядок cursor."
+---
+
+Этот пример использует отдельную модель Membership. Порядок @@id определяет порядок cursor.
+
+```prisma
+model Membership {
+  tenantId Int
+  userId Int
+  role String
+  @@id([tenantId, userId])
+}
+```
+
+```kotlin
+db.membership.create { tenantId = 1; userId = 1; role = "reader" }
+db.membership.create { tenantId = 1; userId = 2; role = "writer" }
+db.membership.create { tenantId = 2; userId = 1; role = "reader" }
+val exact = db.membership.findUniqueOrThrow {
+    where { tenantId eq 1; userId eq 2 }
+}
+val next = db.membership.findMany {
+    cursor(tenantId = exact.tenantId, userId = exact.userId)
+    take = 10
+}
+check(next.single().tenantId == 2)
+```
+
+Укажи все части PK в single read/update/delete. findUnique не проверяет полноту ключа: только tenantId может вернуть первую строку. Cursor сравнивает весь упорядоченный tuple; после (1,2) идут (2,1), (2,2), … . По умолчанию строка границы исключена, inclusive=true включает её. Явный orderBy с cursor запрещён. Для страницы одного tenant добавь `where { tenantId eq tenant }` и передай полный cursor.

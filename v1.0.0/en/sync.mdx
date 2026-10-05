@@ -1,0 +1,15 @@
+---
+title: "Pull and push"
+description: "Pull reads structure. Push changes the database to the target schema. Preview SQL first."
+---
+
+Pull reads structure. Push changes the database to the target schema. Preview SQL first.
+
+```bash
+volan db pull --url jdbc:sqlite:./data.db --stdout
+volan db pull --url jdbc:sqlite:./data.db --schema introspected.volan
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db --dry-run
+volan db push --schema schema.volan --url jdbc:sqlite:./data.db
+```
+
+Pull refuses overwrite without --force. Export uses env("DATABASE_URL") without credentials. Push creates no migration files and does not update versioned history. Warning-bearing changes require --accept-data-loss after review. PostgreSQL/SQLite apply transactionally and verify structure; H2/MySQL/MariaDB keep durable progress and require repair after failure. A successful repeated push is a no-op.

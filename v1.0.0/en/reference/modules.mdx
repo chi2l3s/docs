@@ -1,0 +1,23 @@
+---
+title: "Modules and API"
+description: "All public Volan 1.0.0 modules and exact contracts."
+---
+
+- [volan-core](/v1.0.0/en/reference/volan-core): JSON and the base exception.
+- [volan-schema](/v1.0.0/en/reference/volan-schema): SourceFile, lexer, parser, AST, formatter and diagnostics.
+- [volan-ir](/v1.0.0/en/reference/volan-ir): Loading, semantic analysis, types, models, keys and relations.
+- [volan-codegen](/v1.0.0/en/reference/volan-codegen): Kotlin/Java API generation and output ownership.
+- [volan-dialect-api](/v1.0.0/en/reference/volan-dialect-api): SQL/DDL model, parameters, capabilities and JDBC dialect.
+- [volan-dialect-postgres](/v1.0.0/en/reference/volan-dialect-postgres): PostgreSQL runtime SQL, DDL, binding and ServiceLoader provider.
+- [volan-dialect-sqlite](/v1.0.0/en/reference/volan-dialect-sqlite): SQLite SQL, DDL, scalar storage and connection initialization.
+- [volan-dialect-h2](/v1.0.0/en/reference/volan-dialect-h2): H2 SQL/DDL, delta-table returning and memory pooling.
+- [volan-dialect-mysql](/v1.0.0/en/reference/volan-dialect-mysql): MySQL/MariaDB SQL, DDL, locks and provider discovery.
+- [volan-runtime](/v1.0.0/en/reference/volan-runtime): QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks.
+- [volan-migrate](/v1.0.0/en/reference/volan-migrate): Readers, structural schema, plans, scripts, sync and migration journal.
+- [volan-coroutines](/v1.0.0/en/reference/volan-coroutines): CoroutineAccess, suspendQuery and SuspendingQueryExecutor.
+- [volan-micrometer](/v1.0.0/en/reference/volan-micrometer): MicrometerQueryInterceptor and statement timers.
+- [volan-gradle-plugin](/v1.0.0/en/reference/volan-gradle-plugin): VolanPlugin, VolanExtension and VolanGenerateTask.
+- [volan-maven-plugin](/v1.0.0/en/reference/volan-maven-plugin): GenerateMojo and generate-sources integration.
+- [volan-cli](/v1.0.0/en/reference/volan-cli): JVM CLI entry point. Commands and flags are in the CLI reference.
+
+volan-bom aligns 13 libraries. Gradle/Maven plugins and CLI have distinct roles. Runtime has no coroutine/Micrometer dependency until an optional module is added. [Generated API](/v1.0.0/en/reference/generated).

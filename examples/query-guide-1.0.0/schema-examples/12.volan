@@ -1,0 +1,32 @@
+datasource db {
+  provider = "h2"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.schema.scalars"
+  javaFriendly = true
+}
+enum State {
+  NEW @map("new")
+  DONE @map("done")
+}
+model Sample {
+  id Int @id
+  label String
+  state State @default(NEW)
+  enabled Boolean @default(true)
+  amount Decimal
+  ratio Double
+  score Float
+  total Long
+  occurredAt DateTime
+  eventDate Date
+  eventTime Time
+  token Uuid
+  data Json
+  content Bytes
+  scores Int[]
+  modifiedAt DateTime? @updatedAt
+  note String?
+}

@@ -1,0 +1,18 @@
+---
+title: "Upgrading to 1.0.0"
+description: "Upgrade generator/plugin and runtime together, then regenerate."
+---
+
+Upgrade generator/plugin and runtime together, then regenerate.
+
+```kotlin
+plugins {
+    kotlin("jvm") version "2.4.20"
+    id("io.github.thirtyeighttwentysix.volan") version "1.0.0"
+}
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+}
+```
+
+1.0.0 adds H2/MySQL/MariaDB, automatic plugins, coroutines, metrics and CLI. Replace old custom generation tasks with the plugin. Dialect/driver dependencies remain explicit. Alpha users of DropConstraint.copy must recompile for its expanded data-class signature. Alpha snapshots remain in the version selector; these pages target 1.0.0.

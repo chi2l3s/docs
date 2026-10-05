@@ -1,0 +1,69 @@
+---
+title: "Filtering"
+description: "Consecutive conditions use AND. or, and and not form groups."
+---
+
+Consecutive conditions use AND. or, and and not form groups.
+
+```kotlin
+val posts = db.post.findMany {
+    where {
+        views.between(100, 1000)
+        title contains "Volan"
+    }
+    orderBy { id.asc() }
+    take = 20
+}
+```
+
+```kotlin
+val users = db.user.findMany {
+    where {
+        email.ignoringCase() endsWith "@example.org"
+        name.isNotNull()
+    }
+    orderBy { id.asc() }
+    take = 20
+}
+```
+
+```kotlin
+val users = db.user.findMany {
+    where {
+        email endsWith "@example.org"
+        or {
+            name eq "Alice"
+            name.isNull()
+        }
+        not { email startsWith "blocked" }
+    }
+    orderBy { id.asc() }
+}
+```
+
+```kotlin
+val authors = db.user.findMany {
+    where { posts { some { views gt 100 } } }
+    orderBy { id.asc() }
+}
+val posts = db.post.findMany {
+    where { author { matches { email endsWith "@example.org" } } }
+    orderBy { id.asc() }
+}
+```
+
+```java
+var users = db.getUser().findMany(q -> {
+    q.where(w -> {
+        w.getEmail().endsWith("@example.org");
+        w.or(alternative -> {
+            alternative.getName().eq("Alice");
+            alternative.getName().isNull();
+        });
+    });
+    q.orderBy(o -> o.getId().asc());
+    q.setTake(20);
+});
+```
+
+Equality fields expose eq, notEq, oneOf, notOneOf, isNull, isNotNull. Ordered fields add lt, lte, gt, gte, inclusive between. String adds contains, startsWith, endsWith. ignoringCase affects only eq/notEq and substring/prefix/suffix search; membership stays sensitive. SQLite case folding is ASCII-only. Empty DSL groups add no condition. [Relation filters](/v1.0.0/en/querying/relation-filters).

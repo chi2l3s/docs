@@ -1,0 +1,20 @@
+---
+title: "DB pull"
+description: "Exports the database catalog as schema text without credentials."
+---
+
+Exports the database catalog as schema text without credentials.
+
+```bash
+volan db pull --url jdbc:h2:file:./data --stdout
+volan db pull --url jdbc:h2:file:./data --schema pulled.volan
+```
+
+| Flag | Default / behavior |
+| --- | --- |
+| --schema | schema.volan; output file |
+| --url | DATABASE_URL |
+| --stdout | print instead of writing |
+| --force | permit overwrite |
+
+Credentials: DATABASE_USER and DATABASE_PASSWORD. Push resolves --url → schema literal/env URL → DATABASE_URL. Pull resolves --url → DATABASE_URL. Use a JDBC URL. --resolve/--dry-run cannot combine. [Recovery](/v1.0.0/en/migrations/recovery).

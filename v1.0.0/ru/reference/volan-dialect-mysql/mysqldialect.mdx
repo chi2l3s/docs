@@ -1,0 +1,104 @@
+---
+title: "MySqlDialect"
+description: "MySQL/MariaDB SQL, DDL, locks и provider discovery."
+---
+
+Контракты типов и членов volan-dialect-mysql для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `MariaDbDialect`, `MySqlDialect`, `MySqlRenderer`
+
+```kotlin
+public open class MySqlRenderer(override val id: String) :
+    DdlRenderer(
+        DialectCapabilities(false, false, false, false, false, true, false, MAXIMUM_PARAMETERS),
+    )
+
+    override val timestampWithoutTimeZone: Boolean get()
+
+    override val likeEscape: Char get()
+
+    override val defaultValuesClause: String get()
+
+    override val currentTimestamp: String get()
+
+    override val generatedUuid: String get()
+
+    override fun quote(name: String): String
+
+    override fun initialize(connection: Connection)
+
+    override fun renderForUpdate(select: SqlSelect): SqlStatement
+
+    override fun render(select: SqlSelect): SqlStatement
+
+    override fun Builder.appendOrderBy(terms: List<SqlOrder>)
+
+    override fun Builder.appendLimit(limit: Int?, offset: Int?)
+
+    override fun typeName(type: SqlType): String
+
+    override fun render(type: ColumnType): String
+
+    override fun createTable(create: DdlStatement.CreateTable): String
+
+    override fun autoIncrementType(type: ColumnType): String
+
+    override fun render(ddl: DdlStatement): List<SqlStatement>
+
+    override fun alterColumn(alter: DdlStatement.AlterColumn): List<SqlStatement>
+
+    override fun createIndex(table: String, index: IndexDefinition): String
+
+    override fun jdbcValue(value: Any?): Any?
+
+    override fun sqlState(exception: SQLException): String?
+
+public object MySqlDialect : MySqlRenderer("mysql")
+
+public object MariaDbDialect : MySqlRenderer("mariadb")
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-mysql/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/mysql/MySqlDialect.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-dialect-mysql).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/dialect/mysql/MariaDbDialect : io/github/thirtyeighttwentysix/volan/dialect/mysql/MySqlRenderer {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/dialect/mysql/MariaDbDialect;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/mysql/MySqlDialect : io/github/thirtyeighttwentysix/volan/dialect/mysql/MySqlRenderer {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/dialect/mysql/MySqlDialect;
+}
+
+public class io/github/thirtyeighttwentysix/volan/dialect/mysql/MySqlRenderer : io/github/thirtyeighttwentysix/volan/dialect/DdlRenderer {
+	public fun <init> (Ljava/lang/String;)V
+	protected fun alterColumn (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AlterColumn;)Ljava/util/List;
+	protected fun appendLimit (Lio/github/thirtyeighttwentysix/volan/dialect/SqlRenderer$Builder;Ljava/lang/Integer;Ljava/lang/Integer;)V
+	protected fun appendOrderBy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlRenderer$Builder;Ljava/util/List;)V
+	protected fun autoIncrementType (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;)Ljava/lang/String;
+	protected fun createIndex (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;)Ljava/lang/String;
+	protected fun createTable (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;)Ljava/lang/String;
+	protected fun getCurrentTimestamp ()Ljava/lang/String;
+	protected fun getDefaultValuesClause ()Ljava/lang/String;
+	protected fun getGeneratedUuid ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	protected fun getLikeEscape ()C
+	public fun getTimestampWithoutTimeZone ()Z
+	public fun initialize (Ljava/sql/Connection;)V
+	public fun jdbcValue (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun quote (Ljava/lang/String;)Ljava/lang/String;
+	protected fun render (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;)Ljava/lang/String;
+	public fun render (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement;)Ljava/util/List;
+	public fun render (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public fun renderForUpdate (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public fun sqlState (Ljava/sql/SQLException;)Ljava/lang/String;
+	protected fun typeName (Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;)Ljava/lang/String;
+}
+```
+
+</Accordion>

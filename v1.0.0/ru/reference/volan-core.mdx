@@ -1,0 +1,16 @@
+---
+title: "volan-core"
+description: "JSON и базовый тип исключения."
+---
+
+JSON и базовый тип исключения.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-core:1.0.0")
+```
+
+## Контракты
+- [Json](/v1.0.0/ru/reference/volan-core/json): `Json`, `Companion`
+- [VolanException](/v1.0.0/ru/reference/volan-core/volanexception): `VolanException`
+
+Data-классы также имеют value equality, copy и componentN; enum — values/valueOf. Nullable обозначается `?`. Сигнатуры Kotlin с @JvmOverloads имеют Java-overloads; @JvmStatic/@JvmField дают static-доступ. Сериализация или миграция данных из самой сигнатуры не следует.

@@ -1,0 +1,15 @@
+---
+title: "Внешний DataSource"
+description: "Передай существующий пул и укажи URL для выбора диалекта либо сам диалект."
+---
+
+Передай существующий пул и укажи URL для выбора диалекта либо сам диалект.
+
+```kotlin
+val db = VolanClient.builder()
+    .dataSource(dataSource)
+    .url("jdbc:postgresql://localhost:5432/app")
+    .build()
+```
+
+DataSource и его размер/таймауты/закрытие принадлежат приложению. URL здесь нужен для discovery, а не создания второго пула. Соединения должны поступать вне чужой активной транзакции. Volan ведёт собственные транзакции; Spring @Transactional сам по себе не включает запросы Volan. Внешний private-memory DataSource должен сохранять одну общую connection.

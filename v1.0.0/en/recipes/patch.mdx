@@ -1,0 +1,19 @@
+---
+title: "PATCH without data loss"
+description: "Represent field presence separately from its nullable value."
+---
+
+Represent field presence separately from its nullable value.
+
+```kotlin
+data class NamePatch(val present: Boolean, val value: String?)
+fun patchName(db: VolanClient, userId: Int, patch: NamePatch) {
+    if (!patch.present) return
+    db.user.update {
+        where { id eq userId }
+        data { name = patch.value }
+    }
+}
+```
+
+present=false preserves the value; present=true/value=null clears it. Do not call update with an empty payload.

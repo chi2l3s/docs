@@ -1,0 +1,17 @@
+---
+title: "volan-ir"
+description: "Loading, semantic analysis, types, models, keys and relations."
+---
+
+Loading, semantic analysis, types, models, keys and relations.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-ir:1.0.0")
+```
+
+## Contracts
+- [Ir](/v1.0.0/en/reference/volan-ir/ir): `Cardinality`, `ConnectionUrl`, `Environment`, `Literal`, `DatasourceConfig`, `DefaultValue`, `AutoIncrement`, `BooleanValue`, `Cuid`, `DatabaseGenerated`, `EmptyList`, `EnumValueRef`, `Now`, `NumberValue`, `StringValue`, `Uuid`, `EnumType`, `EnumValue`, `Field`, `FieldType`, `EnumRef`, `Scalar`, `GeneratorConfig`, `Index`, `IndexKind`, `Model`, `NativeType`, `PrimaryKey`, `Provider`, `Companion`, `ReferentialAction`, `Companion`, `Relation`, `RelationEnd`, `RelationField`, `RelationKind`, `ScalarField`, `ScalarType`, `Companion`, `Schema`, `UniqueConstraint`
+- [SchemaLoader](/v1.0.0/en/reference/volan-ir/schemaloader): `AnalysisResult`, `SchemaLoader`
+- [SemanticCode](/v1.0.0/en/reference/volan-ir/semanticcode): `SemanticCode`
+
+Data classes also provide value equality, copy and componentN; enums expose values/valueOf. ? marks nullable types. Kotlin @JvmOverloads signatures have Java overloads; @JvmStatic/@JvmField provide static access. Signatures alone do not imply serialization or data migration.

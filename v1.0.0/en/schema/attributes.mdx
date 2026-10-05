@@ -1,0 +1,32 @@
+---
+title: "Attributes"
+description: "The complete 1.0.0 attribute set. Check your dialect restrictions."
+---
+
+The complete 1.0.0 attribute set. Check your dialect restrictions.
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  title String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@map("articles")
+}
+```
+
+| Attribute | Purpose |
+| --- | --- |
+| @id / @@id | primary key |
+| @unique / @@unique | unique value / combination |
+| @default | literal, enum, autoincrement(), now(), uuid(), dbgenerated(), [] |
+| @updatedAt | runtime timestamp during typed writes |
+| @map / @@map | database field, enum value, table or enum type name |
+| @ignore / @@ignore | omit from client |
+| @relation | name, fields, references, onDelete, onUpdate |
+| @@index / @@fulltext | ordinary / full-text index |
+| `@db.<Type>` | PostgreSQL native type |
+
+Arguments, default expressions and referential actions follow the exact [analyzer contract](/v1.0.0/en/reference/volan-ir). Invalid targets, repeated attributes and extra arguments produce diagnostics rather than being ignored.

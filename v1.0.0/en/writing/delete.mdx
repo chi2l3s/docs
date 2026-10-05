@@ -1,0 +1,31 @@
+---
+title: "Deleting records"
+description: "delete returns a deleted row; deleteMany returns a count."
+---
+
+delete returns a deleted row; deleteMany returns a count.
+
+```kotlin
+val created = db.user.create { email = "remove@example.org" }
+val deleted = db.user.delete {
+    where { id eq created.id }
+}
+println("Deleted user: ${deleted.email}")
+```
+
+```java
+var created = db.getUser().create(data -> data.setEmail("remove@example.org"));
+var deleted = db.getUser().delete(q -> {
+    q.where(w -> w.getId().eq(created.getId()));
+});
+System.out.println("Deleted user: " + deleted.getEmail());
+```
+
+```kotlin
+val deletedCount = db.user.deleteMany {
+    where { email endsWith "@temporary.example.org" }
+}
+println("Deleted users: $deletedCount")
+```
+
+Deletion without where has no automatic safety guard. PostgreSQL/SQLite/H2 delete with a broad predicate can remove multiple rows while returning one. Use a full PK/unique key for one row. Missing delete throws VolanNotFoundException; deleteMany returns 0. Database cascade applies even to unloaded relations.

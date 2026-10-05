@@ -1,0 +1,51 @@
+---
+title: "Связи в схеме"
+description: "Связь описывается с двух сторон. FK хранится на стороне одиночного значения."
+---
+
+Связь описывается с двух сторон. FK хранится на стороне одиночного значения.
+
+```prisma
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+  posts Post[]
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  title String
+  views Int @default(0)
+  authorId Int
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+```
+
+```prisma
+model Account {
+  id Int @id @default(autoincrement())
+  profile Profile?
+}
+
+model Profile {
+  id Int @id @default(autoincrement())
+  accountId Int @unique
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+}
+```
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  tags Tag[]
+}
+
+model Tag {
+  id Int @id @default(autoincrement())
+  name String @unique
+  articles Article[]
+}
+```
+
+Точно одна сторона задаёт `fields` и `references`; списки равны по длине, типы совпадают. References указывают на PK/unique. One-to-one требует уникального FK. Несколько связей между моделями получают явные имена. Many-to-many создаёт join-таблицу по имени связи.

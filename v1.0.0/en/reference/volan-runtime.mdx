@@ -1,0 +1,32 @@
+---
+title: "volan-runtime"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-runtime:1.0.0")
+```
+
+## Contracts
+- [Aggregates](/v1.0.0/en/reference/volan-runtime/aggregates): `AggregateFunction`, `AggregateScope`, `AggregateSpec`, `AggregateValues`, `Aggregation`, `VolanAggregateNotAskedException`
+- [AsyncAccess](/v1.0.0/en/reference/volan-runtime/asyncaccess): `AsyncAccess`
+- [EntityReader](/v1.0.0/en/reference/volan-runtime/entityreader): `EntityReader`
+- [Exceptions](/v1.0.0/en/reference/volan-runtime/exceptions): `RelationSlot`, `Companion`, `SelectedFields`, `Companion`, `VolanConfigurationException`, `VolanConnectionException`, `VolanConstraintException`, `VolanFieldNotSelectedException`, `VolanForeignKeyException`, `VolanMappingException`, `VolanNotFoundException`, `VolanQueryException`, `VolanRelationNotLoadedException`, `VolanTimeoutException`, `VolanTransactionException`, `VolanUniqueConstraintException`, `VolanUnsupportedException`, `VolanValidationException`
+- [Filters](/v1.0.0/en/reference/volan-runtime/filters): `ComparisonOperator`, `Filter`, `And`, `Between`, `Companion`, `Compare`, `InList`, `IsNull`, `Not`, `Or`, `Related`, `RelationQuantifier`, `TextMatchMode`
+- [FilterScope](/v1.0.0/en/reference/volan-runtime/filterscope): `EnumFilterField`, `EqualityFilterField`, `FilterScope`, `OrderedFilterField`, `TextFilterField`
+- [Grouping](/v1.0.0/en/reference/volan-runtime/grouping): `GroupRow`, `GroupScope`, `GroupSpec`, `HavingScope`
+- [Metadata](/v1.0.0/en/reference/volan-runtime/metadata): `ColumnMetadata`, `RelationMetadata`, `TableMetadata`
+- [NestedWrites](/v1.0.0/en/reference/volan-runtime/nestedwrites): `NestedWrites`
+- [QueryCancellation](/v1.0.0/en/reference/volan-runtime/querycancellation): `QueryCancellation`, `Companion`
+- [QueryExecutor](/v1.0.0/en/reference/volan-runtime/queryexecutor): `QueryExecutor`
+- [QueryInterceptor](/v1.0.0/en/reference/volan-runtime/queryinterceptor): `QueryContext`, `QueryInterceptor`, `QueryOperation`
+- [QueryScope](/v1.0.0/en/reference/volan-runtime/queryscope): `IncludeScope`, `OrderField`, `OrderScope`, `QueryScope`, `SelectScope`
+- [QuerySpec](/v1.0.0/en/reference/volan-runtime/queryspec): `ConnectOrCreateEntry`, `CreateSpec`, `DeleteSpec`, `NestedWrite`, `ConnectOrCreateRows`, `ConnectRows`, `CreateRows`, `DeleteRows`, `DisconnectRows`, `SetRows`, `UpdateRows`, `NullsOrder`, `OrderTerm`, `Pagination`, `Companion`, `QuerySpec`, `RelationRequest`, `SortDirection`, `UpdateSpec`, `UpsertSpec`
+- [Row](/v1.0.0/en/reference/volan-runtime/row): `Row`, `RowMapper`
+- [TableRegistry](/v1.0.0/en/reference/volan-runtime/tableregistry): `TableRegistry`
+- [Transactions](/v1.0.0/en/reference/volan-runtime/transactions): `Isolation`, `RetryPolicy`, `Companion`
+- [Volan](/v1.0.0/en/reference/volan-runtime/volan): `Volan`, `Builder`, `Companion`
+
+Data classes also provide value equality, copy and componentN; enums expose values/valueOf. ? marks nullable types. Kotlin @JvmOverloads signatures have Java overloads; @JvmStatic/@JvmField provide static access. Signatures alone do not imply serialization or data migration.

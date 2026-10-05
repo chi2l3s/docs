@@ -1,0 +1,45 @@
+---
+title: "DatabaseSync"
+description: "Readers, structural schema, plans, scripts, sync и migration journal."
+---
+
+Контракты типов и членов volan-migrate для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `DatabaseSync`
+
+```kotlin
+public class DatabaseSync(private val reader: DatabaseReader, private val dialect: DdlRenderer)
+
+    public fun pull(connection: Connection): String
+
+    public fun drift(connection: Connection, expected: DatabaseSchema): MigrationPlan
+
+    public fun plan(connection: Connection, schema: Schema): MigrationPlan
+
+    public fun push(connection: Connection, schema: Schema, acceptWarnings: Boolean = false): MigrationPlan
+
+    public fun resolvePush(connection: Connection, schema: Schema): Unit
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-migrate/src/main/kotlin/io/github/thirtyeighttwentysix/volan/migrate/DatabaseSync.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-migrate).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/migrate/DatabaseSync {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/migrate/DatabaseReader;Lio/github/thirtyeighttwentysix/volan/dialect/DdlRenderer;)V
+	public final fun drift (Ljava/sql/Connection;Lio/github/thirtyeighttwentysix/volan/migrate/DatabaseSchema;)Lio/github/thirtyeighttwentysix/volan/migrate/MigrationPlan;
+	public final fun plan (Ljava/sql/Connection;Lio/github/thirtyeighttwentysix/volan/ir/Schema;)Lio/github/thirtyeighttwentysix/volan/migrate/MigrationPlan;
+	public final fun pull (Ljava/sql/Connection;)Ljava/lang/String;
+	public final fun push (Ljava/sql/Connection;Lio/github/thirtyeighttwentysix/volan/ir/Schema;)Lio/github/thirtyeighttwentysix/volan/migrate/MigrationPlan;
+	public final fun push (Ljava/sql/Connection;Lio/github/thirtyeighttwentysix/volan/ir/Schema;Z)Lio/github/thirtyeighttwentysix/volan/migrate/MigrationPlan;
+	public static synthetic fun push$default (Lio/github/thirtyeighttwentysix/volan/migrate/DatabaseSync;Ljava/sql/Connection;Lio/github/thirtyeighttwentysix/volan/ir/Schema;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/migrate/MigrationPlan;
+	public final fun resolvePush (Ljava/sql/Connection;Lio/github/thirtyeighttwentysix/volan/ir/Schema;)V
+}
+```
+
+</Accordion>

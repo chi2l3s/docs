@@ -1,0 +1,26 @@
+---
+title: "MySQL"
+description: "Настрой datasource, зависимости и JDBC URL."
+---
+
+Настрой datasource, зависимости и JDBC URL.
+
+```prisma
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+}
+```
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-mysql")
+    runtimeOnly("com.mysql:mysql-connector-j:26.7.0")
+}
+val db = VolanClient.builder().url("jdbc:mysql://localhost:3306/app").build()
+```
+
+Проверяемый сервер: MySQL 8.4, InnoDB, utf8mb4_bin. Borrowed connections используют UTC, ANSI_QUOTES, NO_BACKSLASH_ESCAPES и STRICT_TRANS_TABLES. String/enum VARCHAR(191), UUID CHAR(36), Bytes LONGBLOB, Boolean TINYINT(1), Decimal DECIMAL(65,30), DateTime DATETIME(6), Time TIME(6), Json native JSON. UUID PK передавай из приложения. Create читает generated key и затем строку в той же transaction; update/delete сначала lock FOR UPDATE и проверка одной строки. Distinct требует точную projection. DDL commits сразу; migration/push используют named session locks.
+
+[Ограничения introspection](/v1.0.0/ru/database/introspection).

@@ -1,0 +1,82 @@
+---
+title: "SqliteDialect"
+description: "SQLite SQL, DDL, scalar storage and connection initialization."
+---
+
+Type/member contracts of volan-dialect-sqlite for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `SqliteDialect`
+
+```kotlin
+public object SqliteDialect : DdlRenderer(
+    DialectCapabilities(
+        returningClause = true,
+        insertOnConflict = true,
+        caseInsensitiveLike = false,
+        distinctOn = false,
+        nullsOrdering = true,
+        tupleComparison = true,
+        arrayColumns = false,
+        maximumParameters = 999,
+    ),
+)
+
+    override val id: String get()
+
+    override val currentTimestamp: String get()
+
+    override val generatedUuid: String get()
+
+    override fun typeName(type: SqlType): String
+
+    override fun render(type: ColumnType): String
+
+    override fun render(default: ColumnDefault): String
+
+    override fun createTable(create: DdlStatement.CreateTable): String
+
+    override fun render(ddl: DdlStatement): List<SqlStatement>
+
+    override fun createIndex(table: String, index: io.github.thirtyeighttwentysix.volan.dialect.IndexDefinition): String
+
+    override fun initialize(connection: Connection)
+
+    override fun poolSize(jdbcUrl: String, requested: Int): Int
+
+    override fun connectionMaxLifetime(jdbcUrl: String): Long
+
+    override fun jdbcValue(value: Any?): Any?
+
+    override fun sqlState(exception: SQLException): String?
+
+    override fun Builder.appendLimit(limit: Int?, offset: Int?)
+
+    override fun Builder.appendInsert(insert: SqlInsert)
+
+    override fun Builder.appendDistinct(select: SqlSelect)
+
+    override fun Builder.appendTextMatch(condition: SqlCondition.TextMatch)
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-sqlite/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/sqlite/SqliteDialect.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-dialect-sqlite).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/dialect/sqlite/SqliteDialect : io/github/thirtyeighttwentysix/volan/dialect/DdlRenderer {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/dialect/sqlite/SqliteDialect;
+	public fun connectionMaxLifetime (Ljava/lang/String;)Ljava/lang/Long;
+	public fun getId ()Ljava/lang/String;
+	public fun initialize (Ljava/sql/Connection;)V
+	public fun jdbcValue (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun poolSize (Ljava/lang/String;I)I
+	public fun render (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement;)Ljava/util/List;
+	public fun sqlState (Ljava/sql/SQLException;)Ljava/lang/String;
+}
+```
+
+</Accordion>

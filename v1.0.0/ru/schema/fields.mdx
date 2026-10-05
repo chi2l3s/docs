@@ -1,0 +1,32 @@
+---
+title: "Типы полей"
+description: "Выбери скаляр по смыслу значения. Тип SQL зависит от диалекта."
+---
+
+Выбери скаляр по смыслу значения. Тип SQL зависит от диалекта.
+
+```prisma
+model Document {
+  id Int @id @default(autoincrement())
+  title String
+  summary String?
+}
+```
+
+| Volan | Kotlin | Java |
+| --- | --- | --- |
+| String | String | String |
+| Int | Int | int |
+| Long | Long | long |
+| Float | Float | float |
+| Double | Double | double |
+| Decimal | BigDecimal | BigDecimal |
+| Boolean | Boolean | boolean |
+| DateTime | Instant | Instant |
+| Date | LocalDate | LocalDate |
+| Time | LocalTime | LocalTime |
+| Json | io.github.thirtyeighttwentysix.volan.Json | Json |
+| Bytes | ByteArray | byte[] |
+| Uuid | UUID | UUID |
+
+Nullable-примитивы Java становятся boxed-типами (`Integer`, `Long`, …). DateTime — UTC-момент, Date — календарная дата, Time — местное время суток. Decimal использует BigDecimal и недоступен в SQLite. Для точных сумм в SQLite храни минимальные единицы в Long. [Хранение по СУБД](/v1.0.0/ru/databases).

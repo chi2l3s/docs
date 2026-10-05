@@ -1,0 +1,26 @@
+---
+title: "Entities and builders"
+description: "An entity is a row snapshot. An entity setter does not persist data."
+---
+
+An entity is a row snapshot. An entity setter does not persist data.
+
+```kotlin
+val saved = db.user.findUniqueOrThrow { where { id eq userId } }
+println(saved.id)
+println(saved.isPostsLoaded)
+val changed = db.user.update {
+    where { id eq saved.id }
+    data { name = "New name" }
+}
+```
+
+```java
+var value = User.builder()
+    .id(1)
+    .email("alice@example.org")
+    .name("Alice")
+    .build();
+```
+
+JavaFriendly adds static builders, getters and JSpecify nullability. A builder creates an in-memory object; use repository.create/update to persist. Value equality compares values; Bytes use content equality. There is no persistence context, dirty tracking, lazy proxy or automatic refresh. Check relation state through is…Loaded and projection fields through is…Selected.

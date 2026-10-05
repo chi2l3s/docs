@@ -1,0 +1,45 @@
+---
+title: "Модели и ключи"
+description: "Одна модель описывает таблицу. Каждой управляемой модели нужен первичный ключ."
+---
+
+Одна модель описывает таблицу. Каждой управляемой модели нужен первичный ключ.
+
+```prisma
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+}
+```
+
+```prisma
+model Membership {
+  organizationId Int
+  userId Int
+  role String
+
+  @@id([organizationId, userId])
+}
+```
+
+```prisma
+model Account {
+  id Int @id @default(autoincrement())
+  emailAddress String @unique @map("email_address")
+
+  @@map("accounts")
+}
+```
+
+```prisma
+model Article {
+  id Int @id @default(autoincrement())
+  authorId Int
+  publishedAt DateTime
+
+  @@index([authorId, publishedAt])
+}
+```
+
+`@id` — один столбец; `@@id([a,b])` — составной ключ с заданным порядком. Ключи обязательные и скалярные. `@unique` и `@@unique` создают ограничения, а не методы `findByEmail`. Название репозитория — имя модели с первой строчной буквой. Имена БД меняются через mapping; pluralization и snake_case автоматически не применяются. В составном курсоре передавай все поля PK.

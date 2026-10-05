@@ -1,0 +1,31 @@
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+generator client {
+  provider = "volan-kotlin"
+  package = "org.example.schema.relationships"
+  javaFriendly = true
+}
+model Folder {
+  id Int @id
+  parentId Int?
+  parent Folder? @relation("FolderTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Folder[] @relation("FolderTree")
+}
+model Article {
+  id Int @id
+  title String
+  tags Tag[] @relation("ArticleTags")
+}
+model Tag {
+  id Int @id
+  label String @unique
+  articles Article[] @relation("ArticleTags")
+}
+model Membership {
+  tenantId Int
+  userId Int
+  role String
+  @@id([tenantId, userId])
+}

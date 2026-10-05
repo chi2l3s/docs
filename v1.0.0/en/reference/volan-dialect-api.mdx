@@ -1,0 +1,21 @@
+---
+title: "volan-dialect-api"
+description: "SQL/DDL model, parameters, capabilities and JDBC dialect."
+---
+
+SQL/DDL model, parameters, capabilities and JDBC dialect.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-dialect-api:1.0.0")
+```
+
+## Contracts
+- [Ddl](/v1.0.0/en/reference/volan-dialect-api/ddl): `ColumnChange`, `Default`, `Nullability`, `Type`, `ColumnDefault`, `Boolean`, `CurrentTimestamp`, `EmptyArray`, `Expression`, `GeneratedUuid`, `Number`, `Text`, `ColumnDefinition`, `ColumnType`, `Array`, `Enumeration`, `Native`, `Scalar`, `ConstraintKind`, `DdlStatement`, `AddColumn`, `AddEnumValue`, `AddForeignKey`, `AddPrimaryKey`, `AddUnique`, `AlterColumn`, `CreateConstrainedTable`, `CreateEnum`, `CreateIndex`, `CreateTable`, `DropColumn`, `DropConstraint`, `DropEnum`, `DropIndex`, `DropTable`, `ModifyColumn`, `RebuildTable`, `ForeignKeyAction`, `ForeignKeyDefinition`, `IndexDefinition`, `PrimaryKeyDefinition`, `SqlType`, `UniqueDefinition`
+- [DdlRenderer](/v1.0.0/en/reference/volan-dialect-api/ddlrenderer): `DdlRenderer`
+- [Dialect](/v1.0.0/en/reference/volan-dialect-api/dialect): `Dialect`, `DefaultImpls`, `DialectCapabilities`
+- [DialectProvider](/v1.0.0/en/reference/volan-dialect-api/dialectprovider): `DialectProvider`
+- [Sql](/v1.0.0/en/reference/volan-dialect-api/sql): `SqlAggregate`, `SqlAssignment`, `SqlComparison`, `SqlCondition`, `And`, `Between`, `Compare`, `CompareTuple`, `Exists`, `InList`, `IsNull`, `Not`, `Or`, `TextMatch`, `SqlDelete`, `SqlExpression`, `Call`, `Column`, `Keyword`, `Parameter`, `SqlInsert`, `SqlNulls`, `SqlOrder`, `SqlSelect`, `SqlSelectItem`, `Aggregate`, `Column`, `CountAll`, `SqlStatement`, `SqlTextMatch`, `SqlUpdate`
+- [SqlRenderer](/v1.0.0/en/reference/volan-dialect-api/sqlrenderer): `SqlRenderer`
+- [VolanDialectException](/v1.0.0/en/reference/volan-dialect-api/volandialectexception): `VolanDialectException`
+
+Data classes also provide value equality, copy and componentN; enums expose values/valueOf. ? marks nullable types. Kotlin @JvmOverloads signatures have Java overloads; @JvmStatic/@JvmField provide static access. Signatures alone do not imply serialization or data migration.

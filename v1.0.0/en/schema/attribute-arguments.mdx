@@ -1,0 +1,22 @@
+---
+title: "Attribute arguments"
+description: "Use map for SQL object names. @map and @@map take a name string."
+---
+
+Use map for SQL object names. @map and @@map take a name string.
+
+```prisma
+model Account {
+  id Int @id(map: "account_pk")
+  email String @unique(map: "account_email_key") @map("email_address")
+  tenantId Int
+  externalId String
+  @@unique([tenantId, externalId], map: "account_tenant_external_key")
+  @@index([tenantId], map: "account_tenant_idx")
+  @@map(name: "accounts")
+}
+```
+
+@id(map: "…") and @unique(map: "…") take no positional arguments. @@id, @@unique, @@index and @@fulltext take the model's scalar-field list first and an optional map string. Lists use schema field names, not SQL names. @map("…") equals @map(name: "…"); the same applies to @@map and enum-value mapping.
+
+@relation accepts a positional name or name, fields/references lists and onDelete/onUpdate actions. @default takes one value or a supported function. @updatedAt, @ignore and @@ignore are unconfigured markers. Unknown arguments and duplicate single-use attributes fail analysis. [Default functions](/v1.0.0/en/schema/defaults), [FK actions](/v1.0.0/en/schema/referential-actions).

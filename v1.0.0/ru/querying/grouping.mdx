@@ -1,0 +1,25 @@
+---
+title: "GroupBy и having"
+description: "where фильтрует строки до группировки; having — готовые группы."
+---
+
+where фильтрует строки до группировки; having — готовые группы.
+
+```kotlin
+val groups = db.post.groupBy {
+    where { views gt 0 }
+    by { authorId }
+    count()
+    sum { views }
+    having { count gt 1L }
+    orderBy {
+        authorId.asc()
+    }
+    take = 10
+}
+groups.forEach { group ->
+    println("${group.authorId}: ${group.count} posts, ${group.sumOfViews} views")
+}
+```
+
+В `by` нужны скалярные поля. Результат содержит только ключи группы и выбранные агрегаты; невыбранные значения бросают исключение. having предоставляет агрегаты, а не произвольные grouped-поля: такие условия задавай в where. orderBy сортирует поля модели, входящие в by; сортировка по sumOfViews не генерируется. Для неё используй raw SQL. take/skip ограничивают группы; курсоров у groupBy нет.

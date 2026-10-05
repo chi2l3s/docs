@@ -1,0 +1,16 @@
+---
+title: "Тестирование приложения"
+description: "Для поведения БД используй isolated embedded database. Для формы запроса — QueryExecutor test double."
+---
+
+Для поведения БД используй isolated embedded database. Для формы запроса — QueryExecutor test double.
+
+```kotlin
+VolanClient.builder().url("jdbc:sqlite::memory:").build().use { db ->
+    // Create the test tables or apply reviewed migrations first.
+    val created = db.user.create { email = "test@example.org" }
+    check(db.user.findUniqueOrThrow { where { id eq created.id } } == created)
+}
+```
+
+Каждый тест получает новую базу. Проверяй defaults, null, constraints, rollback и provider-specific SQL на выбранной СУБД. VolanClient(executor) позволяет подставить implementation QueryExecutor; все 13 операций в [контракте](/v1.0.0/ru/reference/volan-runtime). Такой клиент не имеет raw SQL/transactions.

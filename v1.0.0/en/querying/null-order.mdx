@@ -1,0 +1,14 @@
+---
+title: "Null ordering"
+description: "Choose explicit null placement when it matters for a page."
+---
+
+Choose explicit null placement when it matters for a page.
+
+```kotlin
+val users = db.user.findMany {
+    orderBy { name.ascNullsLast(); id.asc() }
+}
+```
+
+asc/desc use database defaults. Also available: ascNullsFirst, ascNullsLast, descNullsFirst, descNullsLast. Term order is preserved. A dialect can emulate NULLS FIRST/LAST; see dialect capabilities for SQL behavior.

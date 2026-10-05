@@ -1,0 +1,116 @@
+---
+title: "QueryScope"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions и hooks."
+---
+
+Контракты типов и членов volan-runtime для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `IncludeScope`, `OrderField`, `OrderScope`, `QueryScope`, `SelectScope`
+
+```kotlin
+public abstract class OrderScope protected constructor()
+
+    protected fun orderField(column: String): OrderField
+
+    public fun build(): List<OrderTerm>
+
+public class OrderField internal constructor(private val column: String, private val scope: OrderScope)
+
+    public fun asc(): Unit
+
+    public fun desc(): Unit
+
+    public fun ascNullsFirst(): Unit
+
+    public fun ascNullsLast(): Unit
+
+    public fun descNullsFirst(): Unit
+
+    public fun descNullsLast(): Unit
+
+public abstract class SelectScope protected constructor()
+
+    protected fun markSelected(field: String)
+
+    public fun build(): Set<String>
+
+public abstract class IncludeScope protected constructor()
+
+    protected fun includeRelation(relation: String, spec: QuerySpec)
+
+    public fun build(): List<RelationRequest>
+
+public abstract class QueryScope protected constructor(private val model: String)
+
+    public var take: @Nullable Int?
+
+    public var skip: @Nullable Int?
+
+    protected fun recordFilter(scope: FilterScope)
+
+    protected fun recordOrder(scope: OrderScope)
+
+    protected fun recordSelection(columns: List<String>)
+
+    protected fun recordDistinct(columns: List<String>)
+
+    protected fun recordIncludes(scope: IncludeScope)
+
+    protected fun recordCursor(key: Map<String, @Nullable Any?>, inclusive: Boolean)
+
+    public fun build(): QuerySpec
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/QueryScope.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-runtime).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public abstract class io/github/thirtyeighttwentysix/volan/runtime/IncludeScope {
+	protected fun <init> ()V
+	public final fun build ()Ljava/util/List;
+	protected final fun includeRelation (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/OrderField {
+	public final fun asc ()V
+	public final fun ascNullsFirst ()V
+	public final fun ascNullsLast ()V
+	public final fun desc ()V
+	public final fun descNullsFirst ()V
+	public final fun descNullsLast ()V
+}
+
+public abstract class io/github/thirtyeighttwentysix/volan/runtime/OrderScope {
+	protected fun <init> ()V
+	public final fun build ()Ljava/util/List;
+	protected final fun orderField (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/OrderField;
+}
+
+public abstract class io/github/thirtyeighttwentysix/volan/runtime/QueryScope {
+	protected fun <init> (Ljava/lang/String;)V
+	public final fun build ()Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;
+	public final fun getSkip ()Ljava/lang/Integer;
+	public final fun getTake ()Ljava/lang/Integer;
+	protected final fun recordCursor (Ljava/util/Map;Z)V
+	protected final fun recordDistinct (Ljava/util/List;)V
+	protected final fun recordFilter (Lio/github/thirtyeighttwentysix/volan/runtime/FilterScope;)V
+	protected final fun recordIncludes (Lio/github/thirtyeighttwentysix/volan/runtime/IncludeScope;)V
+	protected final fun recordOrder (Lio/github/thirtyeighttwentysix/volan/runtime/OrderScope;)V
+	protected final fun recordSelection (Ljava/util/List;)V
+	public final fun setSkip (Ljava/lang/Integer;)V
+	public final fun setTake (Ljava/lang/Integer;)V
+}
+
+public abstract class io/github/thirtyeighttwentysix/volan/runtime/SelectScope {
+	protected fun <init> ()V
+	public final fun build ()Ljava/util/Set;
+	protected final fun markSelected (Ljava/lang/String;)V
+}
+```
+
+</Accordion>

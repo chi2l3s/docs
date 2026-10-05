@@ -1,0 +1,28 @@
+---
+title: "Корутины"
+description: "suspendQuery сохраняет тип клиента и запускает синхронный блок на JDBC-worker."
+---
+
+suspendQuery сохраняет тип клиента и запускает синхронный блок на JDBC-worker.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.coroutines.suspendQuery
+import io.github.thirtyeighttwentysix.volan.coroutines.CoroutineAccess
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withTimeout
+
+val access = CoroutineAccess(Dispatchers.IO.limitedParallelism(4))
+val users = withTimeout(2_000) {
+    db.suspendQuery(access) { user.findMany { take = 20 } }
+}
+val created = db.user.suspendQuery { create { email = "new@example.org" } }
+val saved = db.suspendQuery {
+    transaction { tx ->
+        val user = tx.user.create { email = "coroutine-tx@example.org" }
+        tx.post.create { title = "Welcome"; authorId = user.id }
+        user
+    }
+}
+```
+
+Нужен `volan-coroutines`. Default CoroutineAccess использует shared Dispatchers.IO.limitedParallelism(16). Supplied dispatcher принадлежит приложению. Блок и transaction callback синхронные: внутри нельзя suspend. Повторная dispatch из transaction/другой dispatched operation запрещена. Для QueryExecutor есть SuspendingQueryExecutor.

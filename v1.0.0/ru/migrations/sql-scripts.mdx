@@ -1,0 +1,13 @@
+---
+title: "SQL-скрипты"
+description: "Один migration.sql содержит обычные statements без собственного управления транзакцией."
+---
+
+Один migration.sql содержит обычные statements без собственного управления транзакцией.
+
+```sql
+ALTER TABLE "User" ADD COLUMN "nickname" TEXT;
+UPDATE "User" SET "nickname" = "name" WHERE "name" IS NOT NULL;
+```
+
+Parser учитывает quoted identifiers/strings, PostgreSQL dollar quotes и nested comments; MySQL backticks и обычные comments. PostgreSQL запрещённые inside-transaction операции (CREATE INDEX CONCURRENTLY) вынеси в отдельный процесс. На nontransactional providers запрещены transaction/session/database/lock control, SET/USE/RUNSCRIPT/EXECUTE/SHUTDOWN и MySQL executable comments /*!…*/ или /*M!…*/. Routines/triggers не должны косвенно менять эти настройки/журнал. Malformed SQL отклоняется до start record.

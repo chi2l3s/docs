@@ -1,0 +1,21 @@
+---
+title: "Micrometer"
+description: "Timer volan.query считает физические statements и их длительность."
+---
+
+Timer volan.query считает физические statements и их длительность.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.micrometer.MicrometerQueryInterceptor
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+
+val registry = SimpleMeterRegistry()
+val db = VolanClient.builder()
+    .url(url)
+    .interceptor(MicrometerQueryInterceptor(registry))
+    .build()
+// Optional custom metric name:
+val custom = MicrometerQueryInterceptor(registry, "app.database")
+```
+
+Модуль `volan-micrometer` подключается отдельно. Tags: dialect=provider id; operation=query/execute; outcome=success/error/cancelled. SQL, параметры и сообщения исключений не labels. Duration включает ожидание пула и mapping. Include/nested write дают несколько samples. Успешный statement остаётся success даже после rollback внешней transaction. Registry/exporter принадлежат приложению.

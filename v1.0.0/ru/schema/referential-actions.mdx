@@ -1,0 +1,20 @@
+---
+title: "Действия внешних ключей"
+description: "onDelete и onUpdate выполняются базой, даже когда связь не загружена."
+---
+
+onDelete и onUpdate выполняются базой, даже когда связь не загружена.
+
+```prisma
+model Parent {
+  id Int @id
+  children Child[]
+}
+model Child {
+  id Int @id
+  parentId Int?
+  parent Parent? @relation(fields: [parentId], references: [id], onDelete: SetNull)
+}
+```
+
+Допустимые actions: Cascade, Restrict, NoAction, SetNull, SetDefault. SetNull требует nullable FK; SetDefault зависит от СУБД и реального default. MySQL/MariaDB SetDefault отклоняют. Неуказанные actions нормализуются analyzer/schema mapper: смотри [IR](/v1.0.0/ru/reference/volan-ir). Цикл Cascade даёт предупреждение.

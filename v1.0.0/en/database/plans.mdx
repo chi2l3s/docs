@@ -1,0 +1,24 @@
+---
+title: "Library SQL plans"
+description: "Planning reads the catalog without applying changes. Render for the selected provider."
+---
+
+Planning reads the catalog without applying changes. Render for the selected provider.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+import io.github.thirtyeighttwentysix.volan.migrate.DatabaseSync
+import io.github.thirtyeighttwentysix.volan.migrate.SqliteReader
+import io.github.thirtyeighttwentysix.volan.dialect.sqlite.SqliteDialect
+import java.sql.DriverManager
+
+val schema = SchemaLoader.load("schema.volan", schemaText).schemaOrThrow()
+val sync = DatabaseSync(SqliteReader(), SqliteDialect)
+DriverManager.getConnection("jdbc:sqlite:./data.db").use { connection ->
+    val plan = sync.plan(connection, schema)
+    println(plan.warnings)
+    println(plan.toSql(SqliteDialect))
+}
+```
+
+MigrationPlan exposes steps, warnings, isEmpty, isDestructive, render(dialect), toSql(dialect). Each MigrationStep holds DdlStatement and nullable warning. SQLite/MySQL need provider-aware DatabaseSync.plan; generic SchemaDiffer.diff misses rebuild/column details. SchemaMapper plus SchemaDiffer suits supported initial DDL against an empty database.

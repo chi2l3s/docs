@@ -1,0 +1,18 @@
+---
+title: "Isolation and retries"
+description: "A retry reruns the entire callback. Enable it only for repeatable work."
+---
+
+A retry reruns the entire callback. Enable it only for repeatable work.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.Isolation
+import io.github.thirtyeighttwentysix.volan.runtime.RetryPolicy
+
+val result = db.transaction(
+    Isolation.SERIALIZABLE,
+    RetryPolicy(attempts = 3, initialDelay = 20, multiplier = 2.0),
+) { tx -> tx.user.count() }
+```
+
+Isolation values: DEFAULT, READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE. JDBC/database decides level support. RetryPolicy.NONE means 1 attempt; DEFAULT 3; initialDelay=20 ms, multiplier=2. attempts includes the first run and must be ≥1. Only retryable VolanTransactionException (deadlock/serialization) is retried. Send emails and HTTP calls after successful commit.

@@ -1,0 +1,14 @@
+---
+title: "Порядок null"
+description: "Выбери положение null явно, когда оно важно для страницы."
+---
+
+Выбери положение null явно, когда оно важно для страницы.
+
+```kotlin
+val users = db.user.findMany {
+    orderBy { name.ascNullsLast(); id.asc() }
+}
+```
+
+`asc`, `desc` используют default базы. Доступны `ascNullsFirst`, `ascNullsLast`, `descNullsFirst`, `descNullsLast`. Порядок terms сохраняется. Диалект может эмулировать NULLS FIRST/LAST; точные SQL-способности — в справочнике dialect.

@@ -1,0 +1,16 @@
+---
+title: "Нативные типы"
+description: "db-атрибуты уточняют SQL-тип в PostgreSQL. Остальные диалекты их отклоняют."
+---
+
+db-атрибуты уточняют SQL-тип в PostgreSQL. Остальные диалекты их отклоняют.
+
+```prisma
+model Product {
+  id Int @id
+  title String @db.VarChar(200)
+  amount Decimal @db.Decimal(12, 2)
+}
+```
+
+Проверь SQL-тип и его аргументы по [каталогу PostgreSQL](/v1.0.0/ru/schema/postgresql-types). Analyzer не проверяет все пары scalar/native и размеры SQL-типов. Native type не меняет Kotlin-тип свойства. Pull сохраняет поддерживаемые объявления; неподдерживаемую структуру отклоняет.

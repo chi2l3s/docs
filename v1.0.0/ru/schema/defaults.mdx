@@ -1,0 +1,18 @@
+---
+title: "Значения по умолчанию"
+description: "Default работает при пропущенном поле. Явное значение имеет приоритет."
+---
+
+Default работает при пропущенном поле. Явное значение имеет приоритет.
+
+```prisma
+model Event {
+  id Int @id @default(autoincrement())
+  title String @default("Untitled")
+  published Boolean @default(false)
+  createdAt DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+}
+```
+
+`autoincrement()` — Int/Long и допустимая форма PK; `now()` — temporal; `uuid()` — Uuid/String; enum — существующее значение; список — только `[]`. `dbgenerated("SQL")` передаёт выражение БД. SQL-default должен реально существовать в таблице. Default не проверяет бизнес-диапазон. MySQL/MariaDB не поддерживают database-generated UUID PK.

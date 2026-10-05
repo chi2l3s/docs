@@ -1,0 +1,40 @@
+---
+title: "Gradle"
+description: "Обычная сборка генерирует и компилирует клиент. Настройки относятся к текущему модулю."
+---
+
+Обычная сборка генерирует и компилирует клиент. Настройки относятся к текущему модулю.
+
+```kotlin
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+rootProject.name = "volan-first-query"
+```
+
+```kotlin
+plugins {
+    kotlin("jvm") version "2.4.20"
+    id("io.github.thirtyeighttwentysix.volan") version "1.0.0"
+}
+repositories { mavenCentral() }
+dependencies {
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-h2:1.0.0")
+    runtimeOnly("com.h2database:h2:2.5.252")
+}
+volan {
+    schemaFile.set(layout.projectDirectory.file("db/schema.volan"))
+    outputDirectory.set(layout.buildDirectory.dir("generated/my-client"))
+}
+```
+
+```bash
+./gradlew volanGenerate
+./gradlew build --configuration-cache
+./gradlew clean build --build-cache
+```
+
+По умолчанию: `schema.volan`, `build/generated/volan`. Плагин подключает Kotlin/JVM main sources и соответствующий runtime. Генерация поддерживает incremental build, build cache и configuration cache. Каталог output принадлежит генерации. Android и Multiplatform не поддерживаются. Проверяемая связка: Gradle 9.8.0, Kotlin 2.4.20.

@@ -1,0 +1,15 @@
+---
+title: "Distinct"
+description: "Distinct устраняет повторы по выбранным колонкам. Поведение зависит от СУБД."
+---
+
+Distinct устраняет повторы по выбранным колонкам. Поведение зависит от СУБД.
+
+```kotlin
+val authors = db.post.projectMany {
+    select { authorId }
+    distinct { authorId }
+}
+```
+
+SQLite/MySQL/MariaDB требуют select ровно тех колонок, которые указаны в distinct. PostgreSQL/H2 поддерживают DISTINCT ON; сортировка должна согласовываться с колонками distinct. Если нужен агрегат по авторам, используй groupBy. В счётчиках distinct учитывается runtime-планом; не считай его клиентским List.distinct.

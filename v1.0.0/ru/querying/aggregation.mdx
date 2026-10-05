@@ -1,0 +1,22 @@
+---
+title: "Агрегаты"
+description: "Выбери вычисления явно. Результат содержит только запрошенные агрегаты."
+---
+
+Выбери вычисления явно. Результат содержит только запрошенные агрегаты.
+
+```kotlin
+val stats = db.post.aggregate {
+    where { views gt 0 }
+    count()
+    sum { views }
+    average { views }
+    minimum { views }
+    maximum { views }
+}
+println("Posts: ${stats.count}")
+println("Views: ${stats.sumOfViews}")
+println("Average: ${stats.averageOfViews}")
+```
+
+`count` → Long; `sum` → BigDecimal?; `average` → Double?; min/max → nullable тип поля. На пустом наборе count=0, остальные — null. Незапрошенное свойство бросает VolanAggregateNotAskedException. Для min/max/sum набор доступных полей зависит от типа. groupBy/having разобраны отдельно.

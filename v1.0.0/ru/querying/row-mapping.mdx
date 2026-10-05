@@ -1,0 +1,35 @@
+---
+title: "Свои результаты raw SQL"
+description: "RowMapper вызывается для каждой строки, пока result set открыт. Верни готовое значение."
+---
+
+RowMapper вызывается для каждой строки, пока result set открыт. Верни готовое значение.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.RowMapper
+data class UserEmail(val id: Int, val email: String)
+val emails = db.rawQuery(
+    "SELECT id, email FROM User WHERE id > ?",
+    listOf(0),
+    RowMapper { row -> UserEmail(row.getInt("id"), row.getString("email")) },
+)
+```
+
+| Row | Тип результата |
+| --- | --- |
+| `getString` / `getStringOrNull` | `String` / `String?` |
+| `getInt` / `getIntOrNull` | `Int` / `Int?` |
+| `getLong` / `getLongOrNull` | `Long` / `Long?` |
+| `getFloat` / `getFloatOrNull` | `Float` / `Float?` |
+| `getDouble` / `getDoubleOrNull` | `Double` / `Double?` |
+| `getDecimal` / `getDecimalOrNull` | `BigDecimal` / `BigDecimal?` |
+| `getBoolean` / `getBooleanOrNull` | `Boolean` / `Boolean?` |
+| `getInstant` / `getInstantOrNull` | `Instant` / `Instant?` |
+| `getLocalDate` / `getLocalDateOrNull` | `LocalDate` / `LocalDate?` |
+| `getLocalTime` / `getLocalTimeOrNull` | `LocalTime` / `LocalTime?` |
+| `getUuid` / `getUuidOrNull` | `UUID` / `UUID?` |
+| `getBytes` / `getBytesOrNull` | `ByteArray` / `ByteArray?` |
+| `getJson` / `getJsonOrNull` | `Json` / `Json?` |
+| `getScalarList` / `getScalarListOrNull` | `List<Any?>` / `List<Any?>?` |
+
+Передай имя SQL-колонки или alias. Для nullable-колонки выбери OrNull; required-accessor отказывает при NULL. `isNull(column)` проверяет SQL NULL. `getScalarList` возвращает элементы драйвера, не выполняя schema-specific casts. Скопируй значения в DTO внутри mapper: Row нельзя хранить для последующего чтения. Исключение mapper выходит из запроса; ресурсы закрываются.

@@ -1,0 +1,19 @@
+---
+title: "Java futures"
+description: "Async methods return CompletableFuture and run blocking JDBC on an executor."
+---
+
+Async methods return CompletableFuture and run blocking JDBC on an executor.
+
+```java
+var workers = java.util.concurrent.Executors.newFixedThreadPool(4);
+try (var db = VolanClient.builder().url(url).asyncExecutor(workers).build()) {
+    var pending = db.getUser().findManyAsync(q -> q.setTake(20));
+    var users = pending.join();
+    var count = db.getUser().countAsync().join();
+} finally {
+    workers.shutdown();
+}
+```
+
+Every repository operation has an Async variant, including projections, aggregates, groupBy and writes; clients have transactionAsync/rawQueryAsync/rawExecuteAsync. Default executor: commonPool. The application owns the executor; callbacks run on workers, so do not concurrently mutate captured inputs. join wraps failures in CompletionException; get uses ExecutionException. An empty nullable read completes normally with null. [Cancellation](/v1.0.0/en/execution/cancellation).

@@ -1,0 +1,22 @@
+---
+title: "Аргументы атрибутов"
+description: "Имена SQL-объектов задаются через map. @map и @@map используют строку имени."
+---
+
+Имена SQL-объектов задаются через map. @map и @@map используют строку имени.
+
+```prisma
+model Account {
+  id Int @id(map: "account_pk")
+  email String @unique(map: "account_email_key") @map("email_address")
+  tenantId Int
+  externalId String
+  @@unique([tenantId, externalId], map: "account_tenant_external_key")
+  @@index([tenantId], map: "account_tenant_idx")
+  @@map(name: "accounts")
+}
+```
+
+`@id(map: "…")`, `@unique(map: "…")`: нет позиционных аргументов. `@@id`, `@@unique`, `@@index`, `@@fulltext`: список собственных scalar-полей первым аргументом, необязательная строка `map`. В список передаются имена схемы, не SQL-имена. `@map("…")` равно `@map(name: "…")`; то же для `@@map` и enum value mapping.
+
+`@relation`: позиционное имя либо `name`, списки `fields`, `references`, действия `onDelete`, `onUpdate`. `@default` принимает одно значение или поддерживаемую функцию. `@updatedAt`, `@ignore`, `@@ignore` — маркеры без конфигурации. Неизвестные аргументы и повторные одиночные атрибуты — ошибка анализа. [Функции default](/v1.0.0/ru/schema/defaults), [действия FK](/v1.0.0/ru/schema/referential-actions).

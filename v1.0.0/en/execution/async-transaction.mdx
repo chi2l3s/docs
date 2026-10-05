@@ -1,0 +1,19 @@
+---
+title: "Async transactions"
+description: "Dispatch the whole transaction to one worker. Use ordinary methods inside."
+---
+
+Dispatch the whole transaction to one worker. Use ordinary methods inside.
+
+```java
+var user = db.transactionAsync(tx -> {
+    var created = tx.getUser().create(d -> d.setEmail("async-tx@example.org"));
+    tx.getPost().create(d -> {
+        d.setTitle("Async transaction");
+        d.setAuthorId(created.getId());
+    });
+    return created;
+}).join();
+```
+
+Async dispatch inside an active connected transaction returns a failed future; thread-bound transactions cannot follow another thread. Return a final value rather than another future. Callback failure rolls back. Overloads support Isolation and RetryPolicy.

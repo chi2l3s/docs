@@ -1,0 +1,213 @@
+---
+title: "Exceptions"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions и hooks."
+---
+
+Контракты типов и членов volan-runtime для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `RelationSlot`, `Companion`, `SelectedFields`, `Companion`, `VolanConfigurationException`, `VolanConnectionException`, `VolanConstraintException`, `VolanFieldNotSelectedException`, `VolanForeignKeyException`, `VolanMappingException`, `VolanNotFoundException`, `VolanQueryException`, `VolanRelationNotLoadedException`, `VolanTimeoutException`, `VolanTransactionException`, `VolanUniqueConstraintException`, `VolanUnsupportedException`, `VolanValidationException`
+
+```kotlin
+public class VolanRelationNotLoadedException internal constructor(public val model: String, public val relation: String) :
+    VolanException(
+        "`$model.$relation` was not loaded by the query that produced this row.\n" +
+            "  Add it to the query:  include { $relation { } }\n" +
+            "  Or check first:       row.is${relation.replaceFirstChar { it.uppercase() }}Loaded",
+    )
+
+public class VolanFieldNotSelectedException internal constructor(
+    public val model: String,
+    public val field: String,
+    block: String,
+) : VolanException(
+    "`$model.$field` was not selected by the query that produced this row.\n" +
+        "  Add it to the query:  $block { $field }\n" +
+        "  Or check first:       row.is${field.replaceFirstChar { it.uppercase() }}Selected",
+)
+
+public class VolanNotFoundException(public val model: String, message: String) : VolanException(message)
+
+public class VolanConfigurationException @JvmOverloads constructor(message: String, cause: @Nullable Throwable? = null) :
+    VolanException(message, cause)
+
+public class VolanUnsupportedException(message: String) : VolanException(message)
+
+public class VolanUniqueConstraintException(
+    public val constraint: @Nullable String?,
+    message: String,
+    cause: @Nullable Throwable?,
+) : VolanException(message, cause)
+
+public class VolanForeignKeyException(
+    public val constraint: @Nullable String?,
+    message: String,
+    cause: @Nullable Throwable?,
+) : VolanException(message, cause)
+
+public class VolanConstraintException(message: String, cause: @Nullable Throwable?) : VolanException(message, cause)
+
+public class VolanConnectionException(message: String, cause: @Nullable Throwable?) : VolanException(message, cause)
+
+public class VolanTimeoutException(message: String, cause: @Nullable Throwable?) : VolanException(message, cause)
+
+public class VolanTransactionException(
+    public val retryable: Boolean,
+    message: String,
+    cause: @Nullable Throwable?,
+) : VolanException(message, cause)
+
+public class VolanQueryException(message: String, cause: @Nullable Throwable?) : VolanException(message, cause)
+
+public class VolanValidationException(message: String) : VolanException(message)
+
+public class VolanMappingException(message: String) : VolanException(message)
+
+public class SelectedFields private constructor(private val fields: Set<String>, private val block: String)
+
+    public fun contains(field: String): Boolean
+
+    public fun <T : @Nullable Any?> require(model: String, field: String, value: @Nullable T?): T
+
+    override fun equals(other: @Nullable Any?): Boolean
+
+    override fun hashCode(): Int
+
+    override fun toString(): String
+
+    public companion object
+
+        public fun of(fields: Set<String>): SelectedFields
+
+        public fun groupedBy(fields: Set<String>): SelectedFields
+
+public class RelationSlot<T : @Nullable Any?> private constructor(
+    private val value: @Nullable T?,
+    /** Whether the query loaded this relation. */
+    public val isLoaded: Boolean,
+)
+
+    public fun get(model: String, relation: String): T
+
+    public fun orNull(): @Nullable T?
+
+    override fun equals(other: @Nullable Any?): Boolean
+
+    override fun hashCode(): Int
+
+    override fun toString(): String
+
+    public companion object
+
+        public fun <T : @Nullable Any?> loaded(value: T): RelationSlot<T>
+
+        public fun <T : @Nullable Any?> notLoaded(): RelationSlot<T>
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/Exceptions.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-runtime).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/RelationSlot {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/runtime/RelationSlot$Companion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+	public fun hashCode ()I
+	public final fun isLoaded ()Z
+	public static final fun loaded (Ljava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationSlot;
+	public static final fun notLoaded ()Lio/github/thirtyeighttwentysix/volan/runtime/RelationSlot;
+	public final fun orNull ()Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/RelationSlot$Companion {
+	public final fun loaded (Ljava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationSlot;
+	public final fun notLoaded ()Lio/github/thirtyeighttwentysix/volan/runtime/RelationSlot;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/SelectedFields {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/runtime/SelectedFields$Companion;
+	public final fun contains (Ljava/lang/String;)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun groupedBy (Ljava/util/Set;)Lio/github/thirtyeighttwentysix/volan/runtime/SelectedFields;
+	public fun hashCode ()I
+	public static final fun of (Ljava/util/Set;)Lio/github/thirtyeighttwentysix/volan/runtime/SelectedFields;
+	public final fun require (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/SelectedFields$Companion {
+	public final fun groupedBy (Ljava/util/Set;)Lio/github/thirtyeighttwentysix/volan/runtime/SelectedFields;
+	public final fun of (Ljava/util/Set;)Lio/github/thirtyeighttwentysix/volan/runtime/SelectedFields;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanConfigurationException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanConnectionException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanConstraintException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanFieldNotSelectedException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public final fun getField ()Ljava/lang/String;
+	public final fun getModel ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanForeignKeyException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public final fun getConstraint ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanMappingException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanNotFoundException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getModel ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanQueryException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanRelationNotLoadedException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public final fun getModel ()Ljava/lang/String;
+	public final fun getRelation ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanTimeoutException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanTransactionException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (ZLjava/lang/String;Ljava/lang/Throwable;)V
+	public final fun getRetryable ()Z
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanUniqueConstraintException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public final fun getConstraint ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanUnsupportedException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/VolanValidationException : io/github/thirtyeighttwentysix/volan/VolanException {
+	public fun <init> (Ljava/lang/String;)V
+}
+```
+
+</Accordion>

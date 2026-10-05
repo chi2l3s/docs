@@ -1,0 +1,28 @@
+---
+title: "Tenants and soft delete"
+description: "Volan does not inject tenant/soft-delete predicates. Add them to each relevant query."
+---
+
+Volan does not inject tenant/soft-delete predicates. Add them to each relevant query.
+
+```prisma
+model TenantRecord {
+  id Int @id
+  tenantId Int
+  title String
+  deletedAt DateTime?
+  @@index([tenantId, deletedAt])
+}
+```
+
+```kotlin
+val rows = db.tenantRecord.findMany {
+    where { tenantId eq currentTenantId; deletedAt.isNull() }
+}
+db.tenantRecord.updateMany {
+    where { id eq recordId; tenantId eq currentTenantId; deletedAt.isNull() }
+    data { deletedAt = java.time.Instant.now() }
+}
+```
+
+This example requires the separate TenantRecord model and migration. Check tenants in writes and relation filters too; query interceptors are not an authorization system.

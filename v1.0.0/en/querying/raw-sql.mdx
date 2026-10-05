@@ -1,0 +1,44 @@
+---
+title: "Raw SQL"
+description: "You supply SQL text; pass values as separate parameters."
+---
+
+You supply SQL text; pass values as separate parameters.
+
+```kotlin
+val emailToFind = "alice@example.org"
+val emails = db.rawQuery(
+    """SELECT "email" FROM "User" WHERE "email" = ?""",
+    listOf(emailToFind),
+) { row -> row.getString("email") }
+```
+
+```java
+var emailToFind = "alice@example.org";
+var emails = db.rawQuery(
+    "SELECT \"email\" FROM \"User\" WHERE \"email\" = ?",
+    java.util.List.of(emailToFind),
+    row -> row.getString("email")
+);
+```
+
+```kotlin
+data class UserLabel(val email: String, val name: String?)
+
+val labels = db.rawQuery(
+    """SELECT "email", "name" FROM "User" ORDER BY "id" LIMIT 20""",
+    emptyList(),
+) { row ->
+    UserLabel(row.getString("email"), row.getStringOrNull("name"))
+}
+```
+
+```kotlin
+val affected = db.rawExecute(
+    """UPDATE "User" SET "name" = ? WHERE "email" = ?""",
+    listOf("Alice", "alice@example.org"),
+)
+println("Updated rows: $affected")
+```
+
+rawQuery returns mapper results as a List; rawExecute returns affected rows as Long. SQL is not translated across dialects. ? binds a value, not an identifier or sort direction. Read Row inside the mapper; use nullable accessors for SQL NULL. Java List.of rejects null; use Arrays.asList. A bare QueryExecutor client cannot run raw SQL.

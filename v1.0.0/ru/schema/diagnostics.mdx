@@ -1,0 +1,59 @@
+---
+title: "Диагностика схемы"
+description: "Смотри code, source span и help. За один запуск parser может показать несколько ошибок."
+---
+
+Смотри code, source span и help. За один запуск parser может показать несколько ошибок.
+
+```bash
+volan validate --schema schema.volan
+```
+
+```text
+error[E0104]: expected a field type
+  schema.volan:2:9
+  email @unique
+        ^
+help: write name Type, for example email String
+```
+
+| Код | Символ контракта |
+| --- | --- |
+| E0200 | `DUPLICATE_DECLARATION` |
+| E0201 | `UNKNOWN_TYPE` |
+| E0202 | `DUPLICATE_MEMBER` |
+| E0203 | `MISSING_DATASOURCE` |
+| E0204 | `DUPLICATE_DATASOURCE` |
+| E0205 | `UNKNOWN_PROVIDER` |
+| E0206 | `MISSING_OPTION` |
+| E0207 | `UNKNOWN_OPTION` |
+| E0208 | `INVALID_OPTION_VALUE` |
+| E0209 | `MISSING_PRIMARY_KEY` |
+| E0210 | `DUPLICATE_PRIMARY_KEY` |
+| E0211 | `INVALID_ID_FIELD` |
+| E0212 | `UNKNOWN_ATTRIBUTE` |
+| E0213 | `UNKNOWN_ATTRIBUTE_ARGUMENT` |
+| E0214 | `MISSING_ATTRIBUTE_ARGUMENT` |
+| E0215 | `INVALID_ATTRIBUTE_TARGET` |
+| E0216 | `DUPLICATE_ATTRIBUTE` |
+| E0217 | `INVALID_DEFAULT` |
+| E0218 | `INVALID_UPDATED_AT` |
+| E0219 | `UNKNOWN_FIELD_REFERENCE` |
+| E0220 | `RELATION_MISSING_OPPOSITE` |
+| E0221 | `RELATION_AMBIGUOUS` |
+| E0222 | `RELATION_ARGUMENT_MISMATCH` |
+| E0223 | `RELATION_INVALID_SIDE` |
+| E0224 | `RELATION_REFERENCE_NOT_UNIQUE` |
+| E0225 | `RELATION_TYPE_MISMATCH` |
+| E0226 | `INVALID_REFERENTIAL_ACTION` |
+| E0227 | `DUPLICATE_MAPPED_NAME` |
+| E0228 | `CASCADE_CYCLE` |
+| E0229 | `INVALID_UNIQUE_FIELD` |
+| E0230 | `EMPTY_FIELD_LIST` |
+| E0231 | `UNKNOWN_ATTRIBUTE_NAMESPACE` |
+| E0232 | `UNSATISFIABLE_REQUIRED_RELATION` |
+| E0233 | `RELATION_FOREIGN_KEY_NOT_UNIQUE` |
+| E0234 | `CONNECTION_URL_IN_SCHEMA` |
+| E0235 | `UNSUPPORTED_PROVIDER_FEATURE` |
+
+E0228 (cascade cycle) и E0234 (literal URL) — warnings. E0235 — capability provider. Остальные описывают lexical/syntax/semantic ошибку. Предупреждение не делает validate failure.

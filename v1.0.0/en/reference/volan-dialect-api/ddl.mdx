@@ -1,0 +1,740 @@
+---
+title: "Ddl"
+description: "SQL/DDL model, parameters, capabilities and JDBC dialect."
+---
+
+Type/member contracts of volan-dialect-api for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `ColumnChange`, `Default`, `Nullability`, `Type`, `ColumnDefault`, `Boolean`, `CurrentTimestamp`, `EmptyArray`, `Expression`, `GeneratedUuid`, `Number`, `Text`, `ColumnDefinition`, `ColumnType`, `Array`, `Enumeration`, `Native`, `Scalar`, `ConstraintKind`, `DdlStatement`, `AddColumn`, `AddEnumValue`, `AddForeignKey`, `AddPrimaryKey`, `AddUnique`, `AlterColumn`, `CreateConstrainedTable`, `CreateEnum`, `CreateIndex`, `CreateTable`, `DropColumn`, `DropConstraint`, `DropEnum`, `DropIndex`, `DropTable`, `ModifyColumn`, `RebuildTable`, `ForeignKeyAction`, `ForeignKeyDefinition`, `IndexDefinition`, `PrimaryKeyDefinition`, `SqlType`, `UniqueDefinition`
+
+```kotlin
+public enum class SqlType
+
+public enum class ConstraintKind
+
+public sealed interface ColumnType
+
+    public data class Scalar(public val type: SqlType) : ColumnType
+
+    public data class Native @JvmOverloads constructor(public val name: String, public val arguments: List<String> = emptyList()) :
+        ColumnType
+
+    public data class Enumeration(public val name: String) : ColumnType
+
+    public data class Array(public val element: ColumnType) : ColumnType
+
+public sealed interface ColumnDefault
+
+    public data class Text(public val value: String) : ColumnDefault
+
+    public data class Number(public val value: String) : ColumnDefault
+
+    public data class Boolean(public val value: kotlin.Boolean) : ColumnDefault
+
+    public data object EmptyArray : ColumnDefault
+
+    public data object CurrentTimestamp : ColumnDefault
+
+    public data object GeneratedUuid : ColumnDefault
+
+    public data class Expression(public val sql: String) : ColumnDefault
+
+public data class ColumnDefinition @JvmOverloads constructor(
+    public val name: String,
+    public val type: ColumnType,
+    public val nullable: Boolean,
+    public val default: @Nullable ColumnDefault? = null,
+    public val autoIncrement: Boolean = false,
+)
+
+public data class PrimaryKeyDefinition(public val name: @Nullable String?, public val columns: List<String>)
+
+public data class UniqueDefinition(public val name: String, public val columns: List<String>)
+
+public enum class ForeignKeyAction(public val sql: String)
+
+public data class ForeignKeyDefinition @JvmOverloads constructor(
+    public val name: String,
+    public val columns: List<String>,
+    public val targetTable: String,
+    public val targetColumns: List<String>,
+    public val onDelete: ForeignKeyAction = ForeignKeyAction.NO_ACTION,
+    public val onUpdate: ForeignKeyAction = ForeignKeyAction.NO_ACTION,
+)
+
+public data class IndexDefinition @JvmOverloads constructor(
+    public val name: String,
+    public val columns: List<String>,
+    public val unique: Boolean = false,
+    public val fullText: Boolean = false,
+)
+
+public sealed interface ColumnChange
+
+    public data class Type @JvmOverloads constructor(public val type: ColumnType, public val using: @Nullable String? = null) : ColumnChange
+
+    public data class Nullability(public val nullable: kotlin.Boolean) : ColumnChange
+
+    public data class Default(public val default: @Nullable ColumnDefault?) : ColumnChange
+
+public sealed interface DdlStatement
+
+    public data class CreateConstrainedTable @JvmOverloads constructor(
+        public val definition: CreateTable,
+        public val uniques: List<UniqueDefinition> = emptyList(),
+        public val foreignKeys: List<ForeignKeyDefinition> = emptyList(),
+    ) : DdlStatement
+
+    public data class RebuildTable(
+        public val definition: CreateConstrainedTable,
+        public val copiedColumns: List<String>,
+        public val indexes: List<IndexDefinition>,
+    ) : DdlStatement
+
+    public data class CreateTable @JvmOverloads constructor(
+        public val table: String,
+        public val columns: List<ColumnDefinition>,
+        public val primaryKey: @Nullable PrimaryKeyDefinition? = null,
+    ) : DdlStatement
+
+    public data class DropTable(public val table: String) : DdlStatement
+
+    public data class AddColumn(public val table: String, public val column: ColumnDefinition) : DdlStatement
+
+    public data class DropColumn(public val table: String, public val column: String) : DdlStatement
+
+    public data class AlterColumn(
+        public val table: String,
+        public val column: String,
+        public val change: ColumnChange,
+    ) : DdlStatement
+
+    public data class ModifyColumn(public val table: String, public val definition: ColumnDefinition) : DdlStatement
+
+    public data class AddPrimaryKey(public val table: String, public val key: PrimaryKeyDefinition) : DdlStatement
+
+    public data class AddUnique(public val table: String, public val constraint: UniqueDefinition) : DdlStatement
+
+    public data class AddForeignKey(public val table: String, public val key: ForeignKeyDefinition) : DdlStatement
+
+    public data class DropConstraint @JvmOverloads constructor(
+        public val table: String,
+        public val name: String,
+        public val kind: ConstraintKind = ConstraintKind.UNKNOWN,
+    ) : DdlStatement
+
+    public data class CreateIndex(public val table: String, public val index: IndexDefinition) : DdlStatement
+
+    public data class DropIndex(public val table: String, public val name: String) : DdlStatement
+
+    public data class CreateEnum(public val name: String, public val values: List<String>) : DdlStatement
+
+    public data class DropEnum(public val name: String) : DdlStatement
+
+    public data class AddEnumValue @JvmOverloads constructor(
+        public val name: String,
+        public val value: String,
+        public val after: @Nullable String? = null,
+    ) : DdlStatement
+
+/** Text of no fixed length. */
+    TEXT,
+
+    /** A 32-bit integer. */
+    INTEGER,
+
+    /** A 64-bit integer. */
+    BIGINT,
+
+    /** A 32-bit floating point number. */
+    REAL,
+
+    /** A 64-bit floating point number. */
+    DOUBLE,
+
+    /** An exact decimal. */
+    NUMERIC,
+
+    /** A truth value. */
+    BOOLEAN,
+
+    /** A moment in time. */
+    TIMESTAMP,
+
+    /** A date with no time of day. */
+    DATE,
+
+    /** A time of day with no date. */
+    TIME,
+
+    /** A JSON document. */
+    JSON,
+
+    /** Arbitrary bytes. */
+    BLOB,
+
+    /** A UUID. */
+    UUID,
+
+UNKNOWN, PRIMARY_KEY, UNIQUE, FOREIGN_KEY
+
+/** Do the same to them. */
+    CASCADE("CASCADE"),
+
+    /** Refuse while they exist. */
+    RESTRICT("RESTRICT"),
+
+    /** Leave it to the database's own behaviour. */
+    NO_ACTION("NO ACTION"),
+
+    /** Set the foreign key to null. */
+    SET_NULL("SET NULL"),
+
+    /** Set the foreign key back to its default. */
+    SET_DEFAULT("SET DEFAULT"),
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-api/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/Ddl.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-dialect-api).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public abstract interface class io/github/thirtyeighttwentysix/volan/dialect/ColumnChange {
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Default : io/github/thirtyeighttwentysix/volan/dialect/ColumnChange {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Default;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Default;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Default;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDefault ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Nullability : io/github/thirtyeighttwentysix/volan/dialect/ColumnChange {
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Nullability;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Nullability;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Nullability;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNullable ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Type : io/github/thirtyeighttwentysix/volan/dialect/ColumnChange {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;Ljava/lang/String;)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Type;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Type;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange$Type;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getType ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;
+	public final fun getUsing ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault {
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Boolean : io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault {
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Boolean;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Boolean;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Boolean;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$CurrentTimestamp : io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$CurrentTimestamp;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$EmptyArray : io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$EmptyArray;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Expression : io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Expression;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Expression;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Expression;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSql ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$GeneratedUuid : io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$GeneratedUuid;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Number : io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Number;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Number;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Number;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Text : io/github/thirtyeighttwentysix/volan/dialect/ColumnDefault {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Text;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Text;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault$Text;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;Z)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;ZLio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;ZLio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;ZLio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;
+	public final fun component3 ()Z
+	public final fun component4 ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;
+	public final fun component5 ()Z
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;ZLio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;Z)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;ZLio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAutoIncrement ()Z
+	public final fun getDefault ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefault;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getNullable ()Z
+	public final fun getType ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/dialect/ColumnType {
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnType$Array : io/github/thirtyeighttwentysix/volan/dialect/ColumnType {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Array;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Array;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Array;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getElement ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnType$Enumeration : io/github/thirtyeighttwentysix/volan/dialect/ColumnType {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Enumeration;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Enumeration;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Enumeration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnType$Native : io/github/thirtyeighttwentysix/volan/dialect/ColumnType {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Native;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Native;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Native;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArguments ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ColumnType$Scalar : io/github/thirtyeighttwentysix/volan/dialect/ColumnType {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Scalar;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Scalar;Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ColumnType$Scalar;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getType ()Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ConstraintKind : java/lang/Enum {
+	public static final field FOREIGN_KEY Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;
+	public static final field PRIMARY_KEY Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;
+	public static final field UNIQUE Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;
+	public static final field UNKNOWN Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddColumn : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddColumn;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddColumn;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddColumn;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddEnumValue : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddEnumValue;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddEnumValue;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddEnumValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAfter ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddForeignKey : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddForeignKey;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddForeignKey;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddForeignKey;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddPrimaryKey : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddPrimaryKey;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddPrimaryKey;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddPrimaryKey;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddUnique : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddUnique;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddUnique;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AddUnique;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConstraint ()Lio/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AlterColumn : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AlterColumn;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AlterColumn;Ljava/lang/String;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$AlterColumn;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChange ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnChange;
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;Ljava/util/List;)V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;Ljava/util/List;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDefinition ()Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;
+	public final fun getForeignKeys ()Ljava/util/List;
+	public final fun getUniques ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateEnum : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateEnum;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateEnum;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateEnum;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getValues ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateIndex : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateIndex;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateIndex;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateIndex;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndex ()Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateTable;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getPrimaryKey ()Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropColumn : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropColumn;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropColumn;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropColumn;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropConstraint : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropConstraint;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropConstraint;Ljava/lang/String;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropConstraint;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKind ()Lio/github/thirtyeighttwentysix/volan/dialect/ConstraintKind;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropEnum : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropEnum;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropEnum;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropEnum;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropIndex : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropIndex;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropIndex;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropIndex;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropTable : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropTable;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropTable;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$DropTable;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$ModifyColumn : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$ModifyColumn;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$ModifyColumn;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$ModifyColumn;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDefinition ()Lio/github/thirtyeighttwentysix/volan/dialect/ColumnDefinition;
+	public final fun getTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DdlStatement$RebuildTable : io/github/thirtyeighttwentysix/volan/dialect/DdlStatement {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;Ljava/util/List;Ljava/util/List;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;Ljava/util/List;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$RebuildTable;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$RebuildTable;Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$RebuildTable;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCopiedColumns ()Ljava/util/List;
+	public final fun getDefinition ()Lio/github/thirtyeighttwentysix/volan/dialect/DdlStatement$CreateConstrainedTable;
+	public final fun getIndexes ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction : java/lang/Enum {
+	public static final field CASCADE Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public static final field NO_ACTION Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public static final field RESTRICT Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public static final field SET_DEFAULT Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public static final field SET_NULL Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getSql ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public final fun component6 ()Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;)Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyDefinition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getOnDelete ()Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public final fun getOnUpdate ()Lio/github/thirtyeighttwentysix/volan/dialect/ForeignKeyAction;
+	public final fun getTargetColumns ()Ljava/util/List;
+	public final fun getTargetTable ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/IndexDefinition {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Z)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/util/List;ZZ)Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;Ljava/lang/String;Ljava/util/List;ZZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/IndexDefinition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getFullText ()Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getUnique ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/PrimaryKeyDefinition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/SqlType : java/lang/Enum {
+	public static final field BIGINT Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field BLOB Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field BOOLEAN Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field DATE Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field DOUBLE Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field INTEGER Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field JSON Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field NUMERIC Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field REAL Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field TEXT Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field TIME Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field TIMESTAMP Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static final field UUID Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/dialect/SqlType;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/UniqueDefinition;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+```
+
+</Accordion>

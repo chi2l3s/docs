@@ -1,0 +1,40 @@
+---
+title: "Gradle"
+description: "An ordinary build generates and compiles the client. Paths belong to the current module."
+---
+
+An ordinary build generates and compiles the client. Paths belong to the current module.
+
+```kotlin
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+rootProject.name = "volan-first-query"
+```
+
+```kotlin
+plugins {
+    kotlin("jvm") version "2.4.20"
+    id("io.github.thirtyeighttwentysix.volan") version "1.0.0"
+}
+repositories { mavenCentral() }
+dependencies {
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-h2:1.0.0")
+    runtimeOnly("com.h2database:h2:2.5.252")
+}
+volan {
+    schemaFile.set(layout.projectDirectory.file("db/schema.volan"))
+    outputDirectory.set(layout.buildDirectory.dir("generated/my-client"))
+}
+```
+
+```bash
+./gradlew volanGenerate
+./gradlew build --configuration-cache
+./gradlew clean build --build-cache
+```
+
+Defaults: `schema.volan`, `build/generated/volan`. The plugin wires Kotlin/JVM main sources and the matching runtime. Generation supports incremental builds, build cache and configuration cache. The output belongs to generation. Android and Multiplatform are unsupported. Verified combination: Gradle 9.8.0, Kotlin 2.4.20.

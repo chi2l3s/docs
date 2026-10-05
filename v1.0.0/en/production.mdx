@@ -1,0 +1,11 @@
+---
+title: "Application lifecycle"
+description: "Pool, migrations, transactions and shutdown."
+---
+
+1. Apply reviewed migrations on a dedicated connection before serving requests.
+2. Create one client; choose pool size and worker budget.
+3. Validate HTTP input and return DTOs.
+4. Finish outstanding operations, close the client and owned executors/DataSources.
+
+Do not run schema push on every production startup. Migration locks do not block arbitrary application writes. Prepare maintenance windows and recovery for H2/MySQL/MariaDB. [Connections](/v1.0.0/en/client/connection), [DataSource](/v1.0.0/en/client/data-source), [Migrations](/v1.0.0/en/migrations).

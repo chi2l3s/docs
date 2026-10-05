@@ -1,0 +1,23 @@
+---
+title: "Фильтры связей"
+description: "Фильтр связи выбирает родительские строки. Он не загружает связь."
+---
+
+Фильтр связи выбирает родительские строки. Он не загружает связь.
+
+```kotlin
+val active = db.user.findMany {
+    where { posts { some { views gt 100 } } }
+}
+val quiet = db.user.findMany {
+    where { posts { none { views gt 100 } } }
+}
+val consistent = db.user.findMany {
+    where { posts { every { views gte 0 } } }
+}
+val posts = db.post.findMany {
+    where { author { matches { email endsWith "@example.org" } } }
+}
+```
+
+`some` — существует совпадение; `none` — нет совпадений; `every` — нет нарушающих условие. every истинен и для пустой связи. Для одиночной связи есть `matches`/`doesNotMatch`, `isNull`/`isNotNull`. Nullable-связь с отсутствующим target не совпадает с положительным matches. Include задаёт собственный фильтр; внешний where его не подставляет.

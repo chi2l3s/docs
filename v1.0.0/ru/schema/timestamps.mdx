@@ -1,0 +1,17 @@
+---
+title: "updatedAt и часы"
+description: "updatedAt заполняет runtime при типизированной записи. Это не триггер базы."
+---
+
+updatedAt заполняет runtime при типизированной записи. Это не триггер базы.
+
+```kotlin
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
+
+val fixed = Clock.fixed(Instant.parse("2026-01-01T00:00:00Z"), ZoneOffset.UTC)
+val db = VolanClient.builder().url(url).clock(fixed).build()
+```
+
+`@updatedAt` требует одиночного DateTime или DateTime?. Raw SQL и сторонние приложения не обновляют его автоматически. Часы задаются до build. Для повторяемого теста используй Clock.fixed; для приложения значение по умолчанию — Clock.systemUTC(). Поле @updatedAt отсутствует в сгенерированных CreateData/UpdateData: runtime всегда записывает время своих часов.

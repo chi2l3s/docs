@@ -1,0 +1,401 @@
+---
+title: "QuerySpec"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `ConnectOrCreateEntry`, `CreateSpec`, `DeleteSpec`, `NestedWrite`, `ConnectOrCreateRows`, `ConnectRows`, `CreateRows`, `DeleteRows`, `DisconnectRows`, `SetRows`, `UpdateRows`, `NullsOrder`, `OrderTerm`, `Pagination`, `Companion`, `QuerySpec`, `RelationRequest`, `SortDirection`, `UpdateSpec`, `UpsertSpec`
+
+```kotlin
+public enum class SortDirection
+
+public enum class NullsOrder
+
+public data class OrderTerm @JvmOverloads constructor(
+    public val column: String,
+    public val direction: SortDirection,
+    public val nulls: NullsOrder = NullsOrder.DEFAULT,
+)
+
+public data class Pagination @JvmOverloads constructor(
+    public val take: @Nullable Int? = null,
+    public val skip: @Nullable Int? = null,
+    public val cursor: @Nullable Map<String, @Nullable Any?>? = null,
+    public val skipCursorRow: Boolean = true,
+)
+
+    public companion object
+
+        public val NONE: Pagination
+
+public data class RelationRequest(public val relation: String, public val spec: QuerySpec)
+
+public data class QuerySpec @JvmOverloads constructor(
+    public val model: String,
+    public val filter: @Nullable Filter? = null,
+    public val orderBy: List<OrderTerm> = emptyList(),
+    public val pagination: Pagination = Pagination.NONE,
+    public val distinct: List<String> = emptyList(),
+    public val columns: @Nullable List<String>? = null,
+    public val includes: List<RelationRequest> = emptyList(),
+)
+
+public data class CreateSpec @JvmOverloads constructor(
+    public val model: String,
+    public val values: Map<String, @Nullable Any?>,
+    public val nested: List<NestedWrite> = emptyList(),
+)
+
+public sealed interface NestedWrite
+
+    public val relation: String
+
+    public data class CreateRows(override val relation: String, public val rows: List<CreateSpec>) : NestedWrite
+
+    public data class ConnectRows(override val relation: String, public val filters: List<Filter>) : NestedWrite
+
+    public data class ConnectOrCreateRows(override val relation: String, public val entries: List<ConnectOrCreateEntry>) : NestedWrite
+
+    public data class DisconnectRows @JvmOverloads constructor(
+        override val relation: String,
+        public val filters: List<Filter> = emptyList(),
+    ) : NestedWrite
+
+    public data class SetRows(override val relation: String, public val filters: List<Filter>) : NestedWrite
+
+    public data class UpdateRows(
+        override val relation: String,
+        public val filter: @Nullable Filter?,
+        public val values: Map<String, @Nullable Any?>,
+    ) : NestedWrite
+
+    public data class DeleteRows(override val relation: String, public val filter: @Nullable Filter?) : NestedWrite
+
+public data class ConnectOrCreateEntry(public val filter: Filter, public val row: CreateSpec)
+
+public data class UpdateSpec @JvmOverloads constructor(
+    public val model: String,
+    public val filter: @Nullable Filter?,
+    public val values: Map<String, @Nullable Any?>,
+    public val nested: List<NestedWrite> = emptyList(),
+)
+
+public data class DeleteSpec(public val model: String, public val filter: @Nullable Filter?)
+
+public data class UpsertSpec(
+    public val model: String,
+    public val filter: @Nullable Filter?,
+    public val create: Map<String, @Nullable Any?>,
+    public val update: Map<String, @Nullable Any?>,
+)
+
+/** Smallest first. */
+    ASCENDING,
+
+    /** Largest first. */
+    DESCENDING,
+
+/** Wherever the database puts them by default. */
+    DEFAULT,
+
+    /** Before every non-null value. */
+    FIRST,
+
+    /** After every non-null value. */
+    LAST,
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/QuerySpec.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/ConnectOrCreateEntry {
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;)V
+	public final fun component1 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;
+	public final fun copy (Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;)Lio/github/thirtyeighttwentysix/volan/runtime/ConnectOrCreateEntry;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/ConnectOrCreateEntry;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/ConnectOrCreateEntry;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun getRow ()Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/CreateSpec {
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/CreateSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getModel ()Ljava/lang/String;
+	public final fun getNested ()Ljava/util/List;
+	public final fun getValues ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/DeleteSpec {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)Lio/github/thirtyeighttwentysix/volan/runtime/DeleteSpec;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/DeleteSpec;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/DeleteSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun getModel ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/runtime/NestedWrite {
+	public abstract fun getRelation ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/NestedWrite$ConnectOrCreateRows : io/github/thirtyeighttwentysix/volan/runtime/NestedWrite {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$ConnectOrCreateRows;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$ConnectOrCreateRows;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$ConnectOrCreateRows;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEntries ()Ljava/util/List;
+	public fun getRelation ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/NestedWrite$ConnectRows : io/github/thirtyeighttwentysix/volan/runtime/NestedWrite {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$ConnectRows;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$ConnectRows;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$ConnectRows;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilters ()Ljava/util/List;
+	public fun getRelation ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/NestedWrite$CreateRows : io/github/thirtyeighttwentysix/volan/runtime/NestedWrite {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$CreateRows;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$CreateRows;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$CreateRows;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getRelation ()Ljava/lang/String;
+	public final fun getRows ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/NestedWrite$DeleteRows : io/github/thirtyeighttwentysix/volan/runtime/NestedWrite {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$DeleteRows;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$DeleteRows;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$DeleteRows;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public fun getRelation ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/NestedWrite$DisconnectRows : io/github/thirtyeighttwentysix/volan/runtime/NestedWrite {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$DisconnectRows;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$DisconnectRows;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$DisconnectRows;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilters ()Ljava/util/List;
+	public fun getRelation ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/NestedWrite$SetRows : io/github/thirtyeighttwentysix/volan/runtime/NestedWrite {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$SetRows;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$SetRows;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$SetRows;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilters ()Ljava/util/List;
+	public fun getRelation ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/NestedWrite$UpdateRows : io/github/thirtyeighttwentysix/volan/runtime/NestedWrite {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$UpdateRows;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$UpdateRows;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrite$UpdateRows;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public fun getRelation ()Ljava/lang/String;
+	public final fun getValues ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/NullsOrder : java/lang/Enum {
+	public static final field DEFAULT Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;
+	public static final field FIRST Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;
+	public static final field LAST Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/OrderTerm {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;
+	public final fun component3 ()Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;)Lio/github/thirtyeighttwentysix/volan/runtime/OrderTerm;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/OrderTerm;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/OrderTerm;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()Ljava/lang/String;
+	public final fun getDirection ()Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;
+	public final fun getNulls ()Lio/github/thirtyeighttwentysix/volan/runtime/NullsOrder;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Pagination {
+	public static final field Companion Lio/github/thirtyeighttwentysix/volan/runtime/Pagination$Companion;
+	public static final field NONE Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;Z)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Z
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;Z)Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;ZILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCursor ()Ljava/util/Map;
+	public final fun getSkip ()Ljava/lang/Integer;
+	public final fun getSkipCursorRow ()Z
+	public final fun getTake ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/Pagination$Companion {
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/QuerySpec {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;Ljava/util/List;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Ljava/util/List;
+	public final fun component7 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/List;Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()Ljava/util/List;
+	public final fun getDistinct ()Ljava/util/List;
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun getIncludes ()Ljava/util/List;
+	public final fun getModel ()Ljava/lang/String;
+	public final fun getOrderBy ()Ljava/util/List;
+	public final fun getPagination ()Lio/github/thirtyeighttwentysix/volan/runtime/Pagination;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/RelationRequest {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationRequest;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/RelationRequest;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRelation ()Ljava/lang/String;
+	public final fun getSpec ()Lio/github/thirtyeighttwentysix/volan/runtime/QuerySpec;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/SortDirection : java/lang/Enum {
+	public static final field ASCENDING Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;
+	public static final field DESCENDING Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/runtime/SortDirection;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/UpdateSpec {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;)V
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/UpdateSpec;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/UpdateSpec;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/UpdateSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun getModel ()Ljava/lang/String;
+	public final fun getNested ()Ljava/util/List;
+	public final fun getValues ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/UpsertSpec {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/Map;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/Map;)Lio/github/thirtyeighttwentysix/volan/runtime/UpsertSpec;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/UpsertSpec;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/Filter;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/UpsertSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCreate ()Ljava/util/Map;
+	public final fun getFilter ()Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+	public final fun getModel ()Ljava/lang/String;
+	public final fun getUpdate ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+```
+
+</Accordion>

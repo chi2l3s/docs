@@ -1,0 +1,26 @@
+---
+title: "PostgreSQL"
+description: "Configure datasource, dependencies and the JDBC URL."
+---
+
+Configure datasource, dependencies and the JDBC URL.
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+```
+
+```kotlin
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+    implementation("io.github.thirtyeighttwentysix:volan-dialect-postgres")
+    runtimeOnly("org.postgresql:postgresql:42.7.13")
+}
+val db = VolanClient.builder().url("jdbc:postgresql://localhost:5432/app").build()
+```
+
+PostgreSQL returns writes through RETURNING. It supports arrays, native enums and @db. Default DateTime is TIMESTAMP(3), Decimal NUMERIC(65,30), Json JSONB. Check actual storage for native overrides. Migrations address the current schema and use transactions; Volan migration writers use advisory locks.
+
+[Introspection limits](/v1.0.0/en/database/introspection).

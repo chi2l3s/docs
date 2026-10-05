@@ -1,0 +1,13 @@
+---
+title: "Custom dialects"
+description: "Implement Dialect and DialectProvider, then register the provider with ServiceLoader."
+---
+
+Implement Dialect and DialectProvider, then register the provider with ServiceLoader.
+
+```text
+META-INF/services/io.github.thirtyeighttwentysix.volan.dialect.DialectProvider
+com.example.MyDialectProvider
+```
+
+Capabilities define returning, conflict SQL, LIKE, distinctOn, nullsOrdering, tupleComparison, arrays and maximumParameters. Runtime uses initialize/poolSize/connectionMaxLifetime/jdbcValue/sqlState and render. SqlStatement contains SQL and ordered parameters. DdlRenderer is separate; migration support needs a Reader and type mapping. Discovery registration alone does not make an unknown schema provider valid. [Dialect API](/v1.0.0/en/reference/volan-dialect-api).

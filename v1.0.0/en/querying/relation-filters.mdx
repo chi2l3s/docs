@@ -1,0 +1,23 @@
+---
+title: "Relation filters"
+description: "Relation filters select parent rows. They do not load the relation."
+---
+
+Relation filters select parent rows. They do not load the relation.
+
+```kotlin
+val active = db.user.findMany {
+    where { posts { some { views gt 100 } } }
+}
+val quiet = db.user.findMany {
+    where { posts { none { views gt 100 } } }
+}
+val consistent = db.user.findMany {
+    where { posts { every { views gte 0 } } }
+}
+val posts = db.post.findMany {
+    where { author { matches { email endsWith "@example.org" } } }
+}
+```
+
+some requires a match; none forbids matches; every forbids violating rows. every is true for empty relations. Single relations expose matches/doesNotMatch and isNull/isNotNull. An absent optional target does not satisfy a positive matches condition. Include has its own filter; outer where is not inherited.

@@ -1,0 +1,21 @@
+---
+title: "JSON"
+description: "Json хранит текст JSON. Сериализацию объектов выполняет твоя библиотека."
+---
+
+Json хранит текст JSON. Сериализацию объектов выполняет твоя библиотека.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.Json
+val payload = Json.of("""{"theme":"dark"}""")
+println(payload.raw)
+val jsonNull = Json.NULL
+```
+
+```java
+import io.github.thirtyeighttwentysix.volan.Json;
+var payload = Json.of("{"theme":"dark"}");
+System.out.println(payload.getRaw());
+```
+
+`Json.NULL` — JSON `null`; nullable Json со значением Kotlin/Java null — SQL NULL. `Json.of` не создаёт DTO и не проверяет структуру документа. JSON-фильтры по пути не генерируются. Для PostgreSQL jsonb/H2/MySQL используй подходящий raw SQL и параметры. Нормализация БД может менять пробелы; не используй текстовое равенство для бизнес-сравнения JSON.

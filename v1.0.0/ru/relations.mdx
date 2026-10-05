@@ -1,0 +1,33 @@
+---
+title: "Загрузка связей"
+description: "include запрашивает связи явно. Обычное чтение сущности возвращает скалярные поля."
+---
+
+include запрашивает связи явно. Обычное чтение сущности возвращает скалярные поля.
+
+```kotlin
+val authors = db.user.findMany {
+    orderBy { id.asc() }
+    take = 20
+    include {
+        posts {
+            where { views gt 0 }
+            orderBy { id.asc() }
+            take = 5
+        }
+    }
+}
+authors.forEach { println(it.posts.map { post -> post.title }) }
+```
+
+```java
+var authors = db.getUser().findMany(q -> {
+    q.setTake(20);
+    q.include(i -> i.posts(p -> {
+        p.where(w -> w.getViews().gt(0));
+        p.setTake(5);
+    }));
+});
+```
+
+Связи загружаются пакетами по ключам родителей. Базовый chunk — 500, также учитываются parameter limits диалекта. Поэтому запросов больше одного на уровень при больших страницах. `take`/`skip` во вложенном include применяются к каждому родителю; это не обещание SQL top-N для каждого родителя. Родители не отбрасываются при пустом include. Незапрошенный getter бросает VolanRelationNotLoadedException. [Вложенные include](/v1.0.0/ru/querying/deep-include).

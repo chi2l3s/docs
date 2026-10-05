@@ -1,0 +1,18 @@
+---
+title: "Query descriptions"
+description: "QuerySpec and write specs are values passed by the generated API to QueryExecutor."
+---
+
+QuerySpec and write specs are values passed by the generated API to QueryExecutor.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.*
+val spec = QuerySpec(
+    model = "User",
+    filter = Filter.Compare("email", ComparisonOperator.EQUAL, "alice@example.org"),
+    orderBy = listOf(OrderTerm("id", SortDirection.ASCENDING)),
+    pagination = Pagination(take = 20),
+)
+```
+
+model is the model name; columns/filters use metadata database columns. QueryPlanner resolves specs with TableRegistry and Dialect. A null filter matches all rows; columns=null reads all scalars; empty includes/distinct disables those additions. CreateSpec/UpdateSpec contain value maps and NestedWrite trees. Low-level consumers must obey generated DSL restrictions. [Complete runtime API](/v1.0.0/en/reference/volan-runtime).

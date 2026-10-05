@@ -1,0 +1,16 @@
+---
+title: "Upsert"
+description: "Upsert выбирает create или update по фильтру."
+---
+
+Upsert выбирает create или update по фильтру.
+
+```kotlin
+val subscriber = db.user.upsert {
+    where { email eq "subscriber@example.org" }
+    create { email = "subscriber@example.org"; name = "Subscriber" }
+    update { name = "Subscriber" }
+}
+```
+
+Это поиск, затем запись; это не atomic server upsert ON CONFLICT/MERGE. Выбирай полный unique-ключ и обрабатывай гонку unique. create/update — набор данных без вложенных операций; вложенные связи отклоняются. Поля where не копируются в create: заполни обязательные значения явно.

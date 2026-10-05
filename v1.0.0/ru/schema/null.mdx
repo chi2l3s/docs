@@ -1,0 +1,16 @@
+---
+title: "Null и пропущенное поле"
+description: "Пропустить присваивание и присвоить null — разные действия."
+---
+
+Пропустить присваивание и присвоить null — разные действия.
+
+```kotlin
+db.user.update {
+    where { id eq userId }
+    data { name = null }
+}
+val unnamed = db.user.findMany { where { name.isNull() } }
+```
+
+В create обязательное поле без default нужно заполнить. Пропущенное поле с default получает значение БД; nullable без default — NULL. В update пропущенное поле сохраняется, `name = null` очищает его. `eq null` недоступен: используй `isNull`/`isNotNull`. PATCH-запрос должен сохранять различие отсутствия и null. Невыбранное поле проекции и незагруженная связь бросают исключение, а не возвращают null.

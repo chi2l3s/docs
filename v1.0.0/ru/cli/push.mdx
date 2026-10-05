@@ -1,0 +1,23 @@
+---
+title: "DB push"
+description: "Сначала запусти dry-run. Push меняет структуру, а resolve проверяет ручной repair."
+---
+
+Сначала запусти dry-run. Push меняет структуру, а resolve проверяет ручной repair.
+
+```bash
+volan db push --schema schema.volan --dry-run
+volan db push --schema schema.volan
+# After review of warning-bearing changes:
+volan db push --schema schema.volan --accept-data-loss
+```
+
+| Флаг | Default / поведение |
+| --- | --- |
+| --schema | schema.volan; target |
+| --url | override datasource / DATABASE_URL |
+| --dry-run | SQL stdout, warnings stderr, без изменений |
+| --accept-data-loss | принять reviewed warnings |
+| --resolve | проверить первоначальную цель после repair |
+
+Подключение: DATABASE_USER и DATABASE_PASSWORD. Push выбирает --url → schema literal/env URL → DATABASE_URL. Pull: --url → DATABASE_URL. Нужен JDBC URL. --resolve/--dry-run несовместимы. [Recovery](/v1.0.0/ru/migrations/recovery).

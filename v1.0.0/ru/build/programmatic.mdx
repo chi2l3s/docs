@@ -1,0 +1,21 @@
+---
+title: "Генератор как библиотека"
+description: "Для своего инструмента подключи volan-codegen:1.0.0. Выбери управляемую запись или получение файлов в памяти."
+---
+
+Для своего инструмента подключи volan-codegen:1.0.0. Выбери управляемую запись или получение файлов в памяти.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.ir.SchemaLoader
+import io.github.thirtyeighttwentysix.volan.codegen.GeneratedSources
+import io.github.thirtyeighttwentysix.volan.codegen.VolanGenerator
+import java.nio.file.Path
+
+val result = SchemaLoader.load("schema.volan", schemaText)
+val schema = result.schemaOrThrow()
+println(result.render())
+val files = VolanGenerator.generate(schema)
+GeneratedSources.write(schema, Path.of("build/generated/volan"))
+```
+
+`generate` возвращает `List<GeneratedFile>` (relativePath и contents). `GeneratedSources.write` использует manifest очистки. `VolanGenerator.writeTo` — прямой вывод; выбери управляемую запись для повторной генерации. Требуется ровно один generator с provider `volan-kotlin`.

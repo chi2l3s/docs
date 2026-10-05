@@ -1,0 +1,20 @@
+---
+title: "Format"
+description: "Форматирует syntax-valid схему. Semantic errors не мешают форматированию."
+---
+
+Форматирует syntax-valid схему. Semantic errors не мешают форматированию.
+
+```bash
+volan format --schema schema.volan
+volan format --check --schema schema.volan
+volan format --stdout --schema schema.volan
+```
+
+| Флаг | Default / поведение |
+| --- | --- |
+| --schema | schema.volan |
+| --check | nonzero при отличиях; не пишет |
+| --stdout | печатает без записи |
+
+--check и --stdout несовместимы. Comments и blank lines сохраняются.

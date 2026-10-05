@@ -1,0 +1,67 @@
+---
+title: "QueryInterceptor"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `QueryContext`, `QueryInterceptor`, `QueryOperation`
+
+```kotlin
+public enum class QueryOperation
+
+public data class QueryContext(
+    public val sql: String,
+    public val operation: QueryOperation,
+    public val dialect: String,
+)
+
+public interface QueryInterceptor
+
+    public fun <T : @Nullable Any?> intercept(query: QueryContext, next: Supplier<T>): T
+
+/** A statement returning rows, including writes with RETURNING. */
+    QUERY,
+
+    /** A statement returning an affected-row count. */
+    EXECUTE,
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/QueryInterceptor.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/QueryContext {
+	public fun <init> (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/QueryContext;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/runtime/QueryContext;Ljava/lang/String;Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;Ljava/lang/String;ILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/runtime/QueryContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDialect ()Ljava/lang/String;
+	public final fun getOperation ()Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;
+	public final fun getSql ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/thirtyeighttwentysix/volan/runtime/QueryInterceptor {
+	public abstract fun intercept (Lio/github/thirtyeighttwentysix/volan/runtime/QueryContext;Ljava/util/function/Supplier;)Ljava/lang/Object;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/runtime/QueryOperation : java/lang/Enum {
+	public static final field EXECUTE Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;
+	public static final field QUERY Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;
+	public static fun values ()[Lio/github/thirtyeighttwentysix/volan/runtime/QueryOperation;
+}
+```
+
+</Accordion>

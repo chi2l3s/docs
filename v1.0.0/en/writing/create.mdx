@@ -1,0 +1,40 @@
+---
+title: "Creating records"
+description: "create returns the saved row. createMany returns the inserted-row count."
+---
+
+create returns the saved row. createMany returns the inserted-row count.
+
+```kotlin
+val created = db.user.create {
+    email = "alice@example.org"
+    name = "Alice"
+}
+println("Created user ${created.id}: ${created.email}")
+```
+
+```java
+var created = db.getUser().create(data -> {
+    data.setEmail("alice@example.org");
+    data.setName("Alice");
+});
+System.out.println("Created user " + created.getId() + ": " + created.getEmail());
+```
+
+```kotlin
+val inserted = db.user.createMany {
+    row { email = "one@example.org" }
+    row { email = "two@example.org"; name = "Two" }
+}
+println("Inserted rows: $inserted")
+```
+
+```kotlin
+val user = db.user.upsert {
+    where { email eq "subscriber@example.org" }
+    create { email = "subscriber@example.org"; name = "Subscriber" }
+    update { name = "Subscriber" }
+}
+```
+
+Fill required fields without defaults. Database defaults fill omitted defaulted fields. createMany groups payloads by column set, chunks by parameter limits and runs transactionally. It returns no entities and supports no nested writes. Unique conflicts are not automatically skipped.

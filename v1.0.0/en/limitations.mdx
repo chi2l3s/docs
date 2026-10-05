@@ -1,0 +1,20 @@
+---
+title: "1.0.0 limits"
+description: "API boundaries and alternatives."
+---
+
+| Limit | Alternative |
+| --- | --- |
+| count/Kotlin keyword field names | another name + @map |
+| cursor + explicit orderBy | PK cursor without orderBy or offset |
+| aggregate ordering | raw SQL |
+| deep nested update | operations in a transaction |
+| nested createMany/updateMany/upsert | flat payload or transaction |
+| typed array/JSON-path/full-text filters | provider SQL |
+| tenant/soft-delete injection | explicit conditions |
+| Spring @Transactional enlistment | Volan.transaction |
+| R2DBC/nonblocking driver | JDBC workers through futures/coroutines |
+| arbitrary introspection / multi-schema | supported shape or reviewed SQL |
+| nontransactional DDL rollback | journal + manual repair |
+
+findUnique does not validate where uniqueness. PostgreSQL/SQLite/H2 single writes do not guard broad filters. Include batches keys, but large input may require several statements; per-parent take does not imply SQL top-N. Operation pages describe these boundaries.

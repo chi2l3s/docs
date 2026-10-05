@@ -1,0 +1,16 @@
+---
+title: "volan-dialect-mysql"
+description: "MySQL/MariaDB SQL, DDL, locks and provider discovery."
+---
+
+MySQL/MariaDB SQL, DDL, locks and provider discovery.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-dialect-mysql:1.0.0")
+```
+
+## Contracts
+- [MySqlDialect](/v1.0.0/en/reference/volan-dialect-mysql/mysqldialect): `MariaDbDialect`, `MySqlDialect`, `MySqlRenderer`
+- [MySqlDialectProvider](/v1.0.0/en/reference/volan-dialect-mysql/mysqldialectprovider): `MariaDbDialectProvider`, `MySqlDialectProvider`
+
+Data classes also provide value equality, copy and componentN; enums expose values/valueOf. ? marks nullable types. Kotlin @JvmOverloads signatures have Java overloads; @JvmStatic/@JvmField provide static access. Signatures alone do not imply serialization or data migration.

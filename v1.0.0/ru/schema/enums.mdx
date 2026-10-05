@@ -1,0 +1,23 @@
+---
+title: "Перечисления"
+description: "Состояния модели становятся enum в Kotlin и Java. Mapping задаёт хранимое значение."
+---
+
+Состояния модели становятся enum в Kotlin и Java. Mapping задаёт хранимое значение.
+
+```prisma
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED @map("published")
+
+  @@map("publication_status")
+}
+
+model Publication {
+  id Int @id @default(autoincrement())
+  title String
+  status PublicationStatus @default(DRAFT)
+}
+```
+
+В PostgreSQL enum — native type; в остальных провайдерах — строка. Неизвестное значение при чтении вызывает ошибку. Pull строковых колонок не восстанавливает исходное enum-объявление. Добавление PostgreSQL enum-значения и его использование могут требовать разных миграций. Удаление и перестановка значений требуют ручного SQL.

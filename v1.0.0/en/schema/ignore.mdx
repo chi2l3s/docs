@@ -1,0 +1,20 @@
+---
+title: "Ignoring schema objects"
+description: "ignore keeps a description in the schema but omits it from the client."
+---
+
+ignore keeps a description in the schema but omits it from the client.
+
+```prisma
+model Legacy {
+  externalCode String
+  payload String?
+  @@ignore
+}
+model Visible {
+  id Int @id
+  debug String? @ignore
+}
+```
+
+@@ignore permits keyless models. Generation omits ignored models, @ignore fields and relations targeting omitted models. Ignore does not delete a table or define migration policy. An ignored required column without a default can still prevent inserts: the database enforces its actual shape.

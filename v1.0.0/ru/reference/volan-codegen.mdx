@@ -1,0 +1,16 @@
+---
+title: "volan-codegen"
+description: "Генерация Kotlin/Java API и управление output-файлами."
+---
+
+Генерация Kotlin/Java API и управление output-файлами.
+
+```kotlin
+implementation("io.github.thirtyeighttwentysix:volan-codegen:1.0.0")
+```
+
+## Контракты
+- [GeneratedSources](/v1.0.0/ru/reference/volan-codegen/generatedsources): `GeneratedSources`
+- [VolanGenerator](/v1.0.0/ru/reference/volan-codegen/volangenerator): `GeneratedFile`, `VolanGenerationException`, `VolanGenerator`
+
+Data-классы также имеют value equality, copy и componentN; enum — values/valueOf. Nullable обозначается `?`. Сигнатуры Kotlin с @JvmOverloads имеют Java-overloads; @JvmStatic/@JvmField дают static-доступ. Сериализация или миграция данных из самой сигнатуры не следует.

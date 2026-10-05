@@ -1,0 +1,13 @@
+---
+title: "SQL scripts"
+description: "A migration.sql contains ordinary statements without its own transaction control."
+---
+
+A migration.sql contains ordinary statements without its own transaction control.
+
+```sql
+ALTER TABLE "User" ADD COLUMN "nickname" TEXT;
+UPDATE "User" SET "nickname" = "name" WHERE "name" IS NOT NULL;
+```
+
+The parser handles quoted identifiers/strings, PostgreSQL dollar quotes and nested comments; MySQL backticks and ordinary comments. Run PostgreSQL operations forbidden in transactions (CREATE INDEX CONCURRENTLY) separately. Nontransactional providers reject transaction/session/database/lock control, SET/USE/RUNSCRIPT/EXECUTE/SHUTDOWN and MySQL executable comments /*!…*/ or /*M!…*/. Routines/triggers must not indirectly change settings/journals. Malformed SQL is refused before the start record.

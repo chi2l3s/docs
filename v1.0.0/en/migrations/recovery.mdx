@@ -1,0 +1,16 @@
+---
+title: "Recovering failed DDL"
+description: "H2/MySQL/MariaDB can retain partial DDL. Inspect and manually repair to the original target first."
+---
+
+H2/MySQL/MariaDB can retain partial DDL. Inspect and manually repair to the original target first.
+
+```kotlin
+val original = directory.read().single { it.id == failedMigrationId }
+// After inspection and manual repair to the original migration's final state:
+val migrator = Migrator(directory)
+migrator.markApplied(connection, original)
+migrator.apply(connection)
+```
+
+The journal retains started_at, applied_steps and finished_at. Progress is a lower bound: a statement may commit before acknowledgment. Partial scripts never automatically replay; later apply/push calls stop. Retain the original file/checksum. markApplied neither repairs nor verifies SQL results; it records your reviewed repair and refuses changed checksums/finished records. Push has a separate [resolve](/v1.0.0/en/migrations/push-recovery).

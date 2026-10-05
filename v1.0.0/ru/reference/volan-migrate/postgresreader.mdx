@@ -1,0 +1,36 @@
+---
+title: "PostgresReader"
+description: "Readers, structural schema, plans, scripts, sync и migration journal."
+---
+
+Контракты типов и членов volan-migrate для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `PostgresReader`
+
+```kotlin
+public class PostgresReader(
+    private val types: NativeTypeTable = PostgresTypes,
+    private val table: String = MigrationJournal.DEFAULT_TABLE,
+) : DatabaseReader
+
+    override fun read(connection: Connection): DatabaseSchema
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-migrate/src/main/kotlin/io/github/thirtyeighttwentysix/volan/migrate/PostgresReader.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-migrate).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/migrate/PostgresReader : io/github/thirtyeighttwentysix/volan/migrate/DatabaseReader {
+	public fun <init> ()V
+	public fun <init> (Lio/github/thirtyeighttwentysix/volan/migrate/NativeTypeTable;Ljava/lang/String;)V
+	public synthetic fun <init> (Lio/github/thirtyeighttwentysix/volan/migrate/NativeTypeTable;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun read (Ljava/sql/Connection;)Lio/github/thirtyeighttwentysix/volan/migrate/DatabaseSchema;
+}
+```
+
+</Accordion>

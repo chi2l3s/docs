@@ -1,0 +1,86 @@
+---
+title: "VolanClient"
+description: "Контракт клиента, сгенерированного из User/Post."
+---
+
+Сигнатуры для справки. Примеры вызовов и [схема User/Post](/v1.0.0/ru/schema) находятся в руководствах.
+
+```kotlin
+public class VolanClient private constructor(
+  private val connection: @Nullable Volan?,
+  executor: QueryExecutor,
+  private val async: AsyncAccess,
+) : AutoCloseable
+
+  public val user: UserRepository
+
+  public val post: PostRepository
+
+  public constructor(executor: QueryExecutor, asyncExecutor: Executor = ForkJoinPool.commonPool()) : this(null, executor, AsyncAccess(asyncExecutor))
+
+  public constructor(connection: Volan) : this(connection, connection.executor, connection.async)
+
+  public fun <T : @Nullable Any?> transaction(
+    isolation: Isolation = Isolation.DEFAULT,
+    retry: RetryPolicy = RetryPolicy.NONE,
+    block: Function<VolanClient, T>,
+  ): T
+
+  public fun <T : @Nullable Any?> transactionAsync(
+    isolation: Isolation = Isolation.DEFAULT,
+    retry: RetryPolicy = RetryPolicy.NONE,
+    block: Function<VolanClient, T>,
+  ): CompletableFuture<T>
+
+  public fun <T : @Nullable Any?> rawQuery(
+    sql: String,
+    parameters: List<@Nullable Any?>,
+    mapper: RowMapper<T>,
+  ): List<T>
+
+  public fun <T : @Nullable Any?> rawQueryAsync(
+    sql: String,
+    parameters: List<@Nullable Any?>,
+    mapper: RowMapper<T>,
+  ): CompletableFuture<List<T>>
+
+  public fun rawExecute(sql: String, parameters: List<@Nullable Any?> = emptyList()): Long
+
+  public fun rawExecuteAsync(sql: String, parameters: List<@Nullable Any?> = emptyList()): CompletableFuture<Long>
+
+  override fun close()
+
+  public companion object
+
+    public val TABLES: List<TableMetadata>
+
+    public val READERS: Map<String, EntityReader<*>>
+
+    public fun builder(): Builder
+
+  public class Builder internal constructor()
+
+    public fun url(`value`: String): Builder
+
+    public fun username(`value`: @Nullable String?): Builder
+
+    public fun password(`value`: @Nullable String?): Builder
+
+    public fun maxPoolSize(`value`: Int): Builder
+
+    public fun connectionTimeout(`value`: Long): Builder
+
+    public fun poolName(`value`: String): Builder
+
+    public fun asyncExecutor(`value`: Executor): Builder
+
+    public fun dataSource(`value`: DataSource): Builder
+
+    public fun interceptor(`value`: QueryInterceptor): Builder
+
+    public fun dialect(`value`: Dialect): Builder
+
+    public fun clock(`value`: Clock): Builder
+
+    public fun build(): VolanClient
+```

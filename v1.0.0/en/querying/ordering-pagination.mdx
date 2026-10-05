@@ -1,0 +1,61 @@
+---
+title: "Ordering and pagination"
+description: "Use deterministic ordering for offset pages. A cursor resumes by primary key."
+---
+
+Use deterministic ordering for offset pages. A cursor resumes by primary key.
+
+```kotlin
+val posts = db.post.findMany {
+    orderBy {
+        views.desc()
+        id.asc()
+    }
+    take = 20
+}
+```
+
+```kotlin
+val pageNumber = 2
+val pageSize = 10
+val page = db.post.findMany {
+    orderBy { id.asc() }
+    take = pageSize
+    skip = (pageNumber - 1) * pageSize
+}
+```
+
+```kotlin
+val firstPage = db.post.findMany {
+    orderBy { id.asc() }
+    take = 10
+}
+val lastId = firstPage.lastOrNull()?.id
+val nextPage = if (lastId == null) {
+    emptyList()
+} else {
+    db.post.findMany {
+        cursor(id = lastId)
+        take = 10
+    }
+}
+```
+
+```kotlin
+val choices = db.user.projectMany {
+    select { id; email }
+    orderBy { id.asc() }
+    take = 20
+}
+choices.forEach { choice -> println("${choice.id}: ${choice.email}") }
+```
+
+```kotlin
+val authors = db.post.projectMany {
+    select { authorId }
+    distinct { authorId }
+}
+val authorIds = authors.map { it.authorId }
+```
+
+take/skip are nullable, nonnegative Int values; null removes the bound. take=0 yields an empty page. Add a PK tie-breaker to ambiguous ordering. Cursor needs every PK field and excludes its boundary unless inclusive=true. Cursor plus explicit orderBy is unsupported; omit orderBy when resuming.

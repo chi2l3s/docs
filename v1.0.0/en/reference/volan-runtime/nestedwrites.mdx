@@ -1,0 +1,34 @@
+---
+title: "NestedWrites"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `NestedWrites`
+
+```kotlin
+public object NestedWrites
+
+    public fun uniqueFilter(model: String, values: Map<String, @Nullable Any?>, uniqueKeys: List<List<String>>): Filter
+
+    public fun requireFlat(operation: String, nested: List<NestedWrite>, reason: String, instead: String)
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/NestedWrites.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/NestedWrites {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/runtime/NestedWrites;
+	public static final fun requireFlat (Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)V
+	public static final fun uniqueFilter (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/github/thirtyeighttwentysix/volan/runtime/Filter;
+}
+```
+
+</Accordion>

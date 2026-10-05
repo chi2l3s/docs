@@ -1,0 +1,22 @@
+---
+title: "Перехватчики SQL"
+description: "Перехватчик оборачивает каждый физический statement. Зарегистрируй thread-safe реализацию до build."
+---
+
+Перехватчик оборачивает каждый физический statement. Зарегистрируй thread-safe реализацию до build.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.QueryContext
+import io.github.thirtyeighttwentysix.volan.runtime.QueryInterceptor
+import java.util.function.Supplier
+
+val hook = object : QueryInterceptor {
+    override fun <T> intercept(query: QueryContext, next: Supplier<T>): T {
+        println("${query.dialect}: ${query.operation}")
+        return next.get()
+    }
+}
+val db = VolanClient.builder().url(url).interceptor(hook).build()
+```
+
+Порядок: первый зарегистрированный — внешний. next.get выполняй ровно один раз на текущем потоке; повтор или перенос на worker отклоняется. Hook включает checkout, binding, execution, mapping и cleanup. Охватывает generated/raw/relation/nested statements. Transaction control, pool validation, dialect initialization и прямой JDBC мигратора вне hooks. QueryContext: sql, operation QUERY/EXECUTE, dialect; параметров нет. SQL может содержать handwritten literals.

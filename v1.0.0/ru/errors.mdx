@@ -1,0 +1,38 @@
+---
+title: "Ошибки и обработка"
+description: "Лови конкретный тип, когда можешь исправить ситуацию. Сохраняй cause для диагностики."
+---
+
+Лови конкретный тип, когда можешь исправить ситуацию. Сохраняй cause для диагностики.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.VolanUniqueConstraintException
+try {
+    db.user.create { email = "alice@example.org" }
+} catch (conflict: VolanUniqueConstraintException) {
+    println("Email already exists")
+}
+```
+
+| Исключение | Причина / действие |
+| --- | --- |
+| VolanValidationException | missing write field / invalid payload; исправь вход |
+| VolanNotFoundException | OrThrow или single write не нашёл строку |
+| VolanUniqueConstraintException | конфликт unique; constraint nullable |
+| VolanForeignKeyException | отсутствующий target / запрет удаления; constraint nullable |
+| VolanConstraintException | NOT NULL / CHECK |
+| VolanMappingException | stored value не соответствует типу |
+| VolanRelationNotLoadedException | добавь include; model/relation |
+| VolanFieldNotSelectedException | добавь select/by; model/field |
+| VolanAggregateNotAskedException | запроси агрегат |
+| VolanConfigurationException | URL/dialect/registry/ownership |
+| VolanUnsupportedException | сочетание или capability не реализовано |
+| VolanConnectionException | connection/pool failure |
+| VolanTimeoutException | timeout statement/checkout |
+| VolanTransactionException | retryable для deadlock/serialization |
+| VolanQueryException | неклассифицированная SQL-ошибка |
+| VolanSchemaException | syntax/semantic diagnostics |
+| VolanGenerationException | ошибка генерации |
+| VolanMigrationException | planning/history/apply failure |
+
+Все наследуют VolanException. Async оборачивает причины; отмена использует CancellationException. [Точные поля](/v1.0.0/ru/reference/volan-runtime).

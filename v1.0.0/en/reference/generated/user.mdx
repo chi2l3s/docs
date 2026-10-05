@@ -1,0 +1,613 @@
+---
+title: "User"
+description: "Client contract generated from User/Post."
+---
+
+Reference signatures. Usage examples and the [User/Post schema](/v1.0.0/en/schema) are in the guides.
+
+```kotlin
+public class User @JvmOverloads constructor(
+  /**
+   * The `id` column.
+   */
+  public val id: Int,
+  /**
+   * The `email` column.
+   */
+  public val email: String,
+  /**
+   * The `name` column.
+   */
+  public val name: @Nullable String?,
+  private val postsSlot: RelationSlot<List<Post>> = RelationSlot.notLoaded(),
+)
+
+  public val posts: List<Post>
+
+  public val postsIfLoaded: @Nullable List<Post>?
+
+  public val isPostsLoaded: Boolean
+
+  override fun equals(other: @Nullable Any?): Boolean
+
+  override fun hashCode(): Int
+
+  override fun toString(): String
+
+  public class Builder
+
+    public fun id(`value`: Int): Builder
+
+    public fun email(`value`: String): Builder
+
+    public fun name(`value`: @Nullable String?): Builder
+
+    public fun build(): User
+
+  public companion object
+
+    public fun builder(): Builder
+
+public object UserTable
+
+  public val METADATA: TableMetadata
+
+  public val UNIQUE_KEYS: List<List<String>>
+
+  public val ID: String
+
+  public val EMAIL: String
+
+  public val NAME: String
+
+public object UserRowMapper : EntityReader<User>
+
+  override val model: String
+
+  override fun map(row: Row): User
+
+  override fun key(entity: User, columns: List<String>): List<@Nullable Any?>
+
+  override fun withRelation(
+    entity: User,
+    relation: String,
+    `value`: @Nullable Any?,
+  ): User
+
+public class UserProjection @JvmOverloads constructor(
+  private val selected: SelectedFields,
+  private val idValue: @Nullable Int? = null,
+  private val emailValue: @Nullable String? = null,
+  private val nameValue: @Nullable String? = null,
+)
+
+  public val id: Int
+
+  public val isIdSelected: Boolean
+
+  public val email: String
+
+  public val isEmailSelected: Boolean
+
+  public val name: @Nullable String?
+
+  public val isNameSelected: Boolean
+
+public class UserProjectionMapper(
+  private val selected: SelectedFields,
+) : RowMapper<UserProjection>
+
+  override fun map(row: Row): UserProjection
+
+public class UserWhere : FilterScope()
+
+  public val id: OrderedFilterField<Int>
+
+  public val email: TextFilterField
+
+  public val name: TextFilterField
+
+  public fun or(block: UserWhere.() -> Unit)
+
+  public fun orJava(block: Consumer<UserWhere>): Unit
+
+  public fun and(block: UserWhere.() -> Unit)
+
+  public fun andJava(block: Consumer<UserWhere>): Unit
+
+  public fun not(block: UserWhere.() -> Unit)
+
+  public fun notJava(block: Consumer<UserWhere>): Unit
+
+  public fun posts(block: UserPostsFilter.() -> Unit)
+
+  public fun postsJava(block: Consumer<UserPostsFilter>): Unit
+
+public class UserOrderBy : OrderScope()
+
+  public val id: OrderField
+
+  public val email: OrderField
+
+  public val name: OrderField
+
+public class UserSelect : SelectScope()
+
+  public val id: Unit
+
+  public val email: Unit
+
+  public val name: Unit
+
+  public fun idJava()
+
+  public fun emailJava()
+
+  public fun nameJava()
+
+public class UserInclude : IncludeScope()
+
+  public fun posts(block: PostQuery.() -> Unit = {})
+
+  public fun postsJava(block: Consumer<PostQuery> = Consumer {}): Unit
+
+public class UserFields : SelectScope()
+
+  public val id: Unit
+
+  public val email: Unit
+
+  public val name: Unit
+
+  public fun idJava()
+
+  public fun emailJava()
+
+  public fun nameJava()
+
+public class UserQuery : QueryScope("User")
+
+  public fun `where`(block: UserWhere.() -> Unit)
+
+  public fun whereJava(block: Consumer<UserWhere>): Unit
+
+  public fun orderBy(block: UserOrderBy.() -> Unit)
+
+  public fun orderByJava(block: Consumer<UserOrderBy>): Unit
+
+  public fun include(block: UserInclude.() -> Unit)
+
+  public fun includeJava(block: Consumer<UserInclude>): Unit
+
+  public fun select(block: UserSelect.() -> Unit)
+
+  public fun selectJava(block: Consumer<UserSelect>): Unit
+
+  public fun distinct(block: UserFields.() -> Unit)
+
+  public fun distinctJava(block: Consumer<UserFields>): Unit
+
+  public fun cursor(id: Int, inclusive: Boolean = false)
+
+public class UserNumericFields : SelectScope()
+
+  public val id: Unit
+
+  public fun idJava()
+
+public class UserOrderedFields : SelectScope()
+
+  public val id: Unit
+
+  public val email: Unit
+
+  public val name: Unit
+
+  public fun idJava()
+
+  public fun emailJava()
+
+  public fun nameJava()
+
+public class UserAggregateScope : AggregateScope("User")
+
+  public fun `where`(block: UserWhere.() -> Unit)
+
+  public fun whereJava(block: Consumer<UserWhere>): Unit
+
+  public fun count()
+
+  public fun sum(block: UserNumericFields.() -> Unit)
+
+  public fun sumJava(block: Consumer<UserNumericFields>): Unit
+
+  public fun average(block: UserNumericFields.() -> Unit)
+
+  public fun averageJava(block: Consumer<UserNumericFields>): Unit
+
+  public fun minimum(block: UserOrderedFields.() -> Unit)
+
+  public fun minimumJava(block: Consumer<UserOrderedFields>): Unit
+
+  public fun maximum(block: UserOrderedFields.() -> Unit)
+
+  public fun maximumJava(block: Consumer<UserOrderedFields>): Unit
+
+public class UserAggregate(
+  private val values: Map<String, @Nullable Any?>,
+)
+
+  public val count: Long
+
+  public val sumOfId: @Nullable BigDecimal?
+
+  public val averageOfId: @Nullable Double?
+
+  public val minimumOfId: @Nullable Int?
+
+  public val maximumOfId: @Nullable Int?
+
+  public val minimumOfEmail: @Nullable String?
+
+  public val maximumOfEmail: @Nullable String?
+
+  public val minimumOfName: @Nullable String?
+
+  public val maximumOfName: @Nullable String?
+
+public class UserHaving : HavingScope()
+
+  public val count: OrderedFilterField<Long>
+
+  public val sumOfId: OrderedFilterField<BigDecimal>
+
+  public val averageOfId: OrderedFilterField<Double>
+
+  public val minimumOfId: OrderedFilterField<Int>
+
+  public val maximumOfId: OrderedFilterField<Int>
+
+  public val minimumOfEmail: OrderedFilterField<String>
+
+  public val maximumOfEmail: OrderedFilterField<String>
+
+  public val minimumOfName: OrderedFilterField<String>
+
+  public val maximumOfName: OrderedFilterField<String>
+
+public class UserGroupScope : GroupScope("User")
+
+  public fun `by`(block: UserFields.() -> Unit)
+
+  public fun byJava(block: Consumer<UserFields>): Unit
+
+  public fun `where`(block: UserWhere.() -> Unit)
+
+  public fun whereJava(block: Consumer<UserWhere>): Unit
+
+  public fun having(block: UserHaving.() -> Unit)
+
+  public fun havingJava(block: Consumer<UserHaving>): Unit
+
+  public fun orderBy(block: UserOrderBy.() -> Unit)
+
+  public fun orderByJava(block: Consumer<UserOrderBy>): Unit
+
+  public fun count()
+
+  public fun sum(block: UserNumericFields.() -> Unit)
+
+  public fun sumJava(block: Consumer<UserNumericFields>): Unit
+
+  public fun average(block: UserNumericFields.() -> Unit)
+
+  public fun averageJava(block: Consumer<UserNumericFields>): Unit
+
+  public fun minimum(block: UserOrderedFields.() -> Unit)
+
+  public fun minimumJava(block: Consumer<UserOrderedFields>): Unit
+
+  public fun maximum(block: UserOrderedFields.() -> Unit)
+
+  public fun maximumJava(block: Consumer<UserOrderedFields>): Unit
+
+public class UserGroup(
+  private val key: UserProjection,
+  private val values: Map<String, @Nullable Any?>,
+)
+
+  public val id: Int
+
+  public val isIdGrouped: Boolean
+
+  public val email: String
+
+  public val isEmailGrouped: Boolean
+
+  public val name: @Nullable String?
+
+  public val isNameGrouped: Boolean
+
+  public val count: Long
+
+  public val sumOfId: @Nullable BigDecimal?
+
+  public val averageOfId: @Nullable Double?
+
+  public val minimumOfId: @Nullable Int?
+
+  public val maximumOfId: @Nullable Int?
+
+  public val minimumOfEmail: @Nullable String?
+
+  public val maximumOfEmail: @Nullable String?
+
+  public val minimumOfName: @Nullable String?
+
+  public val maximumOfName: @Nullable String?
+
+public class UserCreateData
+
+  public var id: @Nullable Int?
+
+  public var email: @Nullable String?
+
+  public var name: @Nullable String?
+
+  public val posts: UserPostsWrite
+
+public class UserUpdateData
+
+  public var id: @Nullable Int?
+
+  public var email: @Nullable String?
+
+  public var name: @Nullable String?
+
+  public val posts: UserPostsChange
+
+public class UserCreateMany
+
+  public fun row(block: UserCreateData.() -> Unit)
+
+  public fun rowJava(block: Consumer<UserCreateData>): Unit
+
+public class UserUpdateScope
+
+  public fun `where`(block: UserWhere.() -> Unit)
+
+  public fun whereJava(block: Consumer<UserWhere>): Unit
+
+  public fun `data`(block: UserUpdateData.() -> Unit)
+
+  public fun dataJava(block: Consumer<UserUpdateData>): Unit
+
+public class UserUpsertScope
+
+  public fun `where`(block: UserWhere.() -> Unit)
+
+  public fun whereJava(block: Consumer<UserWhere>): Unit
+
+  public fun create(block: UserCreateData.() -> Unit)
+
+  public fun createJava(block: Consumer<UserCreateData>): Unit
+
+  public fun update(block: UserUpdateData.() -> Unit)
+
+  public fun updateJava(block: Consumer<UserUpdateData>): Unit
+
+public class UserDeleteScope
+
+  public fun `where`(block: UserWhere.() -> Unit)
+
+  public fun whereJava(block: Consumer<UserWhere>): Unit
+
+public class UserRepository @JvmOverloads constructor(
+  private val executor: QueryExecutor,
+  private val async: AsyncAccess = AsyncAccess(),
+)
+
+  public fun findMany(block: UserQuery.() -> Unit = {}): List<User>
+
+  public fun findManyJava(block: Consumer<UserQuery> = Consumer {}): List<User>
+
+  public fun findManyAsync(block: UserQuery.() -> Unit = {}): CompletableFuture<List<User>>
+
+  public fun findManyAsyncJava(block: Consumer<UserQuery> = Consumer {}): CompletableFuture<List<User>>
+
+  public fun findFirst(block: UserQuery.() -> Unit = {}): @Nullable User?
+
+  public fun findFirstJava(block: Consumer<UserQuery> = Consumer {}): @Nullable User?
+
+  public fun findFirstAsync(block: UserQuery.() -> Unit = {}): CompletableFuture<@Nullable User?>
+
+  public fun findFirstAsyncJava(block: Consumer<UserQuery> = Consumer {}): CompletableFuture<@Nullable User?>
+
+  public fun findFirstOrThrow(block: UserQuery.() -> Unit = {}): User
+
+  public fun findFirstOrThrowJava(block: Consumer<UserQuery> = Consumer {}): User
+
+  public fun findFirstOrThrowAsync(block: UserQuery.() -> Unit = {}): CompletableFuture<User>
+
+  public fun findFirstOrThrowAsyncJava(block: Consumer<UserQuery> = Consumer {}): CompletableFuture<User>
+
+  public fun findUnique(block: UserQuery.() -> Unit = {}): @Nullable User?
+
+  public fun findUniqueJava(block: Consumer<UserQuery> = Consumer {}): @Nullable User?
+
+  public fun findUniqueAsync(block: UserQuery.() -> Unit = {}): CompletableFuture<@Nullable User?>
+
+  public fun findUniqueAsyncJava(block: Consumer<UserQuery> = Consumer {}): CompletableFuture<@Nullable User?>
+
+  public fun findUniqueOrThrow(block: UserQuery.() -> Unit = {}): User
+
+  public fun findUniqueOrThrowJava(block: Consumer<UserQuery> = Consumer {}): User
+
+  public fun findUniqueOrThrowAsync(block: UserQuery.() -> Unit = {}): CompletableFuture<User>
+
+  public fun findUniqueOrThrowAsyncJava(block: Consumer<UserQuery> = Consumer {}): CompletableFuture<User>
+
+  public fun count(block: UserQuery.() -> Unit = {}): Long
+
+  public fun countJava(block: Consumer<UserQuery> = Consumer {}): Long
+
+  public fun countAsync(block: UserQuery.() -> Unit = {}): CompletableFuture<Long>
+
+  public fun countAsyncJava(block: Consumer<UserQuery> = Consumer {}): CompletableFuture<Long>
+
+  public fun exists(block: UserQuery.() -> Unit = {}): Boolean
+
+  public fun existsJava(block: Consumer<UserQuery> = Consumer {}): Boolean
+
+  public fun existsAsync(block: UserQuery.() -> Unit = {}): CompletableFuture<Boolean>
+
+  public fun existsAsyncJava(block: Consumer<UserQuery> = Consumer {}): CompletableFuture<Boolean>
+
+  public fun projectMany(block: UserQuery.() -> Unit): List<UserProjection>
+
+  public fun projectManyJava(block: Consumer<UserQuery>): List<UserProjection>
+
+  public fun projectManyAsync(block: UserQuery.() -> Unit): CompletableFuture<List<UserProjection>>
+
+  public fun projectManyAsyncJava(block: Consumer<UserQuery>): CompletableFuture<List<UserProjection>>
+
+  public fun projectFirst(block: UserQuery.() -> Unit): @Nullable UserProjection?
+
+  public fun projectFirstJava(block: Consumer<UserQuery>): @Nullable UserProjection?
+
+  public fun projectFirstAsync(block: UserQuery.() -> Unit): CompletableFuture<@Nullable UserProjection?>
+
+  public fun projectFirstAsyncJava(block: Consumer<UserQuery>): CompletableFuture<@Nullable UserProjection?>
+
+  public fun aggregate(block: UserAggregateScope.() -> Unit): UserAggregate
+
+  public fun aggregateJava(block: Consumer<UserAggregateScope>): UserAggregate
+
+  public fun aggregateAsync(block: UserAggregateScope.() -> Unit): CompletableFuture<UserAggregate>
+
+  public fun aggregateAsyncJava(block: Consumer<UserAggregateScope>): CompletableFuture<UserAggregate>
+
+  public fun groupBy(block: UserGroupScope.() -> Unit): List<UserGroup>
+
+  public fun groupByJava(block: Consumer<UserGroupScope>): List<UserGroup>
+
+  public fun groupByAsync(block: UserGroupScope.() -> Unit): CompletableFuture<List<UserGroup>>
+
+  public fun groupByAsyncJava(block: Consumer<UserGroupScope>): CompletableFuture<List<UserGroup>>
+
+  public fun create(block: UserCreateData.() -> Unit): User
+
+  public fun createJava(block: Consumer<UserCreateData>): User
+
+  public fun createAsync(block: UserCreateData.() -> Unit): CompletableFuture<User>
+
+  public fun createAsyncJava(block: Consumer<UserCreateData>): CompletableFuture<User>
+
+  public fun createMany(block: UserCreateMany.() -> Unit): Long
+
+  public fun createManyJava(block: Consumer<UserCreateMany>): Long
+
+  public fun createManyAsync(block: UserCreateMany.() -> Unit): CompletableFuture<Long>
+
+  public fun createManyAsyncJava(block: Consumer<UserCreateMany>): CompletableFuture<Long>
+
+  public fun update(block: UserUpdateScope.() -> Unit): User
+
+  public fun updateJava(block: Consumer<UserUpdateScope>): User
+
+  public fun updateAsync(block: UserUpdateScope.() -> Unit): CompletableFuture<User>
+
+  public fun updateAsyncJava(block: Consumer<UserUpdateScope>): CompletableFuture<User>
+
+  public fun updateMany(block: UserUpdateScope.() -> Unit): Long
+
+  public fun updateManyJava(block: Consumer<UserUpdateScope>): Long
+
+  public fun updateManyAsync(block: UserUpdateScope.() -> Unit): CompletableFuture<Long>
+
+  public fun updateManyAsyncJava(block: Consumer<UserUpdateScope>): CompletableFuture<Long>
+
+  public fun upsert(block: UserUpsertScope.() -> Unit): User
+
+  public fun upsertJava(block: Consumer<UserUpsertScope>): User
+
+  public fun upsertAsync(block: UserUpsertScope.() -> Unit): CompletableFuture<User>
+
+  public fun upsertAsyncJava(block: Consumer<UserUpsertScope>): CompletableFuture<User>
+
+  public fun delete(block: UserDeleteScope.() -> Unit): User
+
+  public fun deleteJava(block: Consumer<UserDeleteScope>): User
+
+  public fun deleteAsync(block: UserDeleteScope.() -> Unit): CompletableFuture<User>
+
+  public fun deleteAsyncJava(block: Consumer<UserDeleteScope>): CompletableFuture<User>
+
+  public fun deleteMany(block: UserDeleteScope.() -> Unit): Long
+
+  public fun deleteManyJava(block: Consumer<UserDeleteScope>): Long
+
+  public fun deleteManyAsync(block: UserDeleteScope.() -> Unit): CompletableFuture<Long>
+
+  public fun deleteManyAsyncJava(block: Consumer<UserDeleteScope>): CompletableFuture<Long>
+
+  public companion object
+
+public class UserPostsFilter(
+  private val sink: BiConsumer<RelationQuantifier, FilterScope>,
+)
+
+  public fun some(block: PostWhere.() -> Unit)
+
+  public fun someJava(block: Consumer<PostWhere>): Unit
+
+  public fun every(block: PostWhere.() -> Unit)
+
+  public fun everyJava(block: Consumer<PostWhere>): Unit
+
+  public fun none(block: PostWhere.() -> Unit)
+
+  public fun noneJava(block: Consumer<PostWhere>): Unit
+
+public class UserPostsWrite internal constructor(
+  @get:JvmSynthetic
+  internal val writes: MutableList<NestedWrite>,
+)
+
+  public fun create(block: PostCreateData.() -> Unit)
+
+  public fun createJava(block: Consumer<PostCreateData>): Unit
+
+  public fun connect(block: PostWhere.() -> Unit)
+
+  public fun connectJava(block: Consumer<PostWhere>): Unit
+
+  public fun connectOrCreate(block: PostCreateData.() -> Unit)
+
+  public fun connectOrCreateJava(block: Consumer<PostCreateData>): Unit
+
+public class UserPostsChange internal constructor(
+  @get:JvmSynthetic
+  internal val writes: MutableList<NestedWrite>,
+)
+
+  public fun create(block: PostCreateData.() -> Unit)
+
+  public fun createJava(block: Consumer<PostCreateData>): Unit
+
+  public fun connect(block: PostWhere.() -> Unit)
+
+  public fun connectJava(block: Consumer<PostWhere>): Unit
+
+  public fun connectOrCreate(block: PostCreateData.() -> Unit)
+
+  public fun connectOrCreateJava(block: Consumer<PostCreateData>): Unit
+
+  public fun update(block: PostUpdateScope.() -> Unit)
+
+  public fun updateJava(block: Consumer<PostUpdateScope>): Unit
+
+  public fun delete(block: PostWhere.() -> Unit = {})
+
+  public fun deleteJava(block: Consumer<PostWhere> = Consumer {}): Unit
+```

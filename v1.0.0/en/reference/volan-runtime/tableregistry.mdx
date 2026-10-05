@@ -1,0 +1,43 @@
+---
+title: "TableRegistry"
+description: "QueryExecutor, query/write descriptions, filters, mapping, transactions and hooks."
+---
+
+Type/member contracts of volan-runtime for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `TableRegistry`
+
+```kotlin
+public class TableRegistry(tables: List<TableMetadata>)
+
+    public val models: List<TableMetadata>
+
+    public fun find(model: String): @Nullable TableMetadata?
+
+    public fun require(model: String): TableMetadata
+
+    public fun requireColumn(model: String, field: String): ColumnMetadata
+
+    public fun requireRelation(model: String, field: String): RelationMetadata
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-runtime/src/main/kotlin/io/github/thirtyeighttwentysix/volan/runtime/TableRegistry.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-runtime).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/runtime/TableRegistry {
+	public fun <init> (Ljava/util/List;)V
+	public final fun find (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/TableMetadata;
+	public final fun getModels ()Ljava/util/List;
+	public final fun require (Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/TableMetadata;
+	public final fun requireColumn (Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/ColumnMetadata;
+	public final fun requireRelation (Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/runtime/RelationMetadata;
+}
+```
+
+</Accordion>

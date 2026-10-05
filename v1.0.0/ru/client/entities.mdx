@@ -1,0 +1,26 @@
+---
+title: "Сущности и builders"
+description: "Сущность — снимок прочитанной строки. Setter сущности не сохраняет данные."
+---
+
+Сущность — снимок прочитанной строки. Setter сущности не сохраняет данные.
+
+```kotlin
+val saved = db.user.findUniqueOrThrow { where { id eq userId } }
+println(saved.id)
+println(saved.isPostsLoaded)
+val changed = db.user.update {
+    where { id eq saved.id }
+    data { name = "New name" }
+}
+```
+
+```java
+var value = User.builder()
+    .id(1)
+    .email("alice@example.org")
+    .name("Alice")
+    .build();
+```
+
+JavaFriendly включает static builder, getters и JSpecify nullability. Builder создаёт объект в памяти; для БД используй repository.create/update. Value equality сравнивает значения; Bytes сравниваются по содержимому. Нет persistence context, dirty tracking, lazy proxies и автоматического refresh. Состояние загрузки связи проверяется через is…Loaded, проекции — is…Selected.

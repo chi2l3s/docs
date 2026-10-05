@@ -1,0 +1,33 @@
+---
+title: "SchemaWriter"
+description: "Readers, structural schema, plans, scripts, sync и migration journal."
+---
+
+Контракты типов и членов volan-migrate для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `SchemaWriter`
+
+```kotlin
+public object SchemaWriter
+
+    public fun write(database: DatabaseSchema, provider: Provider = Provider.POSTGRESQL): String
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-migrate/src/main/kotlin/io/github/thirtyeighttwentysix/volan/migrate/SchemaWriter.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-migrate).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/migrate/SchemaWriter {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/migrate/SchemaWriter;
+	public static final fun write (Lio/github/thirtyeighttwentysix/volan/migrate/DatabaseSchema;)Ljava/lang/String;
+	public static final fun write (Lio/github/thirtyeighttwentysix/volan/migrate/DatabaseSchema;Lio/github/thirtyeighttwentysix/volan/ir/Provider;)Ljava/lang/String;
+	public static synthetic fun write$default (Lio/github/thirtyeighttwentysix/volan/migrate/DatabaseSchema;Lio/github/thirtyeighttwentysix/volan/ir/Provider;ILjava/lang/Object;)Ljava/lang/String;
+}
+```
+
+</Accordion>

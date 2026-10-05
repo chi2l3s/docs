@@ -1,0 +1,18 @@
+---
+title: "Переход на 1.0.0"
+description: "Обнови generator/plugin и runtime вместе, затем пересобери клиент."
+---
+
+Обнови generator/plugin и runtime вместе, затем пересобери клиент.
+
+```kotlin
+plugins {
+    kotlin("jvm") version "2.4.20"
+    id("io.github.thirtyeighttwentysix.volan") version "1.0.0"
+}
+dependencies {
+    implementation(platform("io.github.thirtyeighttwentysix:volan-bom:1.0.0"))
+}
+```
+
+1.0.0 добавляет H2/MySQL/MariaDB, automatic plugins, coroutines, metrics и CLI. Старые custom-generation tasks замени plugin. Подключение диалекта/driver остаётся явным. Alpha consumers DropConstraint.copy должны перекомпилироваться из-за нового data-class signature. Snapshot документации alpha доступен в version selector; эти pages относятся к 1.0.0.

@@ -1,0 +1,70 @@
+---
+title: "Nested writes"
+description: "Create related rows as one logical operation. Runtime executes several SQL statements transactionally."
+---
+
+Create related rows as one logical operation. Runtime executes several SQL statements transactionally.
+
+```kotlin
+val author = db.user.create {
+    email = "author@example.org"
+    posts.create { title = "First post" }
+    posts.create { title = "Second post" }
+}
+val loaded = db.user.findUniqueOrThrow {
+    where { id eq author.id }
+    include { posts { orderBy { id.asc() } } }
+}
+println(loaded.posts.map { it.title })
+```
+
+```java
+var author = db.getUser().create(data -> {
+    data.setEmail("author@example.org");
+    data.getPosts().create(post -> post.setTitle("First post"));
+    data.getPosts().create(post -> post.setTitle("Second post"));
+});
+var loaded = db.getUser().findUniqueOrThrow(q -> {
+    q.where(w -> w.getId().eq(author.getId()));
+    q.include(i -> i.posts());
+});
+System.out.println(loaded.getPosts().size());
+```
+
+```kotlin
+val existingAuthor = db.user.create { email = "existing-author@example.org" }
+val post = db.post.create {
+    title = "Connected post"
+    author.connect { id eq existingAuthor.id }
+}
+println(post.authorId)
+```
+
+```kotlin
+val post = db.post.create {
+    title = "Shared author"
+    author.connectOrCreate {
+        email = "shared-author@example.org"
+        name = "Shared author"
+    }
+}
+println(post.authorId)
+```
+
+```kotlin
+val author = db.user.create {
+    email = "nested-edit@example.org"
+    posts.create { title = "Before" }
+}
+db.user.update {
+    where { id eq author.id }
+    data {
+        posts.update {
+            where { title eq "Before" }
+            data { title = "After" }
+        }
+    }
+}
+```
+
+Create results do not load relations: read them with include. connect looks up an existing row; connectOrCreate derives its condition from the first fully populated unique key in the create payload. Existing targets are not updated. Unique races remain possible. Nested updates are limited to one level; createMany/updateMany/upsert require flat payloads.

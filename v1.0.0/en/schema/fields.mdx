@@ -1,0 +1,32 @@
+---
+title: "Field types"
+description: "Choose a scalar for the value it represents. SQL storage depends on the dialect."
+---
+
+Choose a scalar for the value it represents. SQL storage depends on the dialect.
+
+```prisma
+model Document {
+  id Int @id @default(autoincrement())
+  title String
+  summary String?
+}
+```
+
+| Volan | Kotlin | Java |
+| --- | --- | --- |
+| String | String | String |
+| Int | Int | int |
+| Long | Long | long |
+| Float | Float | float |
+| Double | Double | double |
+| Decimal | BigDecimal | BigDecimal |
+| Boolean | Boolean | boolean |
+| DateTime | Instant | Instant |
+| Date | LocalDate | LocalDate |
+| Time | LocalTime | LocalTime |
+| Json | io.github.thirtyeighttwentysix.volan.Json | Json |
+| Bytes | ByteArray | byte[] |
+| Uuid | UUID | UUID |
+
+Nullable Java primitives become boxed (`Integer`, `Long`, …). DateTime is an instant, Date a calendar date, Time a local time of day. Decimal uses BigDecimal and is unavailable in SQLite. Store exact SQLite amounts as minor units in Long. [Database storage](/v1.0.0/en/databases).

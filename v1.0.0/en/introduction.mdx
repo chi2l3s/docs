@@ -1,0 +1,29 @@
+---
+title: "Volan in five minutes"
+description: "A schema, a typed client and queries for Kotlin and Java."
+---
+
+Volan 1.0.0 is a JVM ORM. Describe tables in `schema.volan`, build the project and use the generated client.
+
+```kotlin
+val users = db.user.findMany {
+    where { email endsWith "@example.org" }
+    orderBy { id.asc() }
+    take = 20
+}
+```
+
+`db` is an open client; tables already exist. Filter values become SQL parameters.
+
+## Choose your next step
+
+- [First query](/v1.0.0/en/quickstart): a complete H2 project.
+- [Schema](/v1.0.0/en/schema): models, types, keys and relations.
+- [Reads](/v1.0.0/en/querying/reading): records, projections and summaries.
+- [Writes](/v1.0.0/en/writing/create): CRUD, bulk and nested operations.
+- [Migrations](/v1.0.0/en/migrations): SQL plans, history and recovery.
+- [Module reference](/v1.0.0/en/reference/modules): public contracts across the library.
+
+The library and CLI require Java 17+. The tutorial uses JDK 25. PostgreSQL, SQLite, H2, MySQL and MariaDB are supported.
+
+Generation creates code. Create tables separately. Load relations explicitly with `include`. JDBC occupies a worker even through async or coroutine access.

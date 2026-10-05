@@ -1,0 +1,38 @@
+---
+title: "Errors and handling"
+description: "Catch a specific type when you can handle it. Keep the cause for diagnosis."
+---
+
+Catch a specific type when you can handle it. Keep the cause for diagnosis.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.VolanUniqueConstraintException
+try {
+    db.user.create { email = "alice@example.org" }
+} catch (conflict: VolanUniqueConstraintException) {
+    println("Email already exists")
+}
+```
+
+| Exception | Cause / action |
+| --- | --- |
+| VolanValidationException | missing write field / invalid payload; fix input |
+| VolanNotFoundException | missing OrThrow read or single write |
+| VolanUniqueConstraintException | unique conflict; nullable constraint |
+| VolanForeignKeyException | missing target / forbidden removal; nullable constraint |
+| VolanConstraintException | NOT NULL / CHECK |
+| VolanMappingException | stored value cannot match schema type |
+| VolanRelationNotLoadedException | add include; model/relation |
+| VolanFieldNotSelectedException | add select/by; model/field |
+| VolanAggregateNotAskedException | request the summary |
+| VolanConfigurationException | URL/dialect/registry/ownership |
+| VolanUnsupportedException | unsupported combination/capability |
+| VolanConnectionException | connection/pool failure |
+| VolanTimeoutException | statement/checkout timeout |
+| VolanTransactionException | retryable for deadlock/serialization |
+| VolanQueryException | unclassified SQL failure |
+| VolanSchemaException | syntax/semantic diagnostics |
+| VolanGenerationException | generation failure |
+| VolanMigrationException | planning/history/apply failure |
+
+All inherit VolanException. Async wraps causes; cancellation uses CancellationException. [Exact fields](/v1.0.0/en/reference/volan-runtime).

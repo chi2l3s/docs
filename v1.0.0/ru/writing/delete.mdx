@@ -1,0 +1,31 @@
+---
+title: "Удаление записей"
+description: "delete возвращает удалённую строку; deleteMany — число строк."
+---
+
+delete возвращает удалённую строку; deleteMany — число строк.
+
+```kotlin
+val created = db.user.create { email = "remove@example.org" }
+val deleted = db.user.delete {
+    where { id eq created.id }
+}
+println("Deleted user: ${deleted.email}")
+```
+
+```java
+var created = db.getUser().create(data -> data.setEmail("remove@example.org"));
+var deleted = db.getUser().delete(q -> {
+    q.where(w -> w.getId().eq(created.getId()));
+});
+System.out.println("Deleted user: " + deleted.getEmail());
+```
+
+```kotlin
+val deletedCount = db.user.deleteMany {
+    where { email endsWith "@temporary.example.org" }
+}
+println("Deleted users: $deletedCount")
+```
+
+Без where удаление не имеет автоматической защиты. На PostgreSQL/SQLite/H2 delete с широким фильтром может удалить несколько строк, вернув одну. Для одной записи фильтруй по полному PK/unique. При отсутствии строки delete бросает VolanNotFoundException; deleteMany возвращает 0. Cascade выполняет БД и действует даже на незагруженные связи.

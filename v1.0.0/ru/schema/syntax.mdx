@@ -1,0 +1,19 @@
+---
+title: "Синтаксис схемы"
+description: "Четыре блока: datasource, generator, model и enum. Регистр имён важен."
+---
+
+Четыре блока: datasource, generator, model и enum. Регистр имён важен.
+
+```prisma
+// Comment
+/// Documentation retained in generated code
+model Document {
+  id Int @id @default(autoincrement())
+  title String
+  summary String?
+  @@map("documents")
+}
+```
+
+`name Type` объявляет поле; `?` означает nullable, `[]` — список. `@` относится к полю на той же строке; `@@` — к блоку. Имена: буква или `_`, затем буквы, цифры, `_`. Строки поддерживают `\n`, `\r`, `\t`, `\"`, `\\`, `\/`, `\uXXXX`. Числа могут иметь знак и дробную часть. Значения: строка, число, boolean, имя, список, вызов. `/* block comments */`, списки `[][]`, nullable-списки `[]?` и многострочные строки запрещены. Порядок блоков свободный. [Диагностика](/v1.0.0/ru/schema/diagnostics).

@@ -1,0 +1,28 @@
+---
+title: "Tenant и soft delete"
+description: "Volan не добавляет tenant/soft-delete условия автоматически. Внеси их в каждый нужный запрос."
+---
+
+Volan не добавляет tenant/soft-delete условия автоматически. Внеси их в каждый нужный запрос.
+
+```prisma
+model TenantRecord {
+  id Int @id
+  tenantId Int
+  title String
+  deletedAt DateTime?
+  @@index([tenantId, deletedAt])
+}
+```
+
+```kotlin
+val rows = db.tenantRecord.findMany {
+    where { tenantId eq currentTenantId; deletedAt.isNull() }
+}
+db.tenantRecord.updateMany {
+    where { id eq recordId; tenantId eq currentTenantId; deletedAt.isNull() }
+    data { deletedAt = java.time.Instant.now() }
+}
+```
+
+Этот пример требует отдельной модели TenantRecord и миграции. Проверяй tenant также в writes и relation filters; query interceptor не является системой авторизации.

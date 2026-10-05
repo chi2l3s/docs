@@ -1,0 +1,119 @@
+---
+title: "Dialect"
+description: "SQL/DDL model, parameters, capabilities and JDBC dialect."
+---
+
+Type/member contracts of volan-dialect-api for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `Dialect`, `DefaultImpls`, `DialectCapabilities`
+
+```kotlin
+public data class DialectCapabilities(
+    public val returningClause: Boolean,
+    public val insertOnConflict: Boolean,
+    public val caseInsensitiveLike: Boolean,
+    public val distinctOn: Boolean,
+    public val nullsOrdering: Boolean,
+    public val tupleComparison: Boolean,
+    public val arrayColumns: Boolean,
+    public val maximumParameters: Int,
+)
+
+public interface Dialect
+
+    public val id: String
+
+    public val capabilities: DialectCapabilities
+
+    public val timestampWithoutTimeZone: Boolean get()
+
+    public val textParameterType: Int get()
+
+    public fun renderForUpdate(select: SqlSelect): SqlStatement
+
+    public fun initialize(connection: Connection): Unit
+
+    public fun poolSize(jdbcUrl: String, requested: Int): Int
+
+    public fun connectionMaxLifetime(jdbcUrl: String): @Nullable Long?
+
+    public fun jdbcValue(value: @Nullable Any?): @Nullable Any?
+
+    public fun sqlState(exception: SQLException): @Nullable String?
+
+    public fun render(select: SqlSelect): SqlStatement
+
+    public fun render(insert: SqlInsert): SqlStatement
+
+    public fun render(update: SqlUpdate): SqlStatement
+
+    public fun render(delete: SqlDelete): SqlStatement
+
+    public fun quote(name: String): String
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-dialect-api/src/main/kotlin/io/github/thirtyeighttwentysix/volan/dialect/Dialect.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-dialect-api).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public abstract interface class io/github/thirtyeighttwentysix/volan/dialect/Dialect {
+	public fun connectionMaxLifetime (Ljava/lang/String;)Ljava/lang/Long;
+	public abstract fun getCapabilities ()Lio/github/thirtyeighttwentysix/volan/dialect/DialectCapabilities;
+	public abstract fun getId ()Ljava/lang/String;
+	public fun getTextParameterType ()I
+	public fun getTimestampWithoutTimeZone ()Z
+	public fun initialize (Ljava/sql/Connection;)V
+	public fun jdbcValue (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun poolSize (Ljava/lang/String;I)I
+	public abstract fun quote (Ljava/lang/String;)Ljava/lang/String;
+	public abstract fun render (Lio/github/thirtyeighttwentysix/volan/dialect/SqlDelete;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public abstract fun render (Lio/github/thirtyeighttwentysix/volan/dialect/SqlInsert;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public abstract fun render (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public abstract fun render (Lio/github/thirtyeighttwentysix/volan/dialect/SqlUpdate;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public fun renderForUpdate (Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public fun sqlState (Ljava/sql/SQLException;)Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/Dialect$DefaultImpls {
+	public static fun connectionMaxLifetime (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;Ljava/lang/String;)Ljava/lang/Long;
+	public static fun getTextParameterType (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;)I
+	public static fun getTimestampWithoutTimeZone (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;)Z
+	public static fun initialize (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;Ljava/sql/Connection;)V
+	public static fun jdbcValue (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun poolSize (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;Ljava/lang/String;I)I
+	public static fun renderForUpdate (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;Lio/github/thirtyeighttwentysix/volan/dialect/SqlSelect;)Lio/github/thirtyeighttwentysix/volan/dialect/SqlStatement;
+	public static fun sqlState (Lio/github/thirtyeighttwentysix/volan/dialect/Dialect;Ljava/sql/SQLException;)Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/dialect/DialectCapabilities {
+	public fun <init> (ZZZZZZZI)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun component6 ()Z
+	public final fun component7 ()Z
+	public final fun component8 ()I
+	public final fun copy (ZZZZZZZI)Lio/github/thirtyeighttwentysix/volan/dialect/DialectCapabilities;
+	public static synthetic fun copy$default (Lio/github/thirtyeighttwentysix/volan/dialect/DialectCapabilities;ZZZZZZZIILjava/lang/Object;)Lio/github/thirtyeighttwentysix/volan/dialect/DialectCapabilities;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArrayColumns ()Z
+	public final fun getCaseInsensitiveLike ()Z
+	public final fun getDistinctOn ()Z
+	public final fun getInsertOnConflict ()Z
+	public final fun getMaximumParameters ()I
+	public final fun getNullsOrdering ()Z
+	public final fun getReturningClause ()Z
+	public final fun getTupleComparison ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+```
+
+</Accordion>

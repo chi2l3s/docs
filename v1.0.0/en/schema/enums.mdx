@@ -1,0 +1,23 @@
+---
+title: "Enums"
+description: "Model states become Kotlin/Java enums. Mapping chooses stored values."
+---
+
+Model states become Kotlin/Java enums. Mapping chooses stored values.
+
+```prisma
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED @map("published")
+
+  @@map("publication_status")
+}
+
+model Publication {
+  id Int @id @default(autoincrement())
+  title String
+  status PublicationStatus @default(DRAFT)
+}
+```
+
+PostgreSQL uses a native enum; other providers use strings. Reading an unknown stored value fails. Pull cannot recover enum declarations from string columns. Adding and using a PostgreSQL enum value can require separate migrations. Removing or reordering values needs explicit SQL.

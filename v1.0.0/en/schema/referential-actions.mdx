@@ -1,0 +1,20 @@
+---
+title: "Referential actions"
+description: "The database executes onDelete/onUpdate even for unloaded relations."
+---
+
+The database executes onDelete/onUpdate even for unloaded relations.
+
+```prisma
+model Parent {
+  id Int @id
+  children Child[]
+}
+model Child {
+  id Int @id
+  parentId Int?
+  parent Parent? @relation(fields: [parentId], references: [id], onDelete: SetNull)
+}
+```
+
+Actions: Cascade, Restrict, NoAction, SetNull, SetDefault. SetNull requires nullable foreign keys; SetDefault depends on the provider and actual defaults. MySQL/MariaDB reject SetDefault. Analyzer/schema mapping normalize omitted actions; see [IR](/v1.0.0/en/reference/volan-ir). Cascade cycles produce warnings.

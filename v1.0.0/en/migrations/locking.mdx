@@ -1,0 +1,13 @@
+---
+title: "Migration locks"
+description: "How migration writers coordinate."
+---
+
+| Database | Mechanism |
+| --- | --- |
+| PostgreSQL | advisory lock within the database schema |
+| SQLite | BEGIN IMMEDIATE before introspection/history; driver busy timeout |
+| H2 | exclusive mode before history; new connections refused, existing operations wait |
+| MySQL/MariaDB | named session lock, 60-second timeout, survives DDL commits |
+
+Locks coordinate Volan writers. Coordinate application SQL and other migration tools separately. H2 requires an administrator connection outside caller-owned exclusive mode; use a maintenance window without active application transactions. MySQL/MariaDB connections must select a database and stay open throughout.

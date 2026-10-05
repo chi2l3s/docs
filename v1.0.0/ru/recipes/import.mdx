@@ -1,0 +1,21 @@
+---
+title: "Пакетный импорт"
+description: "Передай строки пакетами и запиши явные ключи связей."
+---
+
+Передай строки пакетами и запиши явные ключи связей.
+
+```kotlin
+val rows = listOf("One", "Two", "Three")
+db.transaction { tx ->
+    rows.chunked(100).forEach { batch ->
+        tx.post.createMany {
+            batch.forEach { titleValue ->
+                row { title = titleValue; authorId = existingAuthorId }
+            }
+        }
+    }
+}
+```
+
+100 — размер партии приложения, а не жёсткий лимит Volan. Runtime дополнительно учитывает parameter limits. Outer transaction делает весь импорт атомарным, но удерживает connection до конца. Для частичного прогресса вызывай партии отдельно.

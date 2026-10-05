@@ -1,0 +1,70 @@
+---
+title: "SchemaLoader"
+description: "Загрузка и semantic analysis, типы, модели, ключи и связи."
+---
+
+Контракты типов и членов volan-ir для 1.0.0. Это сигнатуры для справки, не самостоятельная программа. `internal`/`private constructor` недоступен приложению; protected-члены предназначены для подклассов.
+
+**Типы:** `AnalysisResult`, `SchemaLoader`
+
+```kotlin
+public class AnalysisResult internal constructor(
+    public val schema: Schema?,
+    public val diagnostics: List<Diagnostic>,
+    public val source: SourceFile,
+)
+
+    public val hasErrors: Boolean
+
+    public val errors: List<Diagnostic>
+
+    public val warnings: List<Diagnostic>
+
+    public fun schemaOrThrow(): Schema
+
+    public fun render(): String
+
+    override fun toString(): String
+
+public object SchemaLoader
+
+    public fun load(source: SourceFile): AnalysisResult
+
+    public fun load(name: String, text: String): AnalysisResult
+
+    public fun loadOrThrow(source: SourceFile): Schema
+
+    public fun analyze(parse: ParseResult): AnalysisResult
+```
+
+[Полный контракт и KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-ir/src/main/kotlin/io/github/thirtyeighttwentysix/volan/ir/SchemaLoader.kt).
+
+[Модуль и применение](/v1.0.0/ru/reference/volan-ir).
+
+<Accordion title="Полный публичный JVM API">
+
+Контракт JVM включает все конструкторы, overloads, свойства и enum constants. Дескрипторы: I — Int, J — Long, Z — Boolean, V — Unit; L…; — объект, [ — массив. Методы copy/componentN — стандартные методы data class.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/ir/AnalysisResult {
+	public final fun getDiagnostics ()Ljava/util/List;
+	public final fun getErrors ()Ljava/util/List;
+	public final fun getHasErrors ()Z
+	public final fun getSchema ()Lio/github/thirtyeighttwentysix/volan/ir/Schema;
+	public final fun getSource ()Lio/github/thirtyeighttwentysix/volan/schema/SourceFile;
+	public final fun getWarnings ()Ljava/util/List;
+	public final fun render ()Ljava/lang/String;
+	public final fun schemaOrThrow ()Lio/github/thirtyeighttwentysix/volan/ir/Schema;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/thirtyeighttwentysix/volan/ir/SchemaLoader {
+	public static final field INSTANCE Lio/github/thirtyeighttwentysix/volan/ir/SchemaLoader;
+	public static final fun analyze (Lio/github/thirtyeighttwentysix/volan/schema/ParseResult;)Lio/github/thirtyeighttwentysix/volan/ir/AnalysisResult;
+	public static final fun load (Lio/github/thirtyeighttwentysix/volan/schema/SourceFile;)Lio/github/thirtyeighttwentysix/volan/ir/AnalysisResult;
+	public static final fun load (Ljava/lang/String;Ljava/lang/String;)Lio/github/thirtyeighttwentysix/volan/ir/AnalysisResult;
+	public static final fun loadOrThrow (Lio/github/thirtyeighttwentysix/volan/schema/SourceFile;)Lio/github/thirtyeighttwentysix/volan/ir/Schema;
+}
+```
+
+</Accordion>

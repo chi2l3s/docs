@@ -1,0 +1,46 @@
+---
+title: "Main"
+description: "JVM CLI entry point. Commands and flags are in the CLI reference."
+---
+
+Type/member contracts of volan-cli for 1.0.0. These signatures are reference material, not a standalone program. Internal/private constructors are not callable by applications; protected members serve subclasses.
+
+**Types:** `MainKt`
+
+```kotlin
+public fun main(args: Array<String>)
+
+    override fun run(): Unit
+
+    override fun run(): Unit
+
+    protected val schemaPath: String by option("--schema", help = "Schema file.").default("schema.volan")
+
+    protected fun dialect(connection: java.sql.Connection): DdlRenderer
+
+    protected fun sync(connection: java.sql.Connection): DatabaseSync
+
+    protected fun schema(): Schema
+
+    protected fun connect(schema: Schema? = null): java.sql.Connection
+
+    override fun run()
+
+    override fun run()
+```
+
+[Complete contract and KDoc](https://github.com/thirtyeighttwentysix/volan/blob/v1.0.0/volan-cli/src/main/kotlin/io/github/thirtyeighttwentysix/volan/cli/Main.kt).
+
+[Module and usage](/v1.0.0/en/reference/volan-cli).
+
+<Accordion title="Complete public JVM API">
+
+The JVM contract includes every constructor, overload, property and enum constant. Descriptors: I = Int, J = Long, Z = Boolean, V = Unit; L…; = object, [ = array. copy/componentN are standard data-class methods.
+
+```text
+public final class io/github/thirtyeighttwentysix/volan/cli/MainKt {
+	public static final fun main ([Ljava/lang/String;)V
+}
+```
+
+</Accordion>

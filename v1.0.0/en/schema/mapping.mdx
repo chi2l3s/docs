@@ -1,0 +1,16 @@
+---
+title: "Table and column names"
+description: "Mapping changes a database name while preserving the code name."
+---
+
+Mapping changes a database name while preserving the code name.
+
+```prisma
+model Customer {
+  id Int @id @map("customer_id")
+  email String @unique @map("email_address")
+  @@map("customers")
+}
+```
+
+The dialect quotes identifiers. Raw SQL uses actual database names. Enum mappings have their own page. Automatic rename planning produces drop/add: use explicit ALTER TABLE RENAME to preserve data. Avoid fields named count or Kotlin keywords in 1.0.0; choose a different code name with @map.

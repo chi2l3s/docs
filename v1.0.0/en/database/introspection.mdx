@@ -1,0 +1,17 @@
+---
+title: "Introspection boundaries"
+description: "Which shapes pull preserves and which it refuses."
+---
+
+Pull must represent structure without loss. It fails when a shape cannot be preserved.
+
+| Provider | Unsupported shapes |
+| --- | --- |
+| PostgreSQL | arbitrary expression/partial/include/ordered indexes; custom FK names; standalone unique indexes instead of constraints; unsupported types/enum transitions |
+| SQLite | views, triggers, virtual tables, CHECK, generated columns, custom collations, STRICT/WITHOUT ROWID, partial/expression/descending indexes, temporary/attached objects |
+| H2 | custom precision/size, bounded/nested arrays, special identities, generated/invisible columns, domains, CHECK, views/triggers/sequences/synonyms/linked/temp tables, cross-schema FK, custom index methods/order, compatibility modes |
+| MySQL/MariaDB | views/triggers, non-InnoDB, custom collation/size/precision, unsigned/generated/invisible columns, extra CHECK, cross-database FK, expression/prefix/descending/invisible indexes |
+
+Comments, generators, original aliases, client-side updatedAt and string enums cannot be recovered. Implicit many-to-many tables export as explicit models; keyless tables use @@ignore. Invalid/colliding names receive deterministic mapped aliases. Unique indexes can be read for comparison but cannot always export as unique constraints. Volan journals are excluded; pass a custom journal name to the reader.
+
+Use reviewed SQL for unsupported objects and retain the original schema.volan. [Reader API](/v1.0.0/en/reference/volan-migrate).
