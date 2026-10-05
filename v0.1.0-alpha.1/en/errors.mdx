@@ -15,7 +15,7 @@ Identify the failing stage first. That is faster than changing schema, driver an
 |---|---|
 | VolanConfigurationException | Check JDBC URL, dialect JAR and driver |
 | VolanValidationException | Supply required write fields |
-| VolanNotFoundException | Handle no match for an OrThrow operation |
+| VolanNotFoundException | Handle no match in OrThrow, update or delete |
 | VolanRelationNotLoadedException | Add include or avoid reading the relation |
 | VolanFieldNotSelectedException | Select the field before reading |
 | VolanUniqueConstraintException | Handle a duplicate business key |
@@ -27,6 +27,7 @@ Identify the failing stage first. That is faster than changing schema, driver an
 | VolanTransactionException | Retry only when retryable and callback is safe |
 | VolanQueryException | Inspect cause and generated/handwritten SQL |
 | VolanUnsupportedException | Change unsupported query shape |
+
 Schema diagnostics use E00xx for lexing, E01xx for parsing and E02xx for semantic validation. The diagnostic includes filename, source frame and a suggested fix where possible. For example, E0209 means a model lacks a primary key, E0224 means relation references are not unique.
 
 If generated code fails unexpectedly, first align generator/runtime/plugin versions and regenerate. Do not manually fix generated files. Missing tables mean schema DDL was never applied or the URL points at another database.
@@ -40,6 +41,8 @@ Migration edited/missing/unfinished history is a deployment stop, not an ordinar
 `findUnique` can return null without an error: no row matched. `findUniqueOrThrow` turns that state into `VolanNotFoundException`. Choose based on the operation's meaning and handle absence once at the service boundary.
 
 For `VolanUniqueConstraintException`, inspect the business key and concurrent writes. An `exists` check cannot prevent another transaction from inserting between the check and create. The database constraint remains the final uniqueness check, and the application must explain that conflict.
+
+`update` and `delete` also throw `VolanNotFoundException` when no row matches. If absence is expected and only an affected count is needed, use the matching `*Many` method: an empty set returns `0L`.
 
 ## Result access failures
 

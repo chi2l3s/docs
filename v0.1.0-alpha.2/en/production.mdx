@@ -17,6 +17,27 @@ The connected generated client receives JDBC URLs and credentials through its bu
 
 Install the runtime, matching dialect and JDBC driver. Reuse an application DataSource when one already exists and give the pool one owner. With the built-in pool, keep one shared client. Do not create a client for every row or HTTP request.
 
+## Builder settings and pool ownership
+
+These settings belong to `VolanClient.builder()` in Kotlin and Java. Set them before `build()`; changing a builder does not reconfigure an already open pool.
+
+| Method | When omitted | Purpose |
+| --- | --- | --- |
+| `url(String)` | No URL | JDBC URL; required for a built-in pool |
+| `username(String?)`, `password(String?)` | `null` | Credentials passed to the built-in pool |
+| `maxPoolSize(Int)` | `10` | Requested maximum connection count |
+| `connectionTimeout(Long)` | `30_000L` ms | Waiting for a free connection, not SQL execution time |
+| `poolName(String)` | `"volan"` | Built-in pool name |
+| `asyncExecutor(Executor)` | `ForkJoinPool.commonPool()` | Java async execution; application-owned executor |
+| `dataSource(DataSource)` | Not set | Use an existing application pool |
+| `dialect(Dialect)` | Selected from the JDBC URL | Explicit dialect when URL selection is unavailable |
+
+With `dataSource(...)`, Volan creates no pool of its own. Configure size, credentials and timeouts on that DataSource: built-in pool settings do not override them. Dialect selection still requires `url(...)` or `dialect(...)`; a DataSource alone does not select the SQL dialect. Closing the client does not close the supplied DataSource or executor.
+
+With a built-in pool, client `close()` closes that owned pool. Do not give one component responsibility for closing a pool that another still uses.
+
+For SQLite, the built-in pool uses one connection regardless of a positive `maxPoolSize`. This applies to both file databases and `:memory:`.
+
 ## Load and limits
 
 Define maximum page sizes and allowed includes in the service. A caller's `take` parameter should not turn into an unbounded table read. Projections select required columns and explicit DTOs fix the shape of a response.

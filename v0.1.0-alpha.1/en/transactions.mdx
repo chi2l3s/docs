@@ -31,6 +31,22 @@ A connected transaction cannot dispatch async or coroutine work onto another thr
 
 When using application-level coroutine dispatch, move the entire transaction to a worker and keep its callback synchronous. Alpha.1 has no suspendQuery API.
 
+## transaction parameters
+
+`transaction(isolation, retry, block)` returns the callback result after a successful commit. A failed commit prevents that result from being returned. Kotlin supports named arguments; Java takes `Isolation`, `RetryPolicy` and the callback in that order. Omitted parameters use `Isolation.DEFAULT` and `RetryPolicy.NONE`.
+
+| RetryPolicy parameter | Value | Meaning |
+| --- | --- | --- |
+| `attempts` | Required, at least `1` | Total executions, including the first |
+| `initialDelay` | `20L` | Delay before the second execution, in milliseconds |
+| `multiplier` | `2.0` | Delay multiplier before subsequent executions |
+| `RetryPolicy.NONE` | `attempts = 1` | One attempt without retries |
+| `RetryPolicy.DEFAULT` | `attempts = 3` | Up to three attempts; default waits of 20 and 40 ms |
+
+The name `RetryPolicy.DEFAULT` does not mean that policy is enabled automatically. The runtime retries only the outer callback after a `VolanTransactionException` with `retryable = true`, until `attempts` is exhausted. A unique constraint, invalid field or arbitrary application exception does not trigger this retry.
+
+A nested `transaction` creates a savepoint and uses the outer transaction's isolation. Its `isolation` and `retry` arguments do not open an independent transaction or run a separate retry loop. If a retryable failure escapes to the outer boundary, an enabled policy retries the entire outer callback.
+
 ## Lifecycle
 
 Keep transactions short and close the client at application shutdown after outstanding work finishes. A supplied DataSource remains caller-owned. Do not assume Spring's `@Transactional` automatically joins Volan's thread-bound transaction.

@@ -44,9 +44,35 @@ db.getUser().createMany(many -> {
 });
 ```
 
-`findMany` returns a list; `findFirst` and `findUnique` return nullable rows. Their `OrThrow` variants raise `VolanNotFoundException`. `create`, `update` and `delete` return the row; single-row writes reject ambiguous multi-row matches. `createMany`, `updateMany`, `deleteMany` return affected counts. Bulk inserts preserve defaults for omitted fields and keep all batches in one transaction.
+`findMany` returns a list; `findFirst` and `findUnique` return nullable rows. Their `OrThrow` variants raise `VolanNotFoundException`. `create`, `update` and `delete` return the row; use a primary or unique key filter for `update` and `delete`. Their names do not guarantee that a broad filter changes only one row. `createMany`, `updateMany`, `deleteMany` return affected counts. Bulk inserts preserve defaults for omitted fields and keep all batches in one transaction.
 
 `upsert { where { ... }; create { ... }; update { ... } }` uses find/create-or-update. It is not an atomic server upsert: concurrent creates can race and hit a unique constraint.
+
+## Method results
+
+Here, `User` is the generated entity and `UserProjection` holds selected columns. These are result types; their names follow your schema's model.
+
+| Method | Kotlin result | When nothing matches |
+| --- | --- | --- |
+| `findMany` | `List<User>` | Empty list |
+| `findFirst`, `findUnique` | `User?` | `null` |
+| `findFirstOrThrow`, `findUniqueOrThrow` | `User` | `VolanNotFoundException` |
+| `projectMany` | `List<UserProjection>` | Empty list |
+| `projectFirst` | `UserProjection?` | `null` |
+| `count` | `Long` | `0L` |
+| `exists` | `Boolean` | `false` |
+| `update`, `delete` | `User` | `VolanNotFoundException` |
+| `updateMany`, `deleteMany` | `Long` | `0L` |
+
+Java nullable results can also be `null`; the `Long` counts above become `long`. Check for a missing row before reading its properties.
+
+`findUnique` uses the same first-row read path as `findFirst`. It does not verify that `where` names a unique key or report multiple matches. Uniqueness must follow from your predicate and database constraints: `id eq userId`, or equality on a complete unique key. `OrThrow` only changes missing-row behavior.
+
+<Warning>
+Use a specific row's key for `update` and `delete`. On PostgreSQL and SQLite, the SQL changes every row matching `where`, while the method returns one of them. Omitting `where` adds no protective predicate. Use `updateMany` or `deleteMany` for a set of rows and check the returned count.
+</Warning>
+
+`findMany` without `take` has no automatic page-size limit. Omitting `where` selects all rows; omitting `orderBy` provides no stable order. These defaults suit a small example, but your application must set page limits and access conditions.
 
 ## Filters
 
@@ -83,3 +109,30 @@ Offset works well for straightforward numbered pages, but large `skip` values st
 ## When you do not need entities
 
 Use `exists` to check for a match and `count` to count rows. Select a projection when an HTTP response only needs emails. Aggregates calculate on the database side, so the application does not have to load every post to total its views. Relation filters likewise do not load the relation itself.
+
+## Parameterized SQL
+
+Use `rawQuery` for reads and `rawExecute` for changes when a repository cannot express an operation. These application fragments require an open `db` and the `User` table from [First query](/v0.1.0-alpha.2/en/quickstart). If the email has no matching user, the result is an empty list.
+
+```kotlin
+val emailToFind = "alice@example.org"
+val emails = db.rawQuery(
+    """SELECT "email" FROM "User" WHERE "email" = ?""",
+    listOf(emailToFind),
+) { row -> row.getString("email") }
+```
+
+```java
+var emailToFind = "alice@example.org";
+var emails = db.rawQuery(
+    "SELECT \"email\" FROM \"User\" WHERE \"email\" = ?",
+    java.util.List.of(emailToFind),
+    row -> row.getString("email")
+);
+```
+
+Each `?` corresponds to one value in `parameters`, in order of appearance. Parameters bind values, not table names, column names or sort directions. Choose those SQL parts from a fixed application allowlist. The SQL above targets PostgreSQL and SQLite; the runtime does not translate arbitrary SQL between dialects.
+
+The mapper runs for each row and constructs your result; raw queries have no automatic `include`. `getString` requires a non-null value; use `getStringOrNull` for a nullable column. `rawQuery` returns `List<T>` and adds no `LIMIT`: put the limit in your SQL.
+
+`rawExecute(sql, parameters)` returns a `Long` affected-row count. For DDL, this value depends on the driver and does not count created tables. Both methods use the current connection inside `transaction`; separate calls outside it do not form one transaction. The generated client must be connected to a database: an executor-only client cannot run raw SQL.

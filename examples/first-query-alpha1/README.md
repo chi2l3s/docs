@@ -25,3 +25,23 @@ Remove only this dedicated example container when finished: `docker rm -f volan-
 
 [English guide](https://volan.mintlify.app/v0.1.0-alpha.1/en/quickstart)
 [Русская инструкция](https://volan.mintlify.app/v0.1.0-alpha.1/ru/quickstart)
+
+## Contract checks
+
+Use the dedicated PostgreSQL example database above. Tests require explicit environment variables and only create temporary tables within transactions:
+
+```bash
+export DATABASE_URL=jdbc:postgresql://localhost:55433/volan_example
+export DATABASE_USER=volan
+export DATABASE_PASSWORD=volan
+./gradlew test
+```
+
+PowerShell:
+
+```powershell
+$env:DATABASE_URL = "jdbc:postgresql://localhost:55433/volan_example"
+$env:DATABASE_USER = "volan"
+$env:DATABASE_PASSWORD = "volan"
+.\gradlew.bat test
+```

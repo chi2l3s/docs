@@ -17,3 +17,13 @@ Users: 1
 
 [English guide](https://volan.mintlify.app/next/en/quickstart)
 [Русская инструкция](https://volan.mintlify.app/next/ru/quickstart)
+
+## Contract checks
+
+Run the query and transaction checks from this directory:
+
+```bash
+./gradlew test "-PvolanRepository=file:///absolute/path/build/release-repository"
+```
+
+On Windows use `.\gradlew.bat`. Tests use isolated in-memory SQLite databases. They verify empty results, parameter binding, broad write filters and transaction retry boundaries. The Java and Kotlin raw SQL examples compile and execute against the same generated client.
