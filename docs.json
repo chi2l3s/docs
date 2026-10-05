@@ -699,6 +699,6 @@
     "dark": "/logo/favicon-dark.svg"
   },
   "background": {
-    "decoration": "gradient"
+    "decoration": "windows"
   }
 }
