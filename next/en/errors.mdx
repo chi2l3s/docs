@@ -15,7 +15,7 @@ Identify the failing stage first. That is faster than changing schema, driver an
 |---|---|
 | VolanConfigurationException | Check JDBC URL, dialect JAR and driver |
 | VolanValidationException | Supply required write fields |
-| VolanNotFoundException | Handle no match for an OrThrow operation |
+| VolanNotFoundException | Handle no match in OrThrow, update or delete |
 | VolanRelationNotLoadedException | Add include or avoid reading the relation |
 | VolanFieldNotSelectedException | Select the field before reading |
 | VolanUniqueConstraintException | Handle a duplicate business key |
@@ -27,6 +27,7 @@ Identify the failing stage first. That is faster than changing schema, driver an
 | VolanTransactionException | Retry only when retryable and callback is safe |
 | VolanQueryException | Inspect cause and generated/handwritten SQL |
 | VolanUnsupportedException | Change unsupported query shape |
+
 Schema diagnostics use E00xx for lexing, E01xx for parsing and E02xx for semantic validation. The diagnostic includes filename, source frame and a suggested fix where possible. For example, E0209 means a model lacks a primary key, E0224 means relation references are not unique. Provider restrictions can raise E0235.
 
 If generated code fails unexpectedly, first align generator/runtime/plugin versions and regenerate. Do not manually fix generated files. Missing tables mean schema DDL was never applied or the URL points at another database.
@@ -41,6 +42,8 @@ Migration edited/missing/unfinished history is a deployment stop, not an ordinar
 
 For `VolanUniqueConstraintException`, inspect the business key and concurrent writes. An `exists` check cannot prevent another transaction from inserting between the check and create. The database constraint remains the final uniqueness check, and the application must explain that conflict.
 
+`update` and `delete` also throw `VolanNotFoundException` when no row matches. If absence is expected and only an affected count is needed, use the matching `*Many` method: an empty set returns `0L`.
+
 ## Result access failures
 
 `VolanRelationNotLoadedException` means code accessed a relation the query did not load. `VolanFieldNotSelectedException` means it accessed an omitted projection field. Fix the query shape or DTO fields rather than blindly repeating the query.
@@ -52,3 +55,11 @@ For `VolanMappingException`, compare field types and actual data. An enum value 
 Verify the JDBC URL, provider, dialect module and driver, then server availability and credentials. For SQLite, check the absolute file path and working directory. A missing-table error calls for verifying that migrations ran against this same database.
 
 Do not retry every exception. A wrong field, unloaded relation or invalid schema will not improve with another query. For temporary write failures, consider whether the previous attempt may already have completed and inspect state by a business key when necessary.
+
+## What to retain for diagnosis
+
+Retain the exception type, operation, runtime and generator versions, provider, message and `cause` chain. Unloaded-data errors expose `model` and `relation`, or `model` and `field`. The `constraint` property on `VolanUniqueConstraintException` and `VolanForeignKeyException` can be `null`: drivers do not always report a constraint name. Do not require that property to recognize the conflict itself.
+
+`VolanTransactionException.retryable` describes whether a transaction can be attempted again, not whether every application action is safe to repeat. Java exposes it through a getter. Follow the [retry policy](/next/en/transactions); an exception message is not a stable business error code.
+
+Before sharing diagnostics, remove passwords, full JDBC URLs containing credentials and sensitive parameter values. Reproduction usually needs the version, a minimal schema, query shape and fictional data with the same types and constraints.

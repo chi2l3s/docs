@@ -31,6 +31,41 @@ Java использует `db.transaction(tx -> { ...; return result; })` либ
 
 Для корутин отправляй целую `transaction` через [suspendQuery](/next/ru/async). Callback остаётся синхронным. Клиенты поверх bare QueryExecutor не владеют соединением и не предоставляют guards подключённой транзакции.
 
+## Параметры transaction
+
+`transaction(isolation, retry, block)` возвращает результат callback после успешного commit. Если commit завершается ошибкой, этот результат не возвращается. В Kotlin параметры можно назвать; в Java передай `Isolation`, `RetryPolicy` и callback в таком порядке. Без явных параметров используются `Isolation.DEFAULT` и `RetryPolicy.NONE`.
+
+| Параметр RetryPolicy | Значение | Смысл |
+| --- | --- | --- |
+| `attempts` | Обязательное, минимум `1` | Общее число запусков, включая первый |
+| `initialDelay` | `20L` | Задержка перед вторым запуском, миллисекунды |
+| `multiplier` | `2.0` | Множитель задержки перед последующими запусками |
+| `RetryPolicy.NONE` | `attempts = 1` | Одна попытка без повторов |
+| `RetryPolicy.DEFAULT` | `attempts = 3` | До трёх попыток; ожидания по умолчанию 20 и 40 мс |
+
+Имя `RetryPolicy.DEFAULT` не означает, что эта политика включена автоматически. Runtime повторяет только внешний callback после `VolanTransactionException` с `retryable = true`, пока не исчерпаны `attempts`. Unique constraint, неверное поле и произвольное исключение приложения не запускают такой повтор.
+
+Вложенный `transaction` создаёт savepoint и использует изоляцию внешней транзакции. Переданные вложенному вызову `isolation` и `retry` не открывают независимую транзакцию и не запускают отдельный цикл повторов. Если повторяемая ошибка выйдет до внешней границы, повторится весь внешний callback при включённой политике.
+
+## Настроить ограниченный повтор
+
+Фрагмент использует уже открытый `db` и таблицу `User` из [Первого запроса](/next/ru/quickstart). Он создаёт пользователя с заданным email. Перед запуском убедись, что этот email ещё не занят. Повтор разрешён для временной ошибки транзакции; повторный отдельный запуск примера с тем же email завершится конфликтом уникальности.
+
+```kotlin
+import io.github.thirtyeighttwentysix.volan.runtime.Isolation
+import io.github.thirtyeighttwentysix.volan.runtime.RetryPolicy
+
+val emailToCreate = "transaction@example.org"
+val created = db.transaction(
+    isolation = Isolation.DEFAULT,
+    retry = RetryPolicy(attempts = 3, initialDelay = 20L, multiplier = 2.0),
+) { tx ->
+    tx.user.create { email = emailToCreate }
+}
+```
+
+После успешного завершения `created.email` равен `emailToCreate`, а запись сохранена. Email подготовлен до callback, поэтому каждая попытка использует один вход. Отправку приветственного письма выполняй после возвращения `transaction`, когда commit уже завершён.
+
 ## Время жизни клиента
 
 Держи транзакции короткими. Закрывай клиент при остановке приложения после завершения работы. Переданный DataSource остаётся собственностью приложения. Не считай, что Spring `@Transactional` автоматически присоединяет транзакцию Volan.

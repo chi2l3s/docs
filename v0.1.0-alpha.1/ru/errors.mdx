@@ -15,7 +15,7 @@ Volan 0.1.0-alpha.1. Архивный релиз для PostgreSQL.
 |---|---|
 | VolanConfigurationException | Проверь JDBC URL, JAR диалекта и драйвер |
 | VolanValidationException | Заполни обязательные поля записи |
-| VolanNotFoundException | Обработай отсутствие записи в OrThrow |
+| VolanNotFoundException | Обработай отсутствие строки в OrThrow, update или delete |
 | VolanRelationNotLoadedException | Добавь include или не читай связь |
 | VolanFieldNotSelectedException | Выбери поле до чтения |
 | VolanUniqueConstraintException | Обработай повтор бизнес-ключа |
@@ -27,6 +27,7 @@ Volan 0.1.0-alpha.1. Архивный релиз для PostgreSQL.
 | VolanTransactionException | Повторяй только при retryable и безопасном callback |
 | VolanQueryException | Проверь cause и generated/ручной SQL |
 | VolanUnsupportedException | Измени неподдерживаемую форму запроса |
+
 Диагностика схемы использует E00xx для lexer, E01xx для parser и E02xx для semantic validation. Сообщение содержит имя файла, фрагмент исходника и исправление, когда оно очевидно. Например, E0209 — отсутствие primary key, E0224 — references не уникальны.
 
 При ошибке generated code сначала согласуй версии generator/runtime/plugin и повтори генерацию. Не исправляй сгенерированные файлы вручную. Отсутствие таблицы означает неприменённый DDL либо подключение к другой БД.
@@ -40,6 +41,8 @@ Edited/missing/unfinished migration history останавливает deploymen
 `findUnique` может вернуть null без ошибки: строка просто не найдена. `findUniqueOrThrow` превращает это состояние в `VolanNotFoundException`. Выбирай вариант по смыслу операции и обрабатывай отсутствие записи один раз на границе сервиса.
 
 При `VolanUniqueConstraintException` проверь бизнес-ключ и конкурентное выполнение. Предварительный `exists` не гарантирует, что другая транзакция не вставит строку между проверкой и create. Ограничение БД остаётся последней проверкой уникальности; приложение должно уметь объяснить такой конфликт.
+
+`update` и `delete` тоже выбрасывают `VolanNotFoundException`, если фильтр не нашёл строку. Если отсутствие допустимо и нужна только информация о числе изменений, используй соответствующий `*Many`: для пустого набора результат равен `0L`.
 
 ## Ошибка загрузки результата
 

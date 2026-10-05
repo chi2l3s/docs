@@ -1,6 +1,6 @@
 ---
 title: "CLI"
-description: "Validate and format schemas, generate clients and run explicit database operations."
+description: "Read a database schema and inspect changes before applying them with the matching release CLI."
 ---
 
 <Info>
@@ -33,3 +33,28 @@ URLs use JDBC syntax. SQLite relative file paths depend on the current working d
 Alpha.2 does not include `init`, `generate`, `format`, `validate`, `migrate` or `--resolve`. Generate the client with the alpha.2 build program from [First query](/v0.1.0-alpha.2/en/quickstart). Apply versioned migration files through the [migration API](/v0.1.0-alpha.2/en/migrations).
 
 The alpha.3 preview CLI has a larger command set and newer generated APIs. Selecting its documentation does not update your application dependencies. Use the tool and generator that match your application release.
+
+## Database URL precedence
+
+For `db push`, the order is:
+
+1. An explicit `--url`.
+2. The schema datasource URL: a literal, or the value of the variable named in `env(...)`.
+3. `DATABASE_URL`, if the earlier sources provide no value.
+
+`db pull` does not load an existing schema to choose its connection. It uses `--url`, then `DATABASE_URL`; `--schema` names the output file. If your datasource uses `env("APP_DATABASE_URL")`, pull still needs `--url` or `DATABASE_URL`.
+
+An empty string is not a missing value: a selected empty URL does not fall back to the next source and fails JDBC URL validation. `DATABASE_USER` and `DATABASE_PASSWORD` are passed separately to the driver. A schema's env declaration also does not make the application client builder read its URL automatically.
+
+## Output and file writes
+
+| Mode | stdout | Files and database |
+| --- | --- | --- |
+| `db pull --stdout` | Schema text | Does not write the schema file |
+| `db pull` | `Wrote ...` after success | Creates a new file; preserves an existing file without `--force` |
+| `db push --dry-run` | Plan SQL or `Schema is up to date.` | Does not apply the plan; connects to the database |
+| `db push` | Change count or `Schema is up to date.` | Applies the plan when its checks pass |
+
+Dry-run warnings go to stderr, separately from SQL. Exit code zero means command success, not necessarily a change: an empty drift plan also succeeds. In CI, treat a nonzero exit as failure and retain stderr rather than inferring success from a stdout message.
+
+`--force` permits replacing a pull output file. `--accept-data-loss` permits applying a warning-bearing plan. They belong to different operations; neither is a general ignore-errors mode.

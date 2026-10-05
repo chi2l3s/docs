@@ -21,3 +21,4 @@ This repository publishes Russian and English documentation at https://volan.min
 - Navigation is language, then version, then topic groups. Default to the latest published release. Preserve both selectors when adding a release.
 - Archive the previous version when publishing a new release: add a new directory and version entry; do not overwrite a release snapshot. Add redirects for old unversioned URLs deliberately.
 - Quickstarts must match their corresponding examples: first-query for alpha.2, first-query-alpha1 for alpha.1 and first-query-next for development. Use the matching generator and runtime.
+- When changing query, raw SQL or transaction contracts, run the corresponding example's `test` task. Alpha.1 checks require a dedicated PostgreSQL database and explicit DATABASE_URL, DATABASE_USER and DATABASE_PASSWORD; the other examples use isolated SQLite memory databases. Keep verification commands in each example's README.
