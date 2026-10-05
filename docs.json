@@ -697,5 +697,8 @@
   "favicon": {
     "light": "/logo/favicon-light.svg",
     "dark": "/logo/favicon-dark.svg"
+  },
+  "background": {
+    "decoration": "gradient"
   }
 }
